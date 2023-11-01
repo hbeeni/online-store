@@ -1,25 +1,82 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.constant.SaleStatus;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
-import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import java.util.Objects;
 
-public class Product {
+@Getter
+@ToString(callSuper = true)
+@Entity
+public class Product extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
+
+    @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(nullable = false)
     private int price;
+
     private String description;
+
+    @Column(nullable = false)
     private int stockQuantity;
+
+    @Column(nullable = false)
     private int salesVolume;
+
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'WAIT'")
+    @Column(nullable = false, length = 20)
     private SaleStatus saleStatus;
+
+    @Column(length = 200)
     private String imageUrl;
 
-    private LocalDateTime createdAt;
-    private String createdBy;
-    private LocalDateTime modifiedAt;
-    private String modifiedBy;
+    protected Product() {}
+
+    @Builder
+    private Product(Category category, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
+        this.category = category;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.stockQuantity = stockQuantity;
+        this.salesVolume = salesVolume;
+        this.saleStatus = saleStatus;
+        this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product that)) return false;
+        return this.getId() != null && Objects.equals(this.getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getId());
+    }
 }
