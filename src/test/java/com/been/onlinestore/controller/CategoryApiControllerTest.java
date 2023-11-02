@@ -55,9 +55,58 @@ class CategoryApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
-                .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.id").value(ID))
                 .andExpect(jsonPath("$.data.name").value(NAME))
                 .andExpect(jsonPath("$.data.productCount").value(PRODUCT_COUNT));
+    }
+
+    @DisplayName("[API][GET] 해당 카테고리의 상품 리스트 조회")
+    @Test
+    void test_getAllProductsInCategory() throws Exception {
+        //Given
+        long productId = 1L;
+        String productName = "test product";
+
+        //When & Then
+        mvc.perform(get("/api/categories/" + ID + "/products"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.categoryName").value(NAME))
+                .andExpect(jsonPath("$.data.products").isArray())
+                .andExpect(jsonPath("$.data.products[0].id").value(productId))
+                .andExpect(jsonPath("$.data.products[0].name").value(productName));
+    }
+
+    @DisplayName("[API][GET] 해당 카테고리의 상품 리스트 조회 + 페이징")
+    @Test
+    void test_getAllProductsInCategory_withPagination() throws Exception {
+        //Given
+        String sortName = "createdAt";
+        String direction = "desc";
+        int pageNumber = 0;
+        int pageSize = 1;
+
+        long productId = 1L;
+        String productName = "test product";
+
+        //When & Then
+        mvc.perform(
+                        get("/api/categories/" + ID + "/products")
+                                .queryParam("page", String.valueOf(pageNumber))
+                                .queryParam("size", String.valueOf(pageSize))
+                                .queryParam("sort", sortName + "," + direction)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.categoryName").value(NAME))
+                .andExpect(jsonPath("$.data.products").isArray())
+                .andExpect(jsonPath("$.data.products[0].id").value(productId))
+                .andExpect(jsonPath("$.data.products[0].name").value(productName))
+                .andExpect(jsonPath("$.page.number").value(0))
+                .andExpect(jsonPath("$.page.size").value(1))
+                .andExpect(jsonPath("$.page.totalPages").value(1))
+                .andExpect(jsonPath("$.page.totalElements").value(1));
     }
 }
