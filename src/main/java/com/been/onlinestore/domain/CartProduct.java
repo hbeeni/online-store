@@ -1,6 +1,5 @@
 package com.been.onlinestore.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -40,12 +39,15 @@ public class CartProduct {
 
     protected CartProduct() {}
 
-    @Builder
     private CartProduct(Cart cart, Product product, int productPrice, int productQuantity) {
         this.cart = cart;
         this.product = product;
         this.productPrice = productPrice;
         this.productQuantity = productQuantity;
+    }
+
+    public static CartProduct of(Cart cart, Product product, int productPrice, int productQuantity) {
+        return new CartProduct(cart, product, productPrice, productQuantity);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.constant.RoleType;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -50,7 +49,6 @@ public class User extends BaseTimeEntity {
 
     protected User() {}
 
-    @Builder
     private User(String uid, String password, String name, String email, String nickname, String phone, RoleType roleType) {
         this.uid = uid;
         this.password = password;
@@ -59,6 +57,10 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.phone = phone;
         this.roleType = roleType;
+    }
+
+    public static User of(String uid, String password, String name, String email, String nickname, String phone, RoleType roleType) {
+        return new User(uid, password, name, email, nickname, phone, roleType);
     }
 
     @Override

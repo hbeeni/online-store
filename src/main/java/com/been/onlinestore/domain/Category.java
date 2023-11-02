@@ -1,6 +1,5 @@
 package com.been.onlinestore.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -29,10 +28,13 @@ public class Category extends BaseEntity {
 
     protected Category() {}
 
-    @Builder
     private Category(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public static Category of(String name, String description) {
+        return new Category(name, description);
     }
 
     @Override

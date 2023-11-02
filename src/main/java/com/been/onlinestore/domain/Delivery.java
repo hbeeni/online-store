@@ -1,7 +1,6 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.constant.DeliveryStatus;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
@@ -46,13 +45,16 @@ public class Delivery {
 
     protected Delivery() {}
 
-    @Builder
     private Delivery(DeliveryStatus deliveryStatus, String deliveryAddress, int deliveryFee, String receiverPhone, LocalDateTime deliveredAt) {
         this.deliveryStatus = deliveryStatus;
         this.deliveryAddress = deliveryAddress;
         this.deliveryFee = deliveryFee;
         this.receiverPhone = receiverPhone;
         this.deliveredAt = deliveredAt;
+    }
+
+    public static Delivery of(DeliveryStatus deliveryStatus, String deliveryAddress, int deliveryFee, String receiverPhone, LocalDateTime deliveredAt) {
+        return new Delivery(deliveryStatus, deliveryAddress, deliveryFee, receiverPhone, deliveredAt);
     }
 
     @Override
