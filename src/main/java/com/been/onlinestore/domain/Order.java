@@ -1,7 +1,6 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.constant.OrderStatus;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
@@ -49,12 +48,15 @@ public class Order extends BaseTimeEntity {
 
     protected Order() {}
 
-    @Builder
     private Order(User user, Delivery delivery, String ordererPhone, OrderStatus orderStatus) {
         this.user = user;
         this.delivery = delivery;
         this.ordererPhone = ordererPhone;
         this.orderStatus = orderStatus;
+    }
+
+    public static Order of(User user, Delivery delivery, String ordererPhone, OrderStatus orderStatus) {
+        return new Order(user, delivery, ordererPhone, orderStatus);
     }
 
     @Override

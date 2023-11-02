@@ -1,7 +1,6 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.converter.DefaultAddressConverter;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -42,12 +41,15 @@ public class Address extends BaseTimeEntity {
 
     protected Address() {}
 
-    @Builder
     private Address(User user, String detail, String zipcode, Boolean defaultAddress) {
         this.user = user;
         this.detail = detail;
         this.zipcode = zipcode;
         this.defaultAddress = defaultAddress;
+    }
+
+    public static Address of(User user, String detail, String zipcode, Boolean defaultAddress) {
+        return new Address(user, detail, zipcode, defaultAddress);
     }
 
     @Override

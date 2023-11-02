@@ -1,7 +1,6 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.constant.SaleStatus;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
@@ -56,7 +55,6 @@ public class Product extends BaseEntity {
 
     protected Product() {}
 
-    @Builder
     private Product(Category category, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
         this.category = category;
         this.name = name;
@@ -66,6 +64,10 @@ public class Product extends BaseEntity {
         this.salesVolume = salesVolume;
         this.saleStatus = saleStatus;
         this.imageUrl = imageUrl;
+    }
+
+    public static Product of(Category category, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
+        return new Product(category, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.been.onlinestore.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -40,12 +39,15 @@ public class OrderProduct {
 
     protected OrderProduct() {}
 
-    @Builder
     private OrderProduct(Order order, Product product, int price, int quantity) {
         this.order = order;
         this.product = product;
         this.price = price;
         this.quantity = quantity;
+    }
+
+    public static OrderProduct of(Order order, Product product, int price, int quantity) {
+        return new OrderProduct(order, product, price, quantity);
     }
 
     @Override
