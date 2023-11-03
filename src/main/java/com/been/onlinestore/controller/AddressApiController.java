@@ -19,6 +19,11 @@ public class AddressApiController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
+    @GetMapping("/{addressId}")
+    public ResponseEntity<?> getAddress(@PathVariable Long addressId) {
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
     @PostMapping
     public ResponseEntity<?> addAddress() {
         return ResponseEntity.ok(ApiResponse.success(null));
