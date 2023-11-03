@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Disabled("구현 전")
 @DisplayName("API 컨트롤러 - 회원 (공통)")
 @Import(SecurityConfig.class)
-@WebMvcTest(CommonController.class)
-class CommonControllerTest {
+@WebMvcTest(CommonApiController.class)
+class CommonApiControllerTest {
 
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper mapper;
