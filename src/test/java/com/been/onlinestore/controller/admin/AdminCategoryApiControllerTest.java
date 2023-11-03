@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,6 +27,19 @@ class AdminCategoryApiControllerTest {
     @Autowired private ObjectMapper mapper;
 
     private static final long ID = 1L;
+
+    @DisplayName("[API][POST] 카테고리 추가")
+    @Test
+    void test_addCategory() throws Exception {
+        //Given
+
+        //When & Then
+        mvc.perform(post("/admin-api/categories"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.id").value(ID));
+    }
 
     @DisplayName("[API][PUT] 카테고리 수정")
     @Test
