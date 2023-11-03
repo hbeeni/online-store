@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller;
+package com.been.onlinestore.controller.user;
 
 import com.been.onlinestore.config.SecurityConfig;
 import com.been.onlinestore.domain.constant.OrderStatus;
@@ -39,7 +39,7 @@ class OrderApiControllerTest {
         long orderProductId = 1L;
 
         //When & Then
-        mvc.perform(get("/api/orders"))
+        mvc.perform(get("/api/user/orders"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -66,7 +66,7 @@ class OrderApiControllerTest {
 
         //When & Then
         mvc.perform(
-                        get("/api/orders")
+                        get("/api/user/orders")
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))
                                 .queryParam("sort", sortName + "," + direction)
@@ -95,7 +95,7 @@ class OrderApiControllerTest {
         long orderProductId = 1L;
 
         //When & Then
-        mvc.perform(get("/api/orders/" + ORDER_ID))
+        mvc.perform(get("/api/user/orders/" + ORDER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -112,7 +112,7 @@ class OrderApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(post("/api/orders"))
+        mvc.perform(post("/api/user/orders"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -126,7 +126,7 @@ class OrderApiControllerTest {
         OrderStatus orderStatus = OrderStatus.CANCEL;
 
         //When & Then
-        mvc.perform(put("/api/orders/" + ORDER_ID + "/cancel"))
+        mvc.perform(put("/api/user/orders/" + ORDER_ID + "/cancel"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/seller-api/orders")
+@RequestMapping("/api/seller/orders")
 @RestController
 public class SellerOrderApiController {
 

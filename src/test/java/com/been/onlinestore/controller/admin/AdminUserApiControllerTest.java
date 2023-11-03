@@ -36,7 +36,7 @@ class AdminUserApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/admin-api/users"))
+        mvc.perform(get("/api/admin/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -57,7 +57,7 @@ class AdminUserApiControllerTest {
 
         //When & Then
         mvc.perform(
-                        get("/admin-api/users")
+                        get("/api/admin/users")
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))
                                 .queryParam("sort", sortName + "," + direction)
@@ -81,7 +81,7 @@ class AdminUserApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/admin-api/users/" + ID))
+        mvc.perform(get("/api/admin/users/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -96,7 +96,7 @@ class AdminUserApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(delete("/admin-api/users/" + ID))
+        mvc.perform(delete("/api/admin/users/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))

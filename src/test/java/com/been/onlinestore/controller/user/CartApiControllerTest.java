@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller;
+package com.been.onlinestore.controller.user;
 
 import com.been.onlinestore.config.SecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ class CartApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/api/carts"))
+        mvc.perform(get("/api/user/carts"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -63,7 +63,7 @@ class CartApiControllerTest {
 
         //When & Then
         mvc.perform(
-                        get("/api/carts")
+                        get("/api/user/carts")
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))
                                 .queryParam("sort", sortName + "," + direction)
@@ -90,7 +90,7 @@ class CartApiControllerTest {
         long cartProductId = 1L;
 
         //When & Then
-        mvc.perform(post("/api/carts"))
+        mvc.perform(post("/api/user/carts"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -106,7 +106,7 @@ class CartApiControllerTest {
         int productQuantity = 100;
 
         //When & Then
-        mvc.perform(put("/api/carts/products/" + cartProductId))
+        mvc.perform(put("/api/user/carts/products/" + cartProductId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -119,7 +119,7 @@ class CartApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(delete("/api/carts"))
+        mvc.perform(delete("/api/user/carts"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
