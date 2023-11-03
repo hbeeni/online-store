@@ -31,7 +31,7 @@ public class Order extends BaseTimeEntity {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private User orderer;
 
     @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY)
@@ -48,8 +48,8 @@ public class Order extends BaseTimeEntity {
 
     protected Order() {}
 
-    private Order(User user, Delivery delivery, String ordererPhone, OrderStatus orderStatus) {
-        this.user = user;
+    private Order(User orderer, Delivery delivery, String ordererPhone, OrderStatus orderStatus) {
+        this.orderer = orderer;
         this.delivery = delivery;
         this.ordererPhone = ordererPhone;
         this.orderStatus = orderStatus;
