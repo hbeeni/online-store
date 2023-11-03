@@ -1,21 +1,22 @@
 package com.been.onlinestore.domain;
 
+import com.been.onlinestore.domain.constant.RoleType;
 import lombok.Getter;
 import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Objects;
 
 @Getter
 @ToString(callSuper = true)
-@Table(name = "users")
 @Entity
-public class User extends BaseTimeEntity {
+public class Admin extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,31 +35,32 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(length = 20)
-    private String nickname;
-
     @Column(nullable = false, length = 20)
     private String phone;
 
-    protected User() {}
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private RoleType roleType;
 
-    private User(String uid, String password, String name, String email, String nickname, String phone) {
+    protected Admin() {}
+
+    private Admin(String uid, String password, String name, String email, String phone, RoleType roleType) {
         this.uid = uid;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.nickname = nickname;
         this.phone = phone;
+        this.roleType = roleType;
     }
 
-    public static User of(String uid, String password, String name, String email, String nickname, String phone) {
-        return new User(uid, password, name, email, nickname, phone);
+    public static Admin of(String uid, String password, String name, String email, String phone, RoleType roleType) {
+        return new Admin(uid, password, name, email, phone, roleType);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User that)) return false;
+        if (!(o instanceof Admin that)) return false;
         return this.getId() != null && Objects.equals(this.getId(), that.getId());
     }
 
