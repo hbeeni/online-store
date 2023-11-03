@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,13 +29,30 @@ class AdminCategoryApiControllerTest {
 
     private static final long ID = 1L;
 
+    @DisplayName("[API][GET] 카테고리 상세 조회")
+    @Test
+    void test_getCategory() throws Exception {
+        //Given
+        String name = "test category";
+        int productCount = 1;
+
+        //When & Then
+        mvc.perform(get("/api/admin/categories/" + ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.id").value(ID))
+                .andExpect(jsonPath("$.data.name").value(name))
+                .andExpect(jsonPath("$.data.productCount").value(productCount));
+    }
+
     @DisplayName("[API][POST] 카테고리 추가")
     @Test
     void test_addCategory() throws Exception {
         //Given
 
         //When & Then
-        mvc.perform(post("/admin-api/categories"))
+        mvc.perform(post("/api/admin/categories"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -49,7 +67,7 @@ class AdminCategoryApiControllerTest {
         String description = "updated description";
 
         //When & Then
-        mvc.perform(delete("/admin-api/categories/" + ID))
+        mvc.perform(delete("/api/admin/categories/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -62,7 +80,7 @@ class AdminCategoryApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(delete("/admin-api/categories/" + ID))
+        mvc.perform(delete("/api/admin/categories/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))

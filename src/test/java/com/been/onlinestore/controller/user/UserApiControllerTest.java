@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller;
+package com.been.onlinestore.controller.user;
 
 import com.been.onlinestore.config.SecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ class UserApiControllerTest {
         long id = 1L;
 
         //When & Then
-        mvc.perform(put("/api/users"))
+        mvc.perform(put("/api/user/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))

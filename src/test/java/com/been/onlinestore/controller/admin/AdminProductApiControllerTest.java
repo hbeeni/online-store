@@ -35,7 +35,7 @@ class AdminProductApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/admin-api/products"))
+        mvc.perform(get("/api/admin/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -56,7 +56,7 @@ class AdminProductApiControllerTest {
 
         //When & Then
         mvc.perform(
-                        get("/admin-api/products")
+                        get("/api/admin/products")
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))
                                 .queryParam("sort", sortName + "," + direction)
@@ -86,7 +86,7 @@ class AdminProductApiControllerTest {
 
         //When & Then
         mvc.perform(
-                        get("/admin-api/products")
+                        get("/api/admin/products")
                                 .queryParam("search", searchKeyword)
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))

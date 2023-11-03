@@ -38,7 +38,7 @@ class SellerProductApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/seller-api/products"))
+        mvc.perform(get("/api/seller/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -59,7 +59,7 @@ class SellerProductApiControllerTest {
 
         //When & Then
         mvc.perform(
-                        get("/seller-api/products")
+                        get("/api/seller/products")
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))
                                 .queryParam("sort", sortName + "," + direction)
@@ -89,7 +89,7 @@ class SellerProductApiControllerTest {
 
         //When & Then
         mvc.perform(
-                        get("/seller-api/products")
+                        get("/api/seller/products")
                                 .queryParam("search", searchKeyword)
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))
@@ -114,7 +114,7 @@ class SellerProductApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/seller-api/products/" + ID))
+        mvc.perform(get("/api/seller/products/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -129,7 +129,7 @@ class SellerProductApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(post("/seller-api/products"))
+        mvc.perform(post("/api/seller/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -144,7 +144,7 @@ class SellerProductApiControllerTest {
         SaleStatus saleStatus = SaleStatus.CLOSE;
 
         //When & Then
-        mvc.perform(put("/seller-api/products/" + ID))
+        mvc.perform(put("/api/seller/products/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
