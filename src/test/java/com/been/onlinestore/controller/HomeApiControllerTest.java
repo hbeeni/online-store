@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Disabled("구현 전")
 @DisplayName("API 컨트롤러 - 권한 필요 없음")
 @Import(SecurityConfig.class)
-@WebMvcTest(ApiController.class)
-class ApiControllerTest {
+@WebMvcTest(HomeApiController.class)
+class HomeApiControllerTest {
 
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper mapper;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api")
 @RestController
-public class ApiController {
+public class HomeApiController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp() {

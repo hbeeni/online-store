@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/common")
 @RestController
-public class CommonController {
+public class CommonApiController {
 
     @PutMapping("/info")
     public ResponseEntity<?> updateUserInfo() {
