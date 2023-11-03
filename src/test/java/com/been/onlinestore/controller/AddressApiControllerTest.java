@@ -48,9 +48,24 @@ class AddressApiControllerTest {
                 .andExpect(jsonPath("$.data[0].defaultAddress").value(DEFAULT_ADDRESS));
     }
 
+    @DisplayName("[API][GET] 주소 상세 조회")
+    @Test
+    void test_getAddress() throws Exception {
+        //Given
+
+        //When & Then
+        mvc.perform(get("/api/addresses/" + ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.id").value(ID))
+                .andExpect(jsonPath("$.data.city").value(CITY))
+                .andExpect(jsonPath("$.data.defaultAddress").value(DEFAULT_ADDRESS));
+    }
+
     @DisplayName("[API][POST] 주소 등록")
     @Test
-    void test_addAnAddress() throws Exception {
+    void test_addAddress() throws Exception {
         //Given
 
         //When & Then
@@ -63,7 +78,7 @@ class AddressApiControllerTest {
 
     @DisplayName("[API][PUT] 주소 수정")
     @Test
-    void test_updateAnAddressInfo() throws Exception {
+    void test_updateAddressInfo() throws Exception {
         //Given
 
         //When & Then
@@ -76,7 +91,7 @@ class AddressApiControllerTest {
 
     @DisplayName("[API][DELETE] 주소 삭제")
     @Test
-    void test_deleteAnAddress() throws Exception {
+    void test_deleteAddress() throws Exception {
         //Given
 
         //When & Then
