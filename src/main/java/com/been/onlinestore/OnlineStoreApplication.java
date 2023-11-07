@@ -23,6 +23,7 @@ public class OnlineStoreApplication {
     public CommandLineRunner loadData(UserRepository userRepository, PasswordEncoder encoder) {
         return args -> {
             userRepository.save(User.of("user", encoder.encode("test12"), "user", "testuser@mail.com", "test user", "01012341234"));
+            userRepository.save(User.of("seller", encoder.encode("test12"), "seller", "testseller@mail.com", "test seller", "01012341234", RoleType.SELLER));
             userRepository.save(User.of("admin", encoder.encode("test12"), "admin", "testadmin@mail.com", "test admin", "01012341234", RoleType.ADMIN));
         };
     }
