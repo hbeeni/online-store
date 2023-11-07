@@ -1,8 +1,7 @@
 package com.been.onlinestore.service;
 
-import com.been.onlinestore.domain.Admin;
 import com.been.onlinestore.domain.User;
-import com.been.onlinestore.repository.AdminRepository;
+import com.been.onlinestore.dto.UserDto;
 import com.been.onlinestore.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static com.been.onlinestore.util.UserTestDataUtil.createAdmin;
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
@@ -23,7 +24,6 @@ import static org.mockito.BDDMockito.then;
 class UserServiceTest {
 
     @Mock private UserRepository userRepository;
-    @Mock private AdminRepository adminRepository;
 
     @InjectMocks private UserService sut;
 
@@ -54,8 +54,8 @@ class UserServiceTest {
     @Test
     void test_signUpAdmin() {
         //Given
-        Admin admin = createAdmin();
-        given(adminRepository.save(any())).willReturn(admin);
+        User admin = createAdmin();
+        given(userRepository.save(any())).willReturn(admin);
 
         //When
         Long id = sut.signUp(
@@ -63,13 +63,43 @@ class UserServiceTest {
                 admin.getPassword(),
                 admin.getName(),
                 admin.getEmail(),
-                null,
+                admin.getNickname(),
                 admin.getPhone(),
                 admin.getRoleType()
         );
 
         //Then
         assertThat(id).isEqualTo(admin.getId());
-        then(adminRepository).should().save(any());
+        then(userRepository).should().save(any());
+    }
+
+    @DisplayName("존재하는 회원 ID를 검색하면, 회원 데이터를 Optional로 반환한다.")
+    @Test
+    void test_searchExistentUser() {
+        //Given
+        String uid = "user";
+        given(userRepository.findByUid(uid)).willReturn(Optional.of(createUser(uid)));
+
+        //When
+        Optional<UserDto> result = sut.searchUser(uid);
+
+        //Then
+        assertThat(result).isPresent();
+        then(userRepository).should().findByUid(uid);
+    }
+
+    @DisplayName("존재하지 않는 회원 ID를 검색하면, 비어있는 Optional을 반환한다.")
+    @Test
+    void test_searchNonExistentUser() {
+        //Given
+        String uid = "wrong-user";
+        given(userRepository.findByUid(uid)).willReturn(Optional.empty());
+
+        //When
+        Optional<UserDto> result = sut.searchUser(uid);
+
+        //Then
+        assertThat(result).isEmpty();
+        then(userRepository).should().findByUid(uid);
     }
 }

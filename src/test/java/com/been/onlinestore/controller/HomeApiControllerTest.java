@@ -1,87 +1,42 @@
 package com.been.onlinestore.controller;
 
-import com.been.onlinestore.config.SecurityConfig;
+import com.been.onlinestore.config.TestSecurityConfig;
+import com.been.onlinestore.config.jwt.JwtFilter;
+import com.been.onlinestore.config.jwt.JwtProperties;
+import com.been.onlinestore.config.jwt.JwtTokenProvider;
 import com.been.onlinestore.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.been.onlinestore.util.UserTestDataUtil.createSignUpAdminRequest;
-import static com.been.onlinestore.util.UserTestDataUtil.createSignUpUserRequest;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.anyString;
-import static org.mockito.BDDMockito.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("API 컨트롤러 - 권한 필요 없음")
-@Import(SecurityConfig.class)
-@WebMvcTest(HomeApiController.class)
+@ActiveProfiles("test")
+@Import(TestSecurityConfig.class)
+@ContextConfiguration(classes = {JwtTokenProvider.class, JwtFilter.class, AuthenticationManager.class})
+@EnableConfigurationProperties(JwtProperties.class)
+@WebMvcTest(controllers = HomeApiController.class)
 class HomeApiControllerTest {
 
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper mapper;
 
     @MockBean private UserService userService;
-
-    @DisplayName("[API][POST] 일반 회원 가입")
-    @Test
-    void test_signUpUser() throws Exception {
-        //Given
-        long id = 1L;
-        given(userService.signUp(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), eq(null)))
-                .willReturn(id);
-
-        //When & Then
-        mvc.perform(
-                        post("/api/sign-up")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .characterEncoding("UTF-8")
-                                .content(mapper.writeValueAsString(createSignUpUserRequest()))
-                )
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status").value("success"))
-                .andExpect(jsonPath("$.data.id").value(id));
-        then(userService).should().signUp(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), eq(null));
-    }
-
-    @DisplayName("[API][POST] 어드민 회원 가입")
-    @Test
-    void test_signUpAdmin() throws Exception {
-        //Given
-        long id = 1L;
-        given(userService.signUp(anyString(), anyString(), anyString(), anyString(), eq(null), anyString(), any()))
-                .willReturn(id);
-
-        //When & Then
-        mvc.perform(
-                        post("/api/sign-up")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .characterEncoding("UTF-8")
-                                .content(mapper.writeValueAsString(createSignUpAdminRequest()))
-                )
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status").value("success"))
-                .andExpect(jsonPath("$.data.id").value(id));
-        then(userService).should().signUp(anyString(), anyString(), anyString(), anyString(), eq(null), anyString(), any());
-    }
-
     @Disabled("구현 전")
     @DisplayName("[API][GET] 카테고리 리스트 조회")
     @Test

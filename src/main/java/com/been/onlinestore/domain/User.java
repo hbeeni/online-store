@@ -1,10 +1,14 @@
 package com.been.onlinestore.domain;
 
+import com.been.onlinestore.domain.constant.RoleType;
 import lombok.Getter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,19 +44,29 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 20)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'USER'")
+    @Column(nullable = false, length = 20)
+    private RoleType roleType;
+
     protected User() {}
 
-    private User(String uid, String password, String name, String email, String nickname, String phone) {
+    private User(String uid, String password, String name, String email, String nickname, String phone, RoleType roleType) {
         this.uid = uid;
         this.password = password;
         this.name = name;
         this.email = email;
         this.nickname = nickname;
         this.phone = phone;
+        this.roleType = roleType;
     }
 
     public static User of(String uid, String password, String name, String email, String nickname, String phone) {
-        return new User(uid, password, name, email, nickname, phone);
+        return new User(uid, password, name, email, nickname, phone, RoleType.USER);
+    }
+
+    public static User of(String uid, String password, String name, String email, String nickname, String phone, RoleType roleType) {
+        return new User(uid, password, name, email, nickname, phone, roleType);
     }
 
     @Override
