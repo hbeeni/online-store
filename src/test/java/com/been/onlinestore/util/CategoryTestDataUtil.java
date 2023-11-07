@@ -26,6 +26,10 @@ public class CategoryTestDataUtil {
     }
 
     public static CategoryDto createCategoryDto(Long id, String name) {
-        return CategoryDto.of(id, name, name + DESCRIPTION_SUFFIX, 0);
+        return createCategoryDto(id, name, 0);
+    }
+
+    public static CategoryDto createCategoryDto(Long id, String name, int productCount) {
+        return CategoryDto.of(id, name, name + DESCRIPTION_SUFFIX, productCount);
     }
 }

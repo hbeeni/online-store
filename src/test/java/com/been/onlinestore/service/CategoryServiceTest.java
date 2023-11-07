@@ -1,7 +1,6 @@
 package com.been.onlinestore.service;
 
 import com.been.onlinestore.domain.Category;
-import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.dto.CategoryDto;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
@@ -36,7 +35,7 @@ class CategoryServiceTest {
     @Test
     void test_searchCategories() {
         //Given
-        given(categoryRepository.findAll()).willReturn(List.of(
+        given(categoryRepository.findAllWithProducts()).willReturn(List.of(
                 createCategory("상의"),
                 createCategory("하의"),
                 createCategory("음식")
@@ -47,7 +46,7 @@ class CategoryServiceTest {
 
         //Then
         assertThat(result.size()).isEqualTo(3);
-        then(categoryRepository).should().findAll();
+        then(categoryRepository).should().findAllWithProducts();
     }
 
     @DisplayName("카테고리를 조회하면, 카테고리 정보를 반환한다.")
@@ -55,10 +54,9 @@ class CategoryServiceTest {
     void test_searchCategory() {
         //Given
         long id = 1L;
-        int productCount = 5;
+        int productCount = 0;
         Category category = createCategory("카테고리");
-        given(categoryRepository.findById(id)).willReturn(Optional.of(category));
-        given(productRepository.countByCategory_IdAndSaleStatusEquals(id, SaleStatus.SALE)).willReturn(productCount);
+        given(categoryRepository.findWithProductsById(any())).willReturn(Optional.of(category));
 
         //When
         CategoryDto result = sut.findCategory(id);
@@ -68,7 +66,7 @@ class CategoryServiceTest {
                 .hasFieldOrPropertyWithValue("id", category.getId())
                 .hasFieldOrPropertyWithValue("name", category.getName())
                 .hasFieldOrPropertyWithValue("productCount", productCount);
-        then(categoryRepository).should().findById(id);
+        then(categoryRepository).should().findWithProductsById(any());
     }
 
     @DisplayName("카테고리를 추가하면, 저장된 카테고리의 id를 반환한다.")

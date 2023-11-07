@@ -1,7 +1,6 @@
 package com.been.onlinestore.service;
 
 import com.been.onlinestore.domain.Category;
-import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.dto.CategoryDto;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
@@ -25,15 +24,15 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryDto> findCategories() {
-        return categoryRepository.findAll().stream()
-                .map(category -> CategoryDto.of(category, getProductForSaleCount(category.getId())))
+        return categoryRepository.findAllWithProducts().stream()
+                .map(CategoryDto::from)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public CategoryDto findCategory(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .map(category -> CategoryDto.of(category, getProductForSaleCount(categoryId)))
+        return categoryRepository.findWithProductsById(categoryId)
+                .map(CategoryDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("해당 카테고리가 없습니다 - categoryId: " + categoryId));
     }
 
@@ -63,11 +62,8 @@ public class CategoryService {
     }
 
     public Long deleteCategory(Long categoryId) {
+        productRepository.bulkCategoryNull(categoryId);
         categoryRepository.deleteById(categoryId);
         return categoryId;
-    }
-
-    private int getProductForSaleCount(Long categoryId) {
-        return productRepository.countByCategory_IdAndSaleStatusEquals(categoryId, SaleStatus.SALE);
     }
 }
