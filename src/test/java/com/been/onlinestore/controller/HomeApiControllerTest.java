@@ -1,25 +1,24 @@
 package com.been.onlinestore.controller;
 
 import com.been.onlinestore.config.TestSecurityConfig;
-import com.been.onlinestore.config.jwt.JwtFilter;
-import com.been.onlinestore.config.jwt.JwtProperties;
-import com.been.onlinestore.config.jwt.JwtTokenProvider;
-import com.been.onlinestore.service.UserService;
+import com.been.onlinestore.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
+import static com.been.onlinestore.util.CategoryTestDataUtil.createCategoryDto;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,16 +27,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("API 컨트롤러 - 권한 필요 없음")
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
-@ContextConfiguration(classes = {JwtTokenProvider.class, JwtFilter.class, AuthenticationManager.class})
-@EnableConfigurationProperties(JwtProperties.class)
-@WebMvcTest(controllers = HomeApiController.class)
+@WebMvcTest(HomeApiController.class)
 class HomeApiControllerTest {
 
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper mapper;
 
-    @MockBean private UserService userService;
-    @Disabled("구현 전")
+    @MockBean private CategoryService categoryService;
+
     @DisplayName("[API][GET] 카테고리 리스트 조회")
     @Test
     void test_getAllCategories() throws Exception {
@@ -45,6 +42,7 @@ class HomeApiControllerTest {
         long categoryId = 1L;
         String categoryName = "test category";
         int productCountInCategory = 1;
+        given(categoryService.findCategories()).willReturn(List.of(createCategoryDto(categoryId, categoryName, productCountInCategory)));
 
         //When & Then
         mvc.perform(get("/api/categories"))
@@ -55,6 +53,7 @@ class HomeApiControllerTest {
                 .andExpect(jsonPath("$.data[0].id").value(categoryId))
                 .andExpect(jsonPath("$.data[0].name").value(categoryName))
                 .andExpect(jsonPath("$.data[0].productCount").value(productCountInCategory));
+        then(categoryService).should().findCategories();
     }
 
     @Disabled("구현 전")

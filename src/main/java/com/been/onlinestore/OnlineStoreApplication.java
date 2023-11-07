@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableConfigurationProperties(JwtProperties.class)
@@ -19,6 +20,7 @@ public class OnlineStoreApplication {
 		SpringApplication.run(OnlineStoreApplication.class, args);
 	}
 
+    @Profile("local")
     @Bean
     public CommandLineRunner loadData(UserRepository userRepository, PasswordEncoder encoder) {
         return args -> {
