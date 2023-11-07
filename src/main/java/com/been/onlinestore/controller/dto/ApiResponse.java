@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
+import java.util.Map;
+
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
@@ -37,6 +39,21 @@ public class ApiResponse<T> {
      */
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(STATUS_SUCCESS, data, null, null);
+    }
+
+    /**
+     * <p>성공 응답 - 성공 응답 상태 코드, 데이터(id)를 반환합니다.</p>
+     * <pre>
+     * {
+     *     "status": "success",
+     *     "data": {
+     *         "id": 1
+     *     }
+     * }
+     * </pre>
+     */
+    public static <T> ApiResponse<Map<String, Long>> successWithId(Long id) {
+        return new ApiResponse<>(STATUS_SUCCESS, Map.of("id", id), null, null);
     }
 
     /**
