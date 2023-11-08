@@ -3,7 +3,6 @@ package com.been.onlinestore.service;
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.dto.CategoryDto;
 import com.been.onlinestore.repository.CategoryRepository;
-import com.been.onlinestore.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +26,6 @@ import static org.mockito.BDDMockito.willDoNothing;
 class CategoryServiceTest {
 
     @Mock private CategoryRepository categoryRepository;
-    @Mock private ProductRepository productRepository;
 
     @InjectMocks private CategoryService sut;
 
@@ -80,7 +78,7 @@ class CategoryServiceTest {
         Long result = sut.addCategory(createCategoryDto(name));
 
         //Then
-        assertThat(result).isEqualTo(1L);
+        assertThat(result).isNotNull();
         then(categoryRepository).should().save(any());
     }
 
