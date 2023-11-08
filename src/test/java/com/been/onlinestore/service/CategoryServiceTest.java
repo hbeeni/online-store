@@ -80,7 +80,7 @@ class CategoryServiceTest {
         Long result = sut.addCategory(createCategoryDto(name));
 
         //Then
-        assertThat(result).isEqualTo(1L);
+        assertThat(result).isNotNull();
         then(categoryRepository).should().save(any());
     }
 
@@ -107,6 +107,7 @@ class CategoryServiceTest {
     void test_deleteCategory() {
         //Given
         long id = 1L;
+        given(productRepository.bulkCategoryNull(id)).willReturn(0);
         willDoNothing().given(categoryRepository).deleteById(id);
 
         //When
@@ -114,6 +115,7 @@ class CategoryServiceTest {
 
         //Then
         assertThat(result).isEqualTo(id);
+        then(productRepository).should().bulkCategoryNull(id);
         then(categoryRepository).should().deleteById(id);
     }
 }

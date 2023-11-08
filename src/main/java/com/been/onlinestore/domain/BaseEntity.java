@@ -11,7 +11,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity extends BaseTimeEntity {

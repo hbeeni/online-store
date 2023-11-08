@@ -4,6 +4,8 @@ import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.dto.CategoryDto;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static java.time.LocalDateTime.now;
+
 public class CategoryTestDataUtil {
 
     private static Long sequence = 0L;
@@ -30,6 +32,15 @@ public class CategoryTestDataUtil {
     }
 
     public static CategoryDto createCategoryDto(Long id, String name, int productCount) {
-        return CategoryDto.of(id, name, name + DESCRIPTION_SUFFIX, productCount);
+        return CategoryDto.of(
+                id,
+                name,
+                name + DESCRIPTION_SUFFIX,
+                productCount,
+                now(),
+                "been",
+                now(),
+                "been"
+        );
     }
 }

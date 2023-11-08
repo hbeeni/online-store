@@ -30,6 +30,10 @@ public class Product extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -55,8 +59,9 @@ public class Product extends BaseEntity {
 
     protected Product() {}
 
-    private Product(Category category, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
+    private Product(Category category, User user, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
         this.category = category;
+        this.user = user;
         this.name = name;
         this.price = price;
         this.description = description;
@@ -66,8 +71,24 @@ public class Product extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
-    public static Product of(Category category, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
-        return new Product(category, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl);
+    public static Product of(Category category, User user, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
+        return new Product(category, user, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl);
+    }
+
+    public void updateInfo(Category category, String name, int price, String description, String imageUrl) {
+        this.category = category;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
+
+    public void updateStockQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
+
+    public void updateSaleStatus(SaleStatus saleStatus) {
+        this.saleStatus = saleStatus;
     }
 
     @Override
