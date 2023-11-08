@@ -3,6 +3,7 @@ package com.been.onlinestore.service;
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.dto.CategoryDto;
 import com.been.onlinestore.repository.CategoryRepository;
+import com.been.onlinestore.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import static org.mockito.BDDMockito.willDoNothing;
 class CategoryServiceTest {
 
     @Mock private CategoryRepository categoryRepository;
+    @Mock private ProductRepository productRepository;
 
     @InjectMocks private CategoryService sut;
 
@@ -105,6 +107,7 @@ class CategoryServiceTest {
     void test_deleteCategory() {
         //Given
         long id = 1L;
+        given(productRepository.bulkCategoryNull(id)).willReturn(0);
         willDoNothing().given(categoryRepository).deleteById(id);
 
         //When
@@ -112,6 +115,7 @@ class CategoryServiceTest {
 
         //Then
         assertThat(result).isEqualTo(id);
+        then(productRepository).should().bulkCategoryNull(id);
         then(categoryRepository).should().deleteById(id);
     }
 }
