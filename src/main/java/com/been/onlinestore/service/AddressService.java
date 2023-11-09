@@ -6,7 +6,6 @@ import com.been.onlinestore.dto.AddressDto;
 import com.been.onlinestore.repository.AddressRepository;
 import com.been.onlinestore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -23,12 +21,14 @@ public class AddressService {
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<AddressDto> findAddresses(Long userId) {
         return addressRepository.findAllByUser_Id(userId).stream()
                 .map(AddressDto::from)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public AddressDto findAddress(Long addressId, Long userId) {
         return addressRepository.findByIdAndUser_Id(addressId, userId)
                 .map(AddressDto::from)
