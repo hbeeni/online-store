@@ -24,6 +24,19 @@ public class UserTestDataUtil {
         return user;
     }
 
+    public static User createUser(Long id) {
+        User user = User.of(
+                "uid",
+                "testpassword",
+                "test user",
+                "e@mail.com",
+                "test user",
+                "01012341234"
+        );
+        ReflectionTestUtils.setField(user, "id", id);
+        return user;
+    }
+
     public static User createAdmin() {
         return createAdmin("testadmin");
     }
