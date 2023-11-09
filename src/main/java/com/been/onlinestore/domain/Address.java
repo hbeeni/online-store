@@ -52,6 +52,15 @@ public class Address extends BaseTimeEntity {
         return new Address(user, detail, zipcode, defaultAddress);
     }
 
+    public void updateInfo(String detail, String zipcode) {
+        this.detail = detail;
+        this.zipcode = zipcode;
+    }
+
+    public void updateDefaultAddress(boolean defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
