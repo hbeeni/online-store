@@ -42,10 +42,6 @@ public class CartProduct {
         this.productQuantity = productQuantity;
     }
 
-    public static CartProduct of(Product product, int productQuantity) {
-        return CartProduct.of(null, product, productQuantity);
-    }
-
     public static CartProduct of(Cart cart, Product product, int productQuantity) {
         return new CartProduct(cart, product, productQuantity);
     }
