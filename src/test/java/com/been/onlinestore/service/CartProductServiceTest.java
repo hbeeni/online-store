@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static com.been.onlinestore.util.CartTestDataUtil.createCart;
@@ -123,7 +124,7 @@ class CartProductServiceTest {
         long userId = 1L;
         int updateProductQuantity = 1;
 
-        given(cartRepository.findByIdAndUser_Id(cartId, userId)).willReturn(Optional.of(createCart(cartId, userId)));
+        given(cartRepository.existsByIdAndUser_Id(cartId, userId)).willReturn(true);
         given(cartProductRepository.findByIdAndCart_Id(cartProductId, cartId)).willReturn(Optional.of(createCartProduct(cartProductId, cartId, 1L)));
 
         //When
@@ -131,7 +132,7 @@ class CartProductServiceTest {
 
         //Then
         assertThat(result).isNotNull();
-        then(cartRepository).should().findByIdAndUser_Id(cartId, userId);
+        then(cartRepository).should().existsByIdAndUser_Id(cartId, userId);
         then(cartProductRepository).should().findByIdAndCart_Id(cartProductId, cartId);
     }
 
@@ -144,12 +145,12 @@ class CartProductServiceTest {
         long userId = 1L;
         int updateProductQuantity = 1;
 
-        given(cartRepository.findByIdAndUser_Id(cartId, userId)).willReturn(Optional.empty());
+        given(cartRepository.existsByIdAndUser_Id(cartId, userId)).willReturn(false);
 
         //When & Then
         assertThatThrownBy(() -> sut.updateCartProductQuantity(cartProductId, cartId, userId, updateProductQuantity))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(cartRepository).should().findByIdAndUser_Id(cartId, userId);
+        then(cartRepository).should().existsByIdAndUser_Id(cartId, userId);
         then(cartProductRepository).shouldHaveNoInteractions();
     }
 
@@ -162,13 +163,13 @@ class CartProductServiceTest {
         long userId = 1L;
         int updateProductQuantity = 1;
 
-        given(cartRepository.findByIdAndUser_Id(cartId, userId)).willReturn(Optional.of(createCart(cartId, userId)));
+        given(cartRepository.existsByIdAndUser_Id(cartId, userId)).willReturn(true);
         given(cartProductRepository.findByIdAndCart_Id(cartProductId, cartId)).willReturn(Optional.empty());
 
         //When & Then
         assertThatThrownBy(() -> sut.updateCartProductQuantity(cartProductId, cartId, userId, updateProductQuantity))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(cartRepository).should().findByIdAndUser_Id(cartId, userId);
+        then(cartRepository).should().existsByIdAndUser_Id(cartId, userId);
         then(cartProductRepository).should().findByIdAndCart_Id(cartProductId, cartId);
     }
 
@@ -180,15 +181,15 @@ class CartProductServiceTest {
         long cartProductId = 1L;
         long userId = 1L;
 
-        given(cartRepository.findByIdAndUser_Id(cartId, userId)).willReturn(Optional.of(createCart(cartId, userId)));
+        given(cartRepository.existsByIdAndUser_Id(cartId, userId)).willReturn(true);
         willDoNothing().given(cartProductRepository).deleteByIdAndCart_Id(cartProductId, cartId);
 
         //When
-        Long result = sut.deleteCartProduct(cartProductId, cartId, userId);
+        Map<String, Long> result = sut.deleteCartProduct(cartProductId, cartId, userId);
 
         //Then
-        assertThat(result).isEqualTo(cartProductId);
-        then(cartRepository).should().findByIdAndUser_Id(cartId, userId);
+        assertThat(result).isNotNull();
+        then(cartRepository).should().existsByIdAndUser_Id(cartId, userId);
         then(cartProductRepository).should().deleteByIdAndCart_Id(cartProductId, cartId);
     }
 }

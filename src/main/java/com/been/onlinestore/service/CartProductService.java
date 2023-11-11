@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -48,14 +51,39 @@ public class CartProductService {
         return CartProductDto.from(cartProduct);
     }
 
-    public Long deleteCartProduct(Long cartProductId, Long cartId, Long userId) {
+    protected void deleteCartProducts(Long cartId) {
+        cartProductRepository.deleteByCartId(cartId);
+    }
+
+    public Map<String, Long> deleteCartProduct(Long cartProductId, Long cartId, Long userId) {
         validateCartBelongsToUser(cartId, userId);
+
         cartProductRepository.deleteByIdAndCart_Id(cartProductId, cartId);
-        return cartProductId;
+        if (isCartEmpty(cartId)) {
+            cartRepository.deleteById(cartId);
+        }
+
+        return makeCartIdAndCartProductIdMap(cartId, cartProductId);
     }
 
     private void validateCartBelongsToUser(Long cartId, Long userId) {
-        cartRepository.findByIdAndUser_Id(cartId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("본인의 장바구니의 상품만 수정할 수 있습니다."));
+        if (!isCartExistByUserId(cartId, userId)) {
+            throw new IllegalArgumentException("본인의 장바구니의 상품만 수정할 수 있습니다.");
+        }
+    }
+
+    private boolean isCartExistByUserId(Long cartId, Long userId) {
+        return cartRepository.existsByIdAndUser_Id(cartId, userId);
+    }
+
+    private boolean isCartEmpty(Long cartId) {
+        return !cartProductRepository.existsByCart_Id(cartId);
+    }
+
+    private Map<String, Long> makeCartIdAndCartProductIdMap(Long cartId, Long cartProductId) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("cartId", cartId);
+        map.put("cartProductId", cartProductId);
+        return map;
     }
 }
