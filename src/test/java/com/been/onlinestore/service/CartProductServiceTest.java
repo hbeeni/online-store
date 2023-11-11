@@ -52,7 +52,6 @@ class CartProductServiceTest {
         then(cartProductRepository).should().findById(cartProductId);
     }
 
-
     @DisplayName("장바구니 상품이 존재하지 않으면, 예외를 반환한다.")
     @Test
     void test_searchCartProduct_throwsIllegalArgumentException() {
@@ -69,7 +68,7 @@ class CartProductServiceTest {
 
     @DisplayName("장바구니 상품을 저장하고, 저장된 상품의 정보를 반환한다.")
     @Test
-    void test_addCartProduct() {
+    void test_addCartProduct_withNonExistentCartProduct() {
         //Given
         long cartId = 1L;
         long cartProductId = 1L;
@@ -79,6 +78,7 @@ class CartProductServiceTest {
         CartProduct cartProduct = createCartProduct(cartProductId, cartId, productId);
 
         given(productRepository.getReferenceById(productId)).willReturn(createProduct(productId));
+        given(cartProductRepository.findByCart_IdAndProduct_Id(cartId, cartProductId)).willReturn(Optional.empty());
         given(cartProductRepository.save(any())).willReturn(cartProduct);
 
         //When
@@ -87,7 +87,31 @@ class CartProductServiceTest {
         //Then
         assertThat(result).isNotNull();
         then(productRepository).should().getReferenceById(productId);
+        then(cartProductRepository).should().findByCart_IdAndProduct_Id(cartId, cartProductId);
         then(cartProductRepository).should().save(any());
+    }
+
+    @DisplayName("장바구니 상품을 저장할 때, 해당 상품이 존재하면 수량을 변경하고, 정보를 반환한다.")
+    @Test
+    void test_addCartProduct_withExistentCartProduct() {
+        //Given
+        long cartId = 1L;
+        long cartProductId = 1L;
+        long productId = 1L;
+
+        CartProductDto cartProductDto = createCartProductDto(cartProductId, cartId);
+        CartProduct cartProduct = createCartProduct(cartProductId, cartId, productId);
+
+        given(productRepository.getReferenceById(productId)).willReturn(createProduct(productId));
+        given(cartProductRepository.findByCart_IdAndProduct_Id(cartId, cartProductId)).willReturn(Optional.of(cartProduct));
+
+        //When
+        CartProductDto result = sut.addCartProduct(createCart(cartId, 1L), cartProductDto);
+
+        //Then
+        assertThat(result).isNotNull();
+        then(productRepository).should().getReferenceById(productId);
+        then(cartProductRepository).should().findByCart_IdAndProduct_Id(cartId, cartProductId);
     }
 
     @DisplayName("장바구니 상품의 수량을 수정하면, 수정된 장바구니 상품의 정보를 반환한다.")

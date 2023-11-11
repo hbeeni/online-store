@@ -20,6 +20,7 @@ public class CartProductService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
 
+    @Transactional(readOnly = true)
     public CartProductDto findCartProduct(Long id) {
         return cartProductRepository.findById(id)
                 .map(CartProductDto::from)
@@ -27,8 +28,14 @@ public class CartProductService {
     }
 
     protected CartProductDto addCartProduct(Cart cart, CartProductDto dto) {
-        Product product = productRepository.getReferenceById(dto.productDto().id());
-        return CartProductDto.from(cartProductRepository.save(dto.toEntity(cart, product)));
+        Long productId = dto.productDto().id();
+        Product product = productRepository.getReferenceById(productId);
+
+        CartProduct cartProduct = cartProductRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)
+                .orElseGet(() -> cartProductRepository.save(dto.toEntity(cart, product)));
+        cartProduct.updateProductQuantity(dto.productQuantity());
+
+        return CartProductDto.from(cartProduct);
     }
 
     public CartProductDto updateCartProductQuantity(Long cartProductId, Long cartId, Long userId, int updateProductQuantity) {
