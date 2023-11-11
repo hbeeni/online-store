@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 @ToString
 @Entity
-public class Cart {
+public class Cart extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

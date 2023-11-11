@@ -32,22 +32,28 @@ public class CartProduct {
 
 
     @Column(nullable = false)
-    private int productPrice;
-
-    @Column(nullable = false)
     private int productQuantity;
 
     protected CartProduct() {}
 
-    private CartProduct(Cart cart, Product product, int productPrice, int productQuantity) {
+    private CartProduct(Cart cart, Product product, int productQuantity) {
         this.cart = cart;
         this.product = product;
-        this.productPrice = productPrice;
         this.productQuantity = productQuantity;
     }
 
-    public static CartProduct of(Cart cart, Product product, int productPrice, int productQuantity) {
-        return new CartProduct(cart, product, productPrice, productQuantity);
+    public static CartProduct of(Product product, int productQuantity) {
+        return CartProduct.of(null, product, productQuantity);
+    }
+
+    public static CartProduct of(Cart cart, Product product, int productQuantity) {
+        return new CartProduct(cart, product, productQuantity);
+    }
+
+    public void updateProductQuantity(int productQuantity) {
+        if (productQuantity > 0) {
+            this.productQuantity = productQuantity;
+        }
     }
 
     @Override
