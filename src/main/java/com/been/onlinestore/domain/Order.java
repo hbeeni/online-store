@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,8 +15,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -34,8 +38,12 @@ public class Order extends BaseTimeEntity {
     private User orderer;
 
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY)
-    private Delivery delivery;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private DeliveryRequest deliveryRequest;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
 
     @Column(nullable = false, length = 20)
@@ -48,15 +56,20 @@ public class Order extends BaseTimeEntity {
 
     protected Order() {}
 
-    private Order(User orderer, Delivery delivery, String ordererPhone, OrderStatus orderStatus) {
+    private Order(User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
         this.orderer = orderer;
-        this.delivery = delivery;
+        this.deliveryRequest = deliveryRequest;
         this.ordererPhone = ordererPhone;
         this.orderStatus = orderStatus;
     }
 
-    public static Order of(User user, Delivery delivery, String ordererPhone, OrderStatus orderStatus) {
-        return new Order(user, delivery, ordererPhone, orderStatus);
+    public static Order of(User user, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
+        return new Order(user, deliveryRequest, ordererPhone, orderStatus);
+    }
+
+    public void addOrderProduct(OrderProduct orderProduct) {
+        this.orderProducts.add(orderProduct);
+        orderProduct.setOrder(this);
     }
 
     @Override
