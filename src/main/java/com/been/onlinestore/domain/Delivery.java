@@ -31,34 +31,22 @@ public class Delivery {
     @Column(nullable = false, length = 20)
     private DeliveryStatus deliveryStatus;
 
-    @Column(nullable = false, length = 50)
-    private String deliveryAddress;
-
     @Column(nullable = false)
     private int deliveryFee;
-
-    @Column(nullable = false, length = 20)
-    private String receiverName;
-
-    @Column(nullable = false, length = 20)
-    private String receiverPhone;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime deliveredAt;
 
     protected Delivery() {}
 
-    private Delivery(DeliveryStatus deliveryStatus, String deliveryAddress, int deliveryFee, String receiverName, String receiverPhone, LocalDateTime deliveredAt) {
+    private Delivery(DeliveryStatus deliveryStatus, int deliveryFee, LocalDateTime deliveredAt) {
         this.deliveryStatus = deliveryStatus;
-        this.deliveryAddress = deliveryAddress;
         this.deliveryFee = deliveryFee;
-        this.receiverName = receiverName;
-        this.receiverPhone = receiverPhone;
         this.deliveredAt = deliveredAt;
     }
 
-    public static Delivery of(DeliveryStatus deliveryStatus, String deliveryAddress, int deliveryFee, String receiverName, String receiverPhone, LocalDateTime deliveredAt) {
-        return new Delivery(deliveryStatus, deliveryAddress, deliveryFee, receiverName, receiverPhone, deliveredAt);
+    public static Delivery of(DeliveryStatus deliveryStatus, int deliveryFee, LocalDateTime deliveredAt) {
+        return new Delivery(deliveryStatus, deliveryFee, deliveredAt);
     }
 
     @Override
