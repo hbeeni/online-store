@@ -69,14 +69,14 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDto findProductInfoBySellerId(Long productId, Long sellerId) {
-        return productRepository.findByIdAndUser_Id(productId, sellerId)
+        return productRepository.findByIdAndSeller_Id(productId, sellerId)
                 .map(ProductDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("판매자의 상품 목록에 없습니다. 상품 ID: " + productId));
     }
 
     public Long addProduct(Long categoryId, ProductDto dto) {
         Category category = categoryRepository.getReferenceById(categoryId);
-        User user = userRepository.getReferenceById(dto.userDto().id());
+        User user = userRepository.getReferenceById(dto.sellerDto().id());
         return productRepository.save(dto.toEntity(category, user)).getId();
     }
 

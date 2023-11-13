@@ -32,7 +32,7 @@ public class Product extends BaseEntity {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private User seller;
 
 
     @Column(nullable = false, length = 100)
@@ -59,9 +59,9 @@ public class Product extends BaseEntity {
 
     protected Product() {}
 
-    private Product(Category category, User user, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
+    private Product(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
         this.category = category;
-        this.user = user;
+        this.seller = seller;
         this.name = name;
         this.price = price;
         this.description = description;
@@ -71,8 +71,8 @@ public class Product extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
-    public static Product of(Category category, User user, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
-        return new Product(category, user, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl);
+    public static Product of(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
+        return new Product(category, seller, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl);
     }
 
     public void updateInfo(Category category, String name, int price, String description, String imageUrl) {

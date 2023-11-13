@@ -18,7 +18,7 @@ values (now(), now(), 'admin', 'admin', '패션의류', '패션의류'),
        (now(), now(), 'admin', 'admin', '스포츠', '스포츠');
 
 -- 상품
-insert into product (created_at, modified_at, created_by, modified_by, description, image_url, name, price, sale_status, sales_volume, stock_quantity, category_id, user_id)
+insert into product (created_at, modified_at, created_by, modified_by, description, image_url, name, price, sale_status, sales_volume, stock_quantity, category_id, seller_id)
 values (now(), now(), 'seller', 'seller', '꽃무늬 바지', null, '꽃무늬 바지', 12000, 'SALE', 10, 100, 1, 1),
        (now(), now(), 'seller', 'seller', '꽃무늬 셔츠', null, '꽃무늬 셔츠', 15500, 'SALE', 20, 121, 1, 1),
        (now(), now(), 'seller', 'seller', '프렌치 코트', null, '프렌치 코트', 53000, 'WAIT', 0, 55, 1, 1),

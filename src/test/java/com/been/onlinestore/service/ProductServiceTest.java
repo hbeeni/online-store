@@ -180,14 +180,14 @@ class ProductServiceTest {
         //Given
         long productId = 1L;
         long sellerId = 1L;
-        given(productRepository.findByIdAndUser_Id(productId, sellerId)).willReturn(Optional.of(createProduct(productId)));
+        given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.of(createProduct(productId)));
 
         //When
         ProductDto result = sut.findProductInfoBySellerId(productId, sellerId);
 
         //Then
         assertThat(result).isNotNull();
-        then(productRepository).should().findByIdAndUser_Id(productId, sellerId);
+        then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
     }
 
     @DisplayName("해당 판매자가 판매하지 않는 상품을 조회하면, 예외를 반환한다.")
@@ -196,12 +196,12 @@ class ProductServiceTest {
         //Given
         long productId = 1L;
         long sellerId = 1L;
-        given(productRepository.findByIdAndUser_Id(productId, sellerId)).willReturn(Optional.empty());
+        given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.empty());
 
         //When & Then
         assertThatThrownBy(() -> sut.findProductInfoBySellerId(productId, sellerId))
                 .isInstanceOf(EntityNotFoundException.class);
-        then(productRepository).should().findByIdAndUser_Id(productId, sellerId);
+        then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
     }
 
     @DisplayName("상품을 등록하면, 등록된 상품의 id를 반환한다.")
@@ -212,7 +212,7 @@ class ProductServiceTest {
 
         ProductDto dto = createProductDto(productId);
         long categoryId = dto.categoryDto().id();
-        long userId = dto.userDto().id();
+        long userId = dto.sellerDto().id();
 
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
         given(userRepository.getReferenceById(userId)).willReturn(createUser("user"));

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public record ProductDto(
         Long id,
         CategoryDto categoryDto,
-        UserDto userDto,
+        UserDto sellerDto,
         String name,
         Integer price,
         String description,
@@ -24,15 +24,15 @@ public record ProductDto(
         String modifiedBy
 ) {
 
-    public static ProductDto of(Long id, CategoryDto categoryDto, UserDto userDto, String name, Integer price, String description, Integer stockQuantity, Integer salesVolume, SaleStatus saleStatus, String imageUrl, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-        return new ProductDto(id, categoryDto, userDto, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl, createdAt, createdBy, modifiedAt, modifiedBy);
+    public static ProductDto of(Long id, CategoryDto categoryDto, UserDto sellerDto, String name, Integer price, String description, Integer stockQuantity, Integer salesVolume, SaleStatus saleStatus, String imageUrl, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
+        return new ProductDto(id, categoryDto, sellerDto, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     public static ProductDto from(Product entity) {
         return ProductDto.of(
                 entity.getId(),
                 CategoryDto.from(entity.getCategory()),
-                UserDto.from(entity.getUser()),
+                UserDto.from(entity.getSeller()),
                 entity.getName(),
                 entity.getPrice(),
                 entity.getDescription(),
@@ -47,10 +47,10 @@ public record ProductDto(
         );
     }
 
-    public Product toEntity(Category category, User user) {
+    public Product toEntity(Category category, User seller) {
         return Product.of(
                 category,
-                user,
+                seller,
                 name,
                 price,
                 description,
