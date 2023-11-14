@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
@@ -26,4 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     Optional<Product> findOnSaleById(@Param("id") Long id);
 
     Optional<Product> findByIdAndSeller_Id(Long productId, Long sellerId);
+
+    @Query("select p from Product p where p.saleStatus = 'SALE' and p.id in :ids")
+    List<Product> findAllOnSaleById(@Param("ids") Collection<Long> ids);
 }
