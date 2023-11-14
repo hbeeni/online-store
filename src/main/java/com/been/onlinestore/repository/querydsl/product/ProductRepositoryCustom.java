@@ -1,4 +1,4 @@
-package com.been.onlinestore.repository;
+package com.been.onlinestore.repository.querydsl.product;
 
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.dto.ProductSearchCondition;

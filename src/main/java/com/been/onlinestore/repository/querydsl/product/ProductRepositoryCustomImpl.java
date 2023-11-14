@@ -1,4 +1,4 @@
-package com.been.onlinestore.repository;
+package com.been.onlinestore.repository.querydsl.product;
 
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
@@ -38,7 +38,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
         List<Product> content = queryFactory
                 .selectFrom(product)
                 .leftJoin(product.category, category)
-                .leftJoin(product.user, user)
+                .leftJoin(product.seller, user)
                 .where(categoryIdEq(cond.categoryId()),
                         productNameContains(cond.name()),
                         saleStatusEq(cond.saleStatus()))
@@ -51,7 +51,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .select(product.count())
                 .from(product)
                 .leftJoin(product.category, category)
-                .leftJoin(product.user, user)
+                .leftJoin(product.seller, user)
                 .where(categoryIdEq(cond.categoryId()),
                         productNameContains(cond.name()),
                         saleStatusEq(cond.saleStatus()));
@@ -64,7 +64,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
         List<Product> content = queryFactory
                 .selectFrom(product)
                 .leftJoin(product.category, category)
-                .leftJoin(product.user, user)
+                .leftJoin(product.seller, user)
                 .where(user.id.eq(sellerId),
                         categoryIdEq(cond.categoryId()),
                         productNameContains(cond.name()),
@@ -78,7 +78,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .select(product.count())
                 .from(product)
                 .leftJoin(product.category, category)
-                .leftJoin(product.user, user)
+                .leftJoin(product.seller, user)
                 .where(user.id.eq(sellerId),
                         categoryIdEq(cond.categoryId()),
                         productNameContains(cond.name()),
