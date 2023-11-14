@@ -1,5 +1,6 @@
 package com.been.onlinestore.domain;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.constant.SaleStatus;
 import lombok.Getter;
 import lombok.ToString;
@@ -106,7 +107,7 @@ public class Product extends BaseEntity {
     public void removeStock(int stockQuantity) {
         int restStock = this.stockQuantity - stockQuantity;
         if (restStock < 0) {
-            throw new IllegalArgumentException("재고가 부족합니다. 상품 ID = " + this.id);
+            throw new IllegalArgumentException(ErrorMessages.NOT_ENOUGH_STOCK.getMessage());
         }
         this.stockQuantity = restStock;
     }

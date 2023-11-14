@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.RoleType;
 import com.been.onlinestore.dto.UserDto;
@@ -34,14 +35,14 @@ public class UserService {
     private void validateDuplicateUid(String uid) {
         userRepository.findByUid(uid)
                 .ifPresent(user -> {
-                    throw new IllegalStateException("중복 ID 입니다.");
+                    throw new IllegalStateException(ErrorMessages.DUPLICATE_ID.getMessage());
                 });
     }
 
     private void validateDuplicateEmail(String email) {
         userRepository.findByEmail(email)
                 .ifPresent(user -> {
-                    throw new IllegalStateException("이미 가입한 회원입니다.");
+                    throw new IllegalStateException(ErrorMessages.ALREADY_SIGNED_UP_USER.getMessage());
                 });
     }
 }

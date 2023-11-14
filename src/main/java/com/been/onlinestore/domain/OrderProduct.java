@@ -1,5 +1,6 @@
 package com.been.onlinestore.domain;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -75,7 +76,7 @@ public class OrderProduct {
 
     public void cancel() {
         if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
-            throw new IllegalStateException("결제 완료 상태인 상품만 취소할 수 있습니다. 주문 상품 ID = " + id);
+            throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER_PRODUCT.getMessage());
         }
         product.addStock(this.quantity);
     }
