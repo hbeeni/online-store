@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.dto.CategoryDto;
 import com.been.onlinestore.repository.CategoryRepository;
@@ -33,7 +34,7 @@ public class CategoryService {
     public CategoryDto findCategory(Long categoryId) {
         return categoryRepository.findWithProductsById(categoryId)
                 .map(CategoryDto::from)
-                .orElseThrow(() -> new EntityNotFoundException("해당 카테고리가 없습니다 - categoryId: " + categoryId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_CATEGORY.getMessage()));
     }
 
     public Long addCategory(CategoryDto dto) {
@@ -55,7 +56,7 @@ public class CategoryService {
             category.updateCategory(name, description);
             return category.getId();
         } catch (EntityNotFoundException e) {
-            log.warn("카테고리 수정 실패. 카테고리를 수정하는데 필요한 정보를 찾을 수 없습니다. - {}", e.getLocalizedMessage());
+            log.warn(ErrorMessages.FAIL_TO_UPDATE_CATEGORY.getMessage());
         }
 
         return null;

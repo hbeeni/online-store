@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.dto.AddressDto;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ public class AddressService {
     public AddressDto findAddress(Long addressId, Long userId) {
         return addressRepository.findByIdAndUser_Id(addressId, userId)
                 .map(AddressDto::from)
-                .orElseThrow(() -> new EntityNotFoundException("해당 주소가 존재하지 않습니다. 주소 ID: " + addressId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
     }
 
     public Long addAddress(Long userId, AddressDto dto) {
@@ -64,7 +64,7 @@ public class AddressService {
             address.updateInfo(detail, zipcode);
             return addressId;
         } else {
-            throw new IllegalArgumentException("본인의 주소만 수정할 수 있습니다.");
+            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class AddressService {
             updateDefaultAddress.updateDefaultAddress(true);
             return addressId;
         } else {
-            throw new IllegalArgumentException("본인의 주소만 수정할 수 있습니다.");
+            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage());
         }
     }
 

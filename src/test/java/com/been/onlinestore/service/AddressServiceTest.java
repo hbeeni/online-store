@@ -67,7 +67,7 @@ class AddressServiceTest {
 
     @DisplayName("주소가 없으면, 예외를 던진다.")
     @Test
-    void test_searchAddress_throwsException() {
+    void test_searchAddress_throwsIllegalArgumentException() {
         //Given
         long addressId = 1L;
         long userId = 1L;
@@ -75,7 +75,7 @@ class AddressServiceTest {
 
         //When & Then
         assertThatThrownBy(() -> sut.findAddress(addressId, userId))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
     }
 

@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.User;
@@ -15,8 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -45,7 +44,7 @@ public class ProductService {
     public ProductDto findProductInfoOnSale(Long id) {
         return productRepository.findOnSaleById(id)
                 .map(ProductDto::from)
-                .orElseThrow(() -> new EntityNotFoundException("판매 중인 상품 목록에 없습니다. 상품 ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_SALE_PRODUCT.getMessage()));
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +57,7 @@ public class ProductService {
     public ProductDto findProductInfo(Long id) {
         return productRepository.findById(id)
                 .map(ProductDto::from)
-                .orElseThrow(() -> new EntityNotFoundException("상품이 없습니다. 상품 ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
     }
 
     @Transactional(readOnly = true)
@@ -71,7 +70,7 @@ public class ProductService {
     public ProductDto findProductInfoBySellerId(Long productId, Long sellerId) {
         return productRepository.findByIdAndSeller_Id(productId, sellerId)
                 .map(ProductDto::from)
-                .orElseThrow(() -> new EntityNotFoundException("판매자의 상품 목록에 없습니다. 상품 ID: " + productId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_SALE_PRODUCT.getMessage()));
     }
 
     public Long addProduct(Long categoryId, ProductDto dto) {
@@ -106,6 +105,6 @@ public class ProductService {
 
     private Product getProduct(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품 업데이트 실패. 상품을 수정하는데 필요한 정보를 찾을 수 없습니다. 상품 ID = " + productId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
     }
 }
