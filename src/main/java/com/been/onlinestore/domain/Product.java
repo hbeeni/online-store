@@ -32,7 +32,7 @@ public class Product extends BaseEntity {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private User seller;
 
 
     @Column(nullable = false, length = 100)
@@ -54,25 +54,29 @@ public class Product extends BaseEntity {
     @Column(nullable = false, length = 20)
     private SaleStatus saleStatus;
 
+    @Column(nullable = false)
+    private int deliveryFee;
+
     @Column(length = 200)
     private String imageUrl;
 
     protected Product() {}
 
-    private Product(Category category, User user, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
+    private Product(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageUrl) {
         this.category = category;
-        this.user = user;
+        this.seller = seller;
         this.name = name;
         this.price = price;
         this.description = description;
         this.stockQuantity = stockQuantity;
         this.salesVolume = salesVolume;
         this.saleStatus = saleStatus;
+        this.deliveryFee = deliveryFee;
         this.imageUrl = imageUrl;
     }
 
-    public static Product of(Category category, User user, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, String imageUrl) {
-        return new Product(category, user, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl);
+    public static Product of(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageUrl) {
+        return new Product(category, seller, name, price, description, stockQuantity, salesVolume, saleStatus, deliveryFee, imageUrl);
     }
 
     public void updateInfo(Category category, String name, int price, String description, String imageUrl) {
@@ -89,6 +93,22 @@ public class Product extends BaseEntity {
 
     public void updateSaleStatus(SaleStatus saleStatus) {
         this.saleStatus = saleStatus;
+    }
+
+    public void updateDeliveryFee(int deliveryFee) {
+        this.deliveryFee = deliveryFee;
+    }
+
+    public void addStock(int stockQuantity) {
+        this.stockQuantity += stockQuantity;
+    }
+
+    public void removeStock(int stockQuantity) {
+        int restStock = this.stockQuantity - stockQuantity;
+        if (restStock < 0) {
+            throw new IllegalArgumentException("재고가 부족합니다. 상품 ID = " + this.id);
+        }
+        this.stockQuantity = restStock;
     }
 
     @Override

@@ -180,14 +180,14 @@ class ProductServiceTest {
         //Given
         long productId = 1L;
         long sellerId = 1L;
-        given(productRepository.findByIdAndUser_Id(productId, sellerId)).willReturn(Optional.of(createProduct(productId)));
+        given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.of(createProduct(productId)));
 
         //When
         ProductDto result = sut.findProductInfoBySellerId(productId, sellerId);
 
         //Then
         assertThat(result).isNotNull();
-        then(productRepository).should().findByIdAndUser_Id(productId, sellerId);
+        then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
     }
 
     @DisplayName("해당 판매자가 판매하지 않는 상품을 조회하면, 예외를 반환한다.")
@@ -196,12 +196,12 @@ class ProductServiceTest {
         //Given
         long productId = 1L;
         long sellerId = 1L;
-        given(productRepository.findByIdAndUser_Id(productId, sellerId)).willReturn(Optional.empty());
+        given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.empty());
 
         //When & Then
         assertThatThrownBy(() -> sut.findProductInfoBySellerId(productId, sellerId))
                 .isInstanceOf(EntityNotFoundException.class);
-        then(productRepository).should().findByIdAndUser_Id(productId, sellerId);
+        then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
     }
 
     @DisplayName("상품을 등록하면, 등록된 상품의 id를 반환한다.")
@@ -212,7 +212,7 @@ class ProductServiceTest {
 
         ProductDto dto = createProductDto(productId);
         long categoryId = dto.categoryDto().id();
-        long userId = dto.userDto().id();
+        long userId = dto.sellerDto().id();
 
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
         given(userRepository.getReferenceById(userId)).willReturn(createUser("user"));
@@ -237,7 +237,7 @@ class ProductServiceTest {
         ProductDto dto = createProductDto(productId);
         long categoryId = dto.categoryDto().id();
 
-        given(productRepository.getReferenceById(productId)).willReturn(createProduct(productId));
+        given(productRepository.findById(productId)).willReturn(Optional.of(createProduct(productId)));
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
 
         //When
@@ -245,7 +245,8 @@ class ProductServiceTest {
 
         //Then
         assertThat(result).isEqualTo(productId);
-        then(productRepository).should().getReferenceById(categoryId);
+        then(productRepository).should().findById(productId);
+        then(categoryRepository).should().getReferenceById(categoryId);
     }
 
     @DisplayName("상품 재고를 변경한다.")
@@ -254,45 +255,59 @@ class ProductServiceTest {
         //Given
         long id = 1L;
         int stockQuantity = 100;
-        given(productRepository.getReferenceById(id)).willReturn(createProduct(id));
+        given(productRepository.findById(id)).willReturn(Optional.of(createProduct(id)));
 
         //When
         Long result = sut.updateProductStockQuantity(id, stockQuantity);
 
         //Then
         assertThat(result).isEqualTo(id);
-        then(productRepository).should().getReferenceById(id);
+        then(productRepository).should().findById(id);
     }
 
     @DisplayName("상품 판매 상태를 변경한다.")
     @Test
-    void test_findProductsWithStatusSaleAndKeyword() {
+    void test_updateProductSaleStatus() {
         //Given
         long id = 1L;
         SaleStatus saleStatus = SaleStatus.CLOSE;
-        given(productRepository.getReferenceById(id)).willReturn(createProduct(id));
+        given(productRepository.findById(id)).willReturn(Optional.of(createProduct(id)));
 
         //When
         Long result = sut.updateProductSaleStatus(id, saleStatus);
 
         //Then
         assertThat(result).isEqualTo(id);
-        then(productRepository).should().getReferenceById(id);
+        then(productRepository).should().findById(id);
     }
 
-    @DisplayName("없는 상품의 수정 정보를 입력하면, 경고 로그를 찍고 아무것도 하지 않는다.")
+    @DisplayName("상품의 배송비를 변경한다.")
     @Test
-    void testUpdateProductInfo_logWarn() {
+    void test_updateProductDeliveryFee() {
         //Given
-        ProductDto dto = createProductDto(1L);
-        given(productRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
+        long id = 1L;
+        int deliveryFee = 2000;
+        given(productRepository.findById(id)).willReturn(Optional.of(createProduct(id)));
 
         //When
-        Long result = sut.updateProductInfo(dto.id(), dto.categoryDto().id(), dto);
+        Long result = sut.updateDeliveryFee(id, deliveryFee);
 
         //Then
-        assertThat(result).isNull();
-        then(productRepository).should().getReferenceById(dto.id());
+        assertThat(result).isEqualTo(id);
+        then(productRepository).should().findById(id);
+    }
+
+    @DisplayName("없는 상품의 수정 정보를 입력하면, 예외를 던진다.")
+    @Test
+    void testUpdateProductInfo_throwsIllegalArgumentException() {
+        //Given
+        ProductDto dto = createProductDto(1L);
+        given(productRepository.findById(dto.id())).willReturn(Optional.empty());
+
+        //When & Then
+        assertThatThrownBy(() -> sut.updateProductInfo(dto.id(), dto.categoryDto().id(), dto))
+                .isInstanceOf(IllegalArgumentException.class);
+        then(productRepository).should().findById(dto.id());
         then(categoryRepository).shouldHaveNoInteractions();
     }
 }

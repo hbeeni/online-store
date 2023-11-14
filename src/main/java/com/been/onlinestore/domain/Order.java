@@ -2,6 +2,7 @@ package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.constant.OrderStatus;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -42,6 +43,7 @@ public class Order extends BaseTimeEntity {
     private DeliveryRequest deliveryRequest;
 
     @ToString.Exclude
+    @Setter
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
@@ -63,13 +65,24 @@ public class Order extends BaseTimeEntity {
         this.orderStatus = orderStatus;
     }
 
-    public static Order of(User user, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
-        return new Order(user, deliveryRequest, ordererPhone, orderStatus);
+    public static Order of(User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
+        return new Order(orderer, deliveryRequest, ordererPhone, orderStatus);
     }
 
-    public void addOrderProduct(OrderProduct orderProduct) {
-        this.orderProducts.add(orderProduct);
-        orderProduct.setOrder(this);
+    public void addOrderProducts(List<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
+        orderProducts.forEach(orderProduct -> orderProduct.setOrder(this));
+    }
+
+    public int getTotalPrice() {
+        return orderProducts.stream()
+                .mapToInt(OrderProduct::getTotalPrice)
+                .sum();
+    }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCEL;
+        orderProducts.forEach(OrderProduct::cancel);
     }
 
     @Override
