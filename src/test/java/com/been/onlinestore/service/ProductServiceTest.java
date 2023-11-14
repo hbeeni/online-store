@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static com.been.onlinestore.util.CategoryTestDataUtil.createCategory;
@@ -88,14 +87,14 @@ class ProductServiceTest {
 
     @DisplayName("[판매 중인 상품] 상품이 없으면, 예외를 던진다.")
     @Test
-    void test_findProductInfoOnSale_throwsException() {
+    void test_findProductInfoOnSale_throwsIllegalArgumentException() {
         //Given
         long id = 1L;
         given(productRepository.findOnSaleById(id)).willReturn(Optional.empty());
 
         //When & Then
         assertThatThrownBy(() -> sut.findProductInfoOnSale(id))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         then(productRepository).should().findOnSaleById(id);
     }
 
@@ -147,14 +146,14 @@ class ProductServiceTest {
 
     @DisplayName("상품이 없으면, 예외를 던진다.")
     @Test
-    void test_findProductInfo_throwsException() {
+    void test_findProductInfo_throwsIllegalArgumentException() {
         //Given
         long id = 1L;
         given(productRepository.findById(id)).willReturn(Optional.empty());
 
         //When & Then
         assertThatThrownBy(() -> sut.findProductInfo(id))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         then(productRepository).should().findById(id);
     }
 
@@ -192,7 +191,7 @@ class ProductServiceTest {
 
     @DisplayName("해당 판매자가 판매하지 않는 상품을 조회하면, 예외를 반환한다.")
     @Test
-    void test_findProductInfoBySellerId_throwsException() {
+    void test_findProductInfoBySellerId_throwsIllegalArgumentException() {
         //Given
         long productId = 1L;
         long sellerId = 1L;
@@ -200,7 +199,7 @@ class ProductServiceTest {
 
         //When & Then
         assertThatThrownBy(() -> sut.findProductInfoBySellerId(productId, sellerId))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(IllegalArgumentException.class);
         then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
     }
 

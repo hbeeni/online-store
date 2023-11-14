@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.DeliveryRequest;
 import com.been.onlinestore.domain.Order;
 import com.been.onlinestore.domain.OrderProduct;
@@ -41,7 +42,7 @@ public class OrderService {
     public OrderResponse findOrderByOrderer(Long orderId, Long ordererId) {
         return orderRepository.findOrderByOrderer(orderId, ordererId)
                 .map(OrderResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다. 주문 ID = " + orderId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +55,7 @@ public class OrderService {
     public OrderResponse findOrderBySeller(Long orderId, Long sellerId) {
         return orderRepository.findOrderBySeller(orderId, sellerId)
                 .map(OrderResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다. 주문 ID = " + orderId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
     }
 
     public Long order(Long ordererId, List<Long> productIds, List<Integer> quantities, OrderDto dto) {
@@ -64,7 +65,7 @@ public class OrderService {
         List<Product> products = productRepository.findAllOnSaleById(productIdToQuantityMap.keySet());
 
         if (productIdToQuantityMap.keySet().size() != products.size()) {
-            throw new IllegalArgumentException("판매하지 않는 상품을 주문하였습니다.");
+            throw new IllegalArgumentException(ErrorMessages.NOT_SALE_PRODUCT.getMessage());
         }
 
         Map<Product, Integer> productToQuantityMap = convertToProductToQuantityMap(productIdToQuantityMap, products);
@@ -82,14 +83,14 @@ public class OrderService {
 
     public Long cancelOrder(Long orderId, Long ordererId) {
         Order order = orderRepository.findByIdAndOrdererId(orderId, ordererId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾지 못하였습니다. 주문 ID = " + orderId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
         order.cancel();
         return order.getId();
     }
 
     private Map<Long, Integer> makeProductIdToQuantityMap(List<Long> productIds, List<Integer> quantities) {
         if (productIds.size() != quantities.size()) {
-            throw new IllegalArgumentException("입력된 주문 상품의 수와 수량의 수가 맞지 않습니다. 주문 상품 = " + productIds.size() + ", 수량 = " + quantities.size());
+            throw new IllegalArgumentException(ErrorMessages.NOT_MATCH_ORDER_PRODUCT_COUNT_TO_QUANTITY_COUNT.getMessage());
         }
         return IntStream.range(0, productIds.size())
                 .boxed()

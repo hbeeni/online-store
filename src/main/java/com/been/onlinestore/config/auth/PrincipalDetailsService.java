@@ -1,5 +1,6 @@
 package com.been.onlinestore.config.auth;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,6 @@ public class PrincipalDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String uid) throws UsernameNotFoundException {
         return userService.searchUser(uid)
                 .map(PrincipalDetails::from)
-                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다 - ID: " + uid));
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
     }
 }

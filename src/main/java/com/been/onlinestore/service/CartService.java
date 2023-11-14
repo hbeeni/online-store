@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Cart;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.dto.CartProductDto;
@@ -41,7 +42,7 @@ public class CartService {
             cartRepository.deleteById(cartId);
             return cartId;
         } else {
-            throw new IllegalArgumentException("본인의 장바구니만 삭제할 수 있습니다.");
+            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART.getMessage());
         }
     }
 

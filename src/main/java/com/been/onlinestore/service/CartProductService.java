@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Cart;
 import com.been.onlinestore.domain.CartProduct;
 import com.been.onlinestore.domain.Product;
@@ -27,7 +28,7 @@ public class CartProductService {
     public CartProductDto findCartProduct(Long id) {
         return cartProductRepository.findById(id)
                 .map(CartProductDto::from)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장바구니 상품입니다."));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART_PRODUCT.getMessage()));
     }
 
     protected CartProductDto addCartProduct(Cart cart, CartProductDto dto) {
@@ -45,7 +46,7 @@ public class CartProductService {
         validateCartBelongsToUser(cartId, userId);
 
         CartProduct cartProduct = cartProductRepository.findByIdAndCart_Id(cartProductId, cartId)
-                .orElseThrow(() -> new IllegalArgumentException("장바구니에 해당 상품이 존재하지 않습니다. 장바구니 상품 ID = " + cartProductId));
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART_PRODUCT_IN_CART.getMessage()));
 
         cartProduct.updateProductQuantity(updateProductQuantity);
         return CartProductDto.from(cartProduct);
@@ -68,7 +69,7 @@ public class CartProductService {
 
     private void validateCartBelongsToUser(Long cartId, Long userId) {
         if (!isCartExistByUserId(cartId, userId)) {
-            throw new IllegalArgumentException("본인의 장바구니의 상품만 수정할 수 있습니다.");
+            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART.getMessage());
         }
     }
 
