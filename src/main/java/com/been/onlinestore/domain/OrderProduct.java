@@ -80,6 +80,18 @@ public class OrderProduct {
         product.addStock(this.quantity);
     }
 
+    public void startPreparing() {
+        this.getDelivery().startPreparing();
+    }
+
+    public void startDelivery() {
+        this.getDelivery().startDelivery();
+    }
+
+    public void completeDelivery() {
+        this.getDelivery().completeDelivery();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
