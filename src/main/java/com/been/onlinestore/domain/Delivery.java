@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.now;
+
 @Getter
 @ToString(callSuper = true)
 @Entity
@@ -47,6 +49,28 @@ public class Delivery {
 
     public static Delivery of(DeliveryStatus deliveryStatus, int deliveryFee, LocalDateTime deliveredAt) {
         return new Delivery(deliveryStatus, deliveryFee, deliveredAt);
+    }
+
+    public void startPreparing() {
+        if (this.deliveryStatus != DeliveryStatus.ACCEPT) {
+            throw new IllegalArgumentException("상품 준비 단계로 넘어갈 수 없습니다. 현재 배송 상태 = " + this.deliveryStatus.getDescription());
+        }
+        this.deliveryStatus = DeliveryStatus.PREPARING;
+    }
+
+    public void startDelivery() {
+        if (this.deliveryStatus != DeliveryStatus.PREPARING) {
+            throw new IllegalArgumentException("배송을 시작할 수 없습니다. 현재 배송 상태 = " + this.deliveryStatus.getDescription());
+        }
+        this.deliveryStatus = DeliveryStatus.DELIVERING;
+    }
+
+    public void completeDelivery() {
+        if (this.deliveryStatus != DeliveryStatus.DELIVERING) {
+            throw new IllegalArgumentException("배송 중이 아닙니다. 현재 배송 상태 = " + this.deliveryStatus.getDescription());
+        }
+        this.deliveryStatus = DeliveryStatus.FINAL_DELIVERY;
+        this.deliveredAt = now();
     }
 
     @Override
