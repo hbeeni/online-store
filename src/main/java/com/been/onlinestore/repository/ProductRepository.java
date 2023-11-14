@@ -1,6 +1,7 @@
 package com.been.onlinestore.repository;
 
 import com.been.onlinestore.domain.Product;
+import com.been.onlinestore.repository.querydsl.product.ProductRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
