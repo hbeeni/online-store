@@ -1,5 +1,6 @@
 package com.been.onlinestore.domain;
 
+import com.been.onlinestore.domain.constant.DeliveryStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -55,12 +56,28 @@ public class OrderProduct {
         this.quantity = quantity;
     }
 
-    public static OrderProduct of(Product product, Delivery delivery, int quantity) {
+    /**
+     * 자동으로 배송 정보를 생성하고, 상품의 재고를 감소시킨다.
+     */
+    public static OrderProduct of(Product product, int quantity) {
+        Delivery delivery = Delivery.of(DeliveryStatus.ACCEPT, product.getDeliveryFee(), null);
+        product.removeStock(quantity);
         return OrderProduct.of(null, product, delivery, quantity);
     }
 
     public static OrderProduct of(Order order, Product product, Delivery delivery, int quantity) {
         return new OrderProduct(order, product, delivery, product.getPrice(), quantity);
+    }
+
+    public int getTotalPrice() {
+        return price * quantity;
+    }
+
+    public void cancel() {
+        if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
+            throw new IllegalStateException("결제 완료 상태인 상품만 취소할 수 있습니다. 주문 상품 ID = " + id);
+        }
+        product.addStock(this.quantity);
     }
 
     @Override

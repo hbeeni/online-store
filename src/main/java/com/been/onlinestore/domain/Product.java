@@ -95,6 +95,22 @@ public class Product extends BaseEntity {
         this.saleStatus = saleStatus;
     }
 
+    public void updateDeliveryFee(int deliveryFee) {
+        this.deliveryFee = deliveryFee;
+    }
+
+    public void addStock(int stockQuantity) {
+        this.stockQuantity += stockQuantity;
+    }
+
+    public void removeStock(int stockQuantity) {
+        int restStock = this.stockQuantity - stockQuantity;
+        if (restStock < 0) {
+            throw new IllegalArgumentException("재고가 부족합니다. 상품 ID = " + this.id);
+        }
+        this.stockQuantity = restStock;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
