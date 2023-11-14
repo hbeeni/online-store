@@ -81,55 +81,31 @@ public class ProductService {
     }
 
     public Long updateProductInfo(Long productId, Long categoryId, ProductDto dto) {
-        return updateProduct(productId, categoryId, dto, null, null);
+        Product product = getProduct(productId);
+        product.updateInfo(categoryRepository.getReferenceById(categoryId), dto.name(), dto.price(), dto.description(), dto.imageUrl());
+        return product.getId();
     }
 
     public Long updateProductStockQuantity(Long id, Integer stockQuantity) {
-        return updateProduct(id, null, null, stockQuantity, null);
+        Product product = getProduct(id);
+        product.updateStockQuantity(stockQuantity);
+        return product.getId();
     }
 
     public Long updateProductSaleStatus(Long id, SaleStatus saleStatus) {
-        return updateProduct(id, null, null, null, saleStatus);
+        Product product = getProduct(id);
+        product.updateSaleStatus(saleStatus);
+        return product.getId();
     }
 
-    private Long updateProduct(Long productId, Long categoryId, ProductDto dto, Integer stockQuantity, SaleStatus saleStatus) {
-        try {
-            Product product = productRepository.getReferenceById(productId);
+    public Long updateDeliveryFee(Long id, Integer deliveryFee) {
+        Product product = getProduct(id);
+        product.updateDeliveryFee(deliveryFee);
+        return product.getId();
+    }
 
-            if (dto != null) {
-                Category category = product.getCategory();
-                String name = product.getName();
-                int price = product.getPrice();
-                String description = product.getDescription();
-                String imageUrl = product.getImageUrl();
-
-                if (categoryId != null) {
-                    category = categoryRepository.getReferenceById(categoryId);
-                }
-                if (hasText(dto.name())) {
-                    name = dto.name();
-                }
-                if (dto.price() != null) {
-                    price = dto.price();
-                }
-                if (hasText(dto.description())) {
-                    description = dto.description();
-                }
-                if (hasText(dto.imageUrl())) {
-                    imageUrl = dto.imageUrl();
-                }
-
-                product.updateInfo(category, name, price, description, imageUrl);
-            } else if (stockQuantity != null) {
-                product.updateStockQuantity(stockQuantity);
-            } else if (saleStatus != null) {
-                product.updateSaleStatus(saleStatus);
-            }
-
-            return productId;
-        } catch (EntityNotFoundException e) {
-            log.warn("상품 업데이트 실패. 상품을 수정하는데 필요한 정보를 찾을 수 없습니다. - {}", e.getLocalizedMessage());
-            return null;
-        }
+    private Product getProduct(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품 업데이트 실패. 상품을 수정하는데 필요한 정보를 찾을 수 없습니다. 상품 ID = " + productId));
     }
 }

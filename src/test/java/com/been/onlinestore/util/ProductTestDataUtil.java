@@ -27,6 +27,7 @@ public class ProductTestDataUtil {
                 1000,
                 0,
                 SaleStatus.SALE,
+                3000,
                 null
         );
         ReflectionTestUtils.setField(product, "id", id);
@@ -44,6 +45,7 @@ public class ProductTestDataUtil {
                 1000,
                 0,
                 SaleStatus.SALE,
+                3000,
                 null,
                 now(),
                 "been",

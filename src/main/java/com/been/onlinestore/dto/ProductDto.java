@@ -17,6 +17,7 @@ public record ProductDto(
         Integer stockQuantity,
         Integer salesVolume,
         SaleStatus saleStatus,
+        Integer deliveryFee,
         String imageUrl,
         LocalDateTime createdAt,
         String createdBy,
@@ -24,8 +25,8 @@ public record ProductDto(
         String modifiedBy
 ) {
 
-    public static ProductDto of(Long id, CategoryDto categoryDto, UserDto sellerDto, String name, Integer price, String description, Integer stockQuantity, Integer salesVolume, SaleStatus saleStatus, String imageUrl, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-        return new ProductDto(id, categoryDto, sellerDto, name, price, description, stockQuantity, salesVolume, saleStatus, imageUrl, createdAt, createdBy, modifiedAt, modifiedBy);
+    public static ProductDto of(Long id, CategoryDto categoryDto, UserDto sellerDto, String name, Integer price, String description, Integer stockQuantity, Integer salesVolume, SaleStatus saleStatus, Integer deliveryFee, String imageUrl, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
+        return new ProductDto(id, categoryDto, sellerDto, name, price, description, stockQuantity, salesVolume, saleStatus, deliveryFee, imageUrl, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     public static ProductDto from(Product entity) {
@@ -39,6 +40,7 @@ public record ProductDto(
                 entity.getStockQuantity(),
                 entity.getSalesVolume(),
                 entity.getSaleStatus(),
+                entity.getDeliveryFee(),
                 entity.getImageUrl(),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
@@ -57,6 +59,7 @@ public record ProductDto(
                 stockQuantity,
                 salesVolume,
                 saleStatus,
+                deliveryFee,
                 imageUrl
         );
     }
