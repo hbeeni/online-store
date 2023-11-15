@@ -38,7 +38,7 @@ class AddressApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/api/user/addresses"))
+        mvc.perform(get("/api/addresses"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -54,7 +54,7 @@ class AddressApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(get("/api/user/addresses/" + ID))
+        mvc.perform(get("/api/addresses/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -69,7 +69,7 @@ class AddressApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(post("/api/user/addresses"))
+        mvc.perform(post("/api/addresses"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -82,7 +82,7 @@ class AddressApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(put("/api/user/addresses/" + ID))
+        mvc.perform(put("/api/addresses/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -95,7 +95,7 @@ class AddressApiControllerTest {
         //Given
 
         //When & Then
-        mvc.perform(delete("/api/user/addresses/" + ID))
+        mvc.perform(delete("/api/addresses/" + ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
