@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller;
+package com.been.onlinestore.controller.user;
 
 import com.been.onlinestore.config.SecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Disabled("구현 전")
 @DisplayName("API 컨트롤러 - 회원 (공통)")
 @Import(SecurityConfig.class)
-@WebMvcTest(CommonApiController.class)
-class CommonApiControllerTest {
+@WebMvcTest(UserApiController.class)
+class UserApiControllerTest {
 
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper mapper;
@@ -32,7 +32,7 @@ class CommonApiControllerTest {
         long id = 1L;
 
         //When & Then
-        mvc.perform(put("/api/common/info"))
+        mvc.perform(put("/api/users/info"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))

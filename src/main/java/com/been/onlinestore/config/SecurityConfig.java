@@ -24,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    private static final String[] WHITE_LIST = {"/", "/api/login", "/api/sign-up", "/api/categories/**", "/api/products/**"};
     private final JwtProperties properties;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -39,11 +40,10 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .mvcMatchers("/api/common/**").authenticated()
+                        .mvcMatchers(WHITE_LIST).permitAll()
                         .mvcMatchers("/api/admin/**").hasRole(RoleType.ADMIN.name())
                         .mvcMatchers("/api/seller/**").hasRole(RoleType.SELLER.name())
-                        .mvcMatchers("/api/user/**").hasRole(RoleType.USER.name())
-                        .anyRequest().permitAll()
+                        .mvcMatchers("/api/**").hasRole(RoleType.USER.name())
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/"))
                 .build();
