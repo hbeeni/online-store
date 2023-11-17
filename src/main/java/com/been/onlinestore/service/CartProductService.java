@@ -32,7 +32,7 @@ public class CartProductService {
     }
 
     protected CartProductDto addCartProduct(Cart cart, CartProductDto dto) {
-        Long productId = dto.productDto().id();
+        Long productId = 1L; //TODO: 임시로 넣은 값, 수정 필요
         Product product = productRepository.getReferenceById(productId);
 
         CartProduct cartProduct = cartProductRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)

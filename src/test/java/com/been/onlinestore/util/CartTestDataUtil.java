@@ -3,11 +3,9 @@ package com.been.onlinestore.util;
 import com.been.onlinestore.domain.Cart;
 import com.been.onlinestore.domain.CartProduct;
 import com.been.onlinestore.dto.CartProductDto;
-import com.been.onlinestore.dto.ProductDto;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.been.onlinestore.util.ProductTestDataUtil.createProduct;
-import static com.been.onlinestore.util.ProductTestDataUtil.createProductDto;
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
 
 public class CartTestDataUtil {
@@ -25,11 +23,10 @@ public class CartTestDataUtil {
     }
 
     public static CartProductDto createCartProductDto(Long cartProductId, Long cartId) {
-        ProductDto productDto = createProductDto(1L);
         return CartProductDto.of(
                 cartProductId,
                 cartId,
-                productDto,
+                null,
                 10
         );
     }
