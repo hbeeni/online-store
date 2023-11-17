@@ -2,9 +2,10 @@ package com.been.onlinestore.repository.querydsl.product;
 
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
-import com.been.onlinestore.dto.ProductSearchCondition;
+import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -18,6 +19,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.been.onlinestore.domain.QCategory.category;
 import static com.been.onlinestore.domain.QProduct.product;
@@ -34,14 +36,21 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public Page<Product> searchProducts(ProductSearchCondition cond, Pageable pageable) {
-        List<Product> content = queryFactory
-                .selectFrom(product)
+    public Page<AdminProductResponse> searchProducts(Long sellerId, ProductSearchCondition cond, Pageable pageable) {
+        if (cond == null) {
+            cond = ProductSearchCondition.empty();
+        }
+
+        List<AdminProductResponse> content = queryFactory
+                .select(getAdminProductResponseProjection())
+                .from(product)
                 .leftJoin(product.category, category)
-                .leftJoin(product.seller, user)
-                .where(categoryIdEq(cond.categoryId()),
+                .join(product.seller, user)
+                .where(sellerIdEq(sellerId),
+                        categoryIdEq(cond.categoryId()),
                         productNameContains(cond.name()),
-                        saleStatusEq(cond.saleStatus()))
+                        saleStatusEq(cond.saleStatus())
+                )
                 .orderBy(getOrderSpecifiers(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -51,40 +60,59 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .select(product.count())
                 .from(product)
                 .leftJoin(product.category, category)
-                .leftJoin(product.seller, user)
-                .where(categoryIdEq(cond.categoryId()),
+                .join(product.seller, user)
+                .where(sellerIdEq(sellerId),
+                        categoryIdEq(cond.categoryId()),
                         productNameContains(cond.name()),
-                        saleStatusEq(cond.saleStatus()));
+                        saleStatusEq(cond.saleStatus())
+                );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     @Override
-    public Page<Product> searchProductsBySellerId(Long sellerId, ProductSearchCondition cond, Pageable pageable) {
-        List<Product> content = queryFactory
-                .selectFrom(product)
-                .leftJoin(product.category, category)
-                .leftJoin(product.seller, user)
-                .where(user.id.eq(sellerId),
-                        categoryIdEq(cond.categoryId()),
-                        productNameContains(cond.name()),
-                        saleStatusEq(cond.saleStatus()))
-                .orderBy(getOrderSpecifiers(pageable))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        JPAQuery<Long> countQuery = queryFactory
-                .select(product.count())
+    public Optional<AdminProductResponse> searchProduct(Long productId, Long sellerId) {
+        AdminProductResponse adminProductResponse = queryFactory
+                .select(getAdminProductResponseProjection())
                 .from(product)
                 .leftJoin(product.category, category)
-                .leftJoin(product.seller, user)
-                .where(user.id.eq(sellerId),
-                        categoryIdEq(cond.categoryId()),
-                        productNameContains(cond.name()),
-                        saleStatusEq(cond.saleStatus()));
+                .join(product.seller, user)
+                .where(productIdEq(productId),
+                        sellerIdEq(sellerId)
+                )
+                .fetchOne();
+        return Optional.ofNullable(adminProductResponse);
+    }
 
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    private ConstructorExpression<AdminProductResponse> getAdminProductResponseProjection() {
+        return Projections.constructor(AdminProductResponse.class,
+                product.id,
+                category.name.as("category"),
+                Projections.constructor(AdminProductResponse.Seller.class,
+                        user.id,
+                        user.uid
+                ),
+                product.name,
+                product.price,
+                product.description,
+                product.stockQuantity,
+                product.salesVolume,
+                product.saleStatus,
+                product.deliveryFee,
+                product.imageUrl,
+                product.createdAt,
+                product.createdBy,
+                product.modifiedAt,
+                product.modifiedBy
+        );
+    }
+
+    private BooleanExpression productIdEq(Long productId) {
+        return productId != null ? product.id.eq(productId) : null;
+    }
+
+    private BooleanExpression sellerIdEq(Long sellerId) {
+        return sellerId != null ? user.id.eq(sellerId) : null;
     }
 
     private BooleanExpression categoryIdEq(Long categoryId) {
