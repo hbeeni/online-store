@@ -1,7 +1,8 @@
 package com.been.onlinestore.util;
 
 import com.been.onlinestore.domain.Category;
-import com.been.onlinestore.dto.CategoryDto;
+import com.been.onlinestore.service.response.CategoryResponse;
+import com.been.onlinestore.service.response.admin.AdminCategoryResponse;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static java.time.LocalDateTime.now;
@@ -23,16 +24,8 @@ public class CategoryTestDataUtil {
         return category;
     }
 
-    public static CategoryDto createCategoryDto(String name) {
-        return createCategoryDto(1L, name);
-    }
-
-    public static CategoryDto createCategoryDto(Long id, String name) {
-        return createCategoryDto(id, name, 0);
-    }
-
-    public static CategoryDto createCategoryDto(Long id, String name, int productCount) {
-        return CategoryDto.of(
+    public static AdminCategoryResponse createAdminCategoryResponse(Long id, String name, int productCount) {
+        return AdminCategoryResponse.of(
                 id,
                 name,
                 name + DESCRIPTION_SUFFIX,
@@ -41,6 +34,15 @@ public class CategoryTestDataUtil {
                 "been",
                 now(),
                 "been"
+        );
+    }
+
+    public static CategoryResponse createCategoryResponse(Long id, String name, int productCount) {
+        return CategoryResponse.of(
+                id,
+                name,
+                name + DESCRIPTION_SUFFIX,
+                productCount
         );
     }
 }

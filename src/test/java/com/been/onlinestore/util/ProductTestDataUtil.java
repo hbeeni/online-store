@@ -4,10 +4,10 @@ import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.dto.ProductDto;
 import com.been.onlinestore.dto.UserDto;
+import com.been.onlinestore.service.response.ProductResponse;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.been.onlinestore.util.CategoryTestDataUtil.createCategory;
-import static com.been.onlinestore.util.CategoryTestDataUtil.createCategoryDto;
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
 import static java.time.LocalDateTime.now;
 
@@ -37,7 +37,7 @@ public class ProductTestDataUtil {
     public static ProductDto createProductDto(Long id) {
         return ProductDto.of(
                 id,
-                createCategoryDto("category"),
+                null,
                 UserDto.from(createUser("uid")),
                 "product",
                 10000,
@@ -51,6 +51,17 @@ public class ProductTestDataUtil {
                 "been",
                 now(),
                 "been"
+        );
+    }
+
+    public static ProductResponse createProductResponse(Long id) {
+        return ProductResponse.of(
+                id,
+                "name",
+                10000,
+                "description",
+                3000,
+                "-"
         );
     }
 }

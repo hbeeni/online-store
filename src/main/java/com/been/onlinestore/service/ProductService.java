@@ -10,6 +10,7 @@ import com.been.onlinestore.dto.ProductSearchCondition;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,12 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> findProductsInCategory(Long categoryId, Pageable pageable) {
+        return productRepository.findAllByCategory_Id(categoryId, pageable)
+                .map(ProductResponse::from);
+    }
 
     @Transactional(readOnly = true)
     public Page<ProductDto> findProductsOnSale(String name, Pageable pageable) {

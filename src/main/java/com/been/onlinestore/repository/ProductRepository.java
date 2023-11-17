@@ -19,6 +19,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     @Query("update Product p set p.category = null where p.category.id = :categoryId")
     int bulkCategoryNull(@Param("categoryId") Long categoryId);
 
+    Page<Product> findAllByCategory_Id(Long categoryId, Pageable pageable);
+
     @Query("select p from Product p where p.saleStatus = 'SALE'")
     Page<Product> findAllOnSale(Pageable pageable);
 

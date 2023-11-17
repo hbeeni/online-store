@@ -6,6 +6,7 @@ import com.been.onlinestore.dto.ProductSearchCondition;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,22 @@ class ProductServiceTest {
     @Mock private UserRepository userRepository;
 
     @InjectMocks private ProductService sut;
+
+    @DisplayName("해당 카테고리의 상품의 페이지를 반환한다.")
+    @Test
+    void test_findProductsInCategory() {
+        //Given
+        Long categoryId = 1L;
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "createdAt");
+        given(productRepository.findAllByCategory_Id(categoryId, pageable)).willReturn(Page.empty());
+
+        //When
+        Page<ProductResponse> products = sut.findProductsInCategory(categoryId, pageable);
+
+        //Then
+        assertThat(products).isEmpty();
+        then(productRepository).should().findAllByCategory_Id(categoryId, pageable);
+    }
 
     @DisplayName("[판매 중인 상품] 검색어 없이 검색하면, 상품의 페이지를 반환한다.")
     @Test
@@ -208,9 +225,9 @@ class ProductServiceTest {
     void test_addProduct() {
         //Given
         long productId = 1L;
+        long categoryId = 1L;
 
         ProductDto dto = createProductDto(productId);
-        long categoryId = dto.categoryDto().id();
         long userId = dto.sellerDto().id();
 
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
@@ -232,9 +249,9 @@ class ProductServiceTest {
     void test_updateProductInfo() {
         //Given
         long productId = 1L;
+        long categoryId = 1L;
 
         ProductDto dto = createProductDto(productId);
-        long categoryId = dto.categoryDto().id();
 
         given(productRepository.findById(productId)).willReturn(Optional.of(createProduct(productId)));
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
@@ -300,11 +317,12 @@ class ProductServiceTest {
     @Test
     void testUpdateProductInfo_throwsIllegalArgumentException() {
         //Given
+        long categoryId = 1L;
         ProductDto dto = createProductDto(1L);
         given(productRepository.findById(dto.id())).willReturn(Optional.empty());
 
         //When & Then
-        assertThatThrownBy(() -> sut.updateProductInfo(dto.id(), dto.categoryDto().id(), dto))
+        assertThatThrownBy(() -> sut.updateProductInfo(dto.id(), categoryId, dto))
                 .isInstanceOf(IllegalArgumentException.class);
         then(productRepository).should().findById(dto.id());
         then(categoryRepository).shouldHaveNoInteractions();

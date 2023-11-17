@@ -5,7 +5,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -52,7 +55,7 @@ public class ApiResponse<T> {
      * }
      * </pre>
      */
-    public static <T> ApiResponse<Map<String, Long>> successWithId(Long id) {
+    public static ApiResponse<Map<String, Long>> successId(Long id) {
         return new ApiResponse<>(STATUS_SUCCESS, Map.of("id", id), null, null);
     }
 
@@ -71,10 +74,10 @@ public class ApiResponse<T> {
      * }
      * </pre>
      */
-    public static <T> ApiResponse<T> pagination(T data, Page<T> page) {
+    public static <T> ApiResponse<List<T>> pagination(Page<T> page) {
         return new ApiResponse<>(
                 STATUS_SUCCESS,
-                data,
+                page.getContent(),
                 PageInfo.of(page.getNumber(), page.getSize(), page.getTotalPages(), page.getTotalElements()),
                 null
         );
@@ -90,8 +93,11 @@ public class ApiResponse<T> {
      * }
      * </pre>
      */
-    public static <T> ApiResponse<T> fail(T data, String message) {
-        return new ApiResponse<>(STATUS_FAIL, data, null, message);
+    public static ApiResponse<Map<String, String>> fail(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        bindingResult.getFieldErrors()
+                .forEach(b -> errorMap.put(b.getField(), b.getDefaultMessage()));
+        return new ApiResponse<>(STATUS_FAIL, errorMap, null, "field errors");
     }
 
     /**
@@ -120,6 +126,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(STATUS_ERROR, null, null, message);
     }
 
+    @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     static class PageInfo {
 
