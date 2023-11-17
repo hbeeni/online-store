@@ -1,4 +1,4 @@
-package com.been.onlinestore.dto;
+package com.been.onlinestore.repository.querydsl.product;
 
 import com.been.onlinestore.domain.constant.SaleStatus;
 
@@ -7,6 +7,10 @@ public record ProductSearchCondition(
         String name,
         SaleStatus saleStatus
 ) {
+
+    public static ProductSearchCondition empty() {
+        return ProductSearchCondition.of(null, null, null);
+    }
 
     public static ProductSearchCondition of(Long categoryId, String name, SaleStatus saleStatus) {
         return new ProductSearchCondition(categoryId, name, saleStatus);

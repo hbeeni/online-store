@@ -2,8 +2,7 @@ package com.been.onlinestore.util;
 
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
-import com.been.onlinestore.dto.ProductDto;
-import com.been.onlinestore.dto.UserDto;
+import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.service.response.ProductResponse;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -34,26 +33,6 @@ public class ProductTestDataUtil {
         return product;
     }
 
-    public static ProductDto createProductDto(Long id) {
-        return ProductDto.of(
-                id,
-                null,
-                UserDto.from(createUser("uid")),
-                "product",
-                10000,
-                "description",
-                1000,
-                0,
-                SaleStatus.SALE,
-                3000,
-                null,
-                now(),
-                "been",
-                now(),
-                "been"
-        );
-    }
-
     public static ProductResponse createProductResponse(Long id) {
         return ProductResponse.of(
                 id,
@@ -62,6 +41,26 @@ public class ProductTestDataUtil {
                 "description",
                 3000,
                 "-"
+        );
+    }
+
+    public static AdminProductResponse createAdminProductResponse(Long id) {
+        return AdminProductResponse.of(
+                id,
+                "category",
+                AdminProductResponse.Seller.of(1L, "uid"),
+                "name",
+                1000,
+                "des",
+                100,
+                100,
+                SaleStatus.SALE,
+                3000,
+                null,
+                now(),
+                "been",
+                now(),
+                "been"
         );
     }
 }

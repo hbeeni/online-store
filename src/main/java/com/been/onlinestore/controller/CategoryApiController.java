@@ -31,6 +31,6 @@ public class CategoryApiController {
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<?> getAllProductsInCategory(@PathVariable Long categoryId, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsInCategory(categoryId, pageable)));
+        return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsInCategoryForUser(categoryId, pageable)));
     }
 }

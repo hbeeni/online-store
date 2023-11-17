@@ -80,24 +80,15 @@ public class Product extends BaseEntity {
         return new Product(category, seller, name, price, description, stockQuantity, salesVolume, saleStatus, deliveryFee, imageUrl);
     }
 
-    public void updateInfo(Category category, String name, int price, String description, String imageUrl) {
+    public void updateInfo(Category category, String name, int price, String description, int stockQuantity, SaleStatus saleStatus, int deliveryFee, String imageUrl) {
         this.category = category;
         this.name = name;
         this.price = price;
         this.description = description;
-        this.imageUrl = imageUrl;
-    }
-
-    public void updateStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
-    }
-
-    public void updateSaleStatus(SaleStatus saleStatus) {
         this.saleStatus = saleStatus;
-    }
-
-    public void updateDeliveryFee(int deliveryFee) {
         this.deliveryFee = deliveryFee;
+        this.imageUrl = imageUrl;
     }
 
     public void addStock(int stockQuantity) {

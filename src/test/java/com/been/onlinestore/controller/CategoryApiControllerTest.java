@@ -74,7 +74,7 @@ class CategoryApiControllerTest {
         ProductResponse productResponse = createProductResponse(1L);
         Page<ProductResponse> page = new PageImpl<>(List.of(productResponse), pageable, 1);
 
-        given(productService.findProductsInCategory(categoryId, pageable)).willReturn(page);
+        given(productService.findProductsInCategoryForUser(categoryId, pageable)).willReturn(page);
 
         //When & Then
         mvc.perform(
