@@ -1,6 +1,6 @@
-package com.been.onlinestore.controller.dto.response;
+package com.been.onlinestore.service.response;
 
-import com.been.onlinestore.dto.CategoryDto;
+import com.been.onlinestore.domain.Category;
 
 public record CategoryResponse(
         Long id,
@@ -13,12 +13,12 @@ public record CategoryResponse(
         return new CategoryResponse(id, name, description, productCount);
     }
 
-    public static CategoryResponse from(CategoryDto dto) {
+    public static CategoryResponse from(Category entity) {
         return CategoryResponse.of(
-                dto.id(),
-                dto.name(),
-                dto.description(),
-                dto.productCount()
+                entity.getId(),
+                entity.getName(),
+                entity.getDescription(),
+                entity.getProducts().size()
         );
     }
 }
