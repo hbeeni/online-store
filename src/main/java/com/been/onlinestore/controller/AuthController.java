@@ -3,8 +3,7 @@ package com.been.onlinestore.controller;
 import com.been.onlinestore.config.jwt.JwtProperties;
 import com.been.onlinestore.config.jwt.JwtTokenProvider;
 import com.been.onlinestore.controller.dto.ApiResponse;
-import com.been.onlinestore.controller.dto.request.LoginRequest;
-import com.been.onlinestore.controller.dto.request.SignUpRequest;
+import com.been.onlinestore.controller.dto.UserRequest;
 import com.been.onlinestore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,26 +30,17 @@ public class AuthController {
     private final PasswordEncoder encoder;
 
     @PostMapping("/api/sign-up")
-    public ResponseEntity<ApiResponse<Map<String, Long>>> signUp(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<ApiResponse<Map<String, Long>>> signUp(@RequestBody UserRequest.SignUp request) {
         //TODO: 일반 회원과 어드민 회원의 엔드포인트를 다르게 할 지 고민
-        Long id = userService.signUp(
-                signUpRequest.uid(),
-                encoder.encode(signUpRequest.password()),
-                signUpRequest.name(),
-                signUpRequest.email(),
-                signUpRequest.nickname(),
-                signUpRequest.phone(),
-                signUpRequest.roleType()
-        );
-
+        Long id = userService.signUp(request.toServiceRequest(), encoder.encode(request.password()));
         return ResponseEntity.ok(ApiResponse.success(Map.of("id", id)));
     }
 
     @PostMapping("/api/login")
-    public ResponseEntity<ApiResponse<Map<String, String>>> loginUser(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        return ResponseEntity.ok(ApiResponse.success(Map.of("token", createJwtToken(loginRequest.uid(), loginRequest.password(), response))));
+    public ResponseEntity<ApiResponse<Map<String, String>>> loginUser(@RequestBody UserRequest.Login request, HttpServletResponse response) {
+        String jwtToken = createJwtToken(request.uid(), request.password(), response);
+        return ResponseEntity.ok(ApiResponse.success(Map.of("token", jwtToken)));
     }
-
 
     private String createJwtToken(String uid, String password, HttpServletResponse response) {
         Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(uid, password);

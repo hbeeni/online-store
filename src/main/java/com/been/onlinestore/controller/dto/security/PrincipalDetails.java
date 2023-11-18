@@ -1,13 +1,12 @@
 package com.been.onlinestore.controller.dto.security;
 
 import com.been.onlinestore.domain.constant.RoleType;
-import com.been.onlinestore.dto.UserDto;
+import com.been.onlinestore.service.response.UserResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 
 public record PrincipalDetails(
@@ -26,30 +25,29 @@ public record PrincipalDetails(
                 id,
                 uid,
                 password,
-                Objects.requireNonNullElse(roleType, RoleType.USER),
+                roleType,
                 name,
                 email,
                 nickname,
                 phone);
     }
 
-    public static PrincipalDetails from(UserDto dto) {
+    public static PrincipalDetails from(UserResponse userResponse) {
         return PrincipalDetails.of(
-                dto.id(),
-                dto.uid(),
-                dto.password(),
-                dto.roleType(),
-                dto.name(),
-                dto.email(),
-                dto.nickname(),
-                dto.phone()
+                userResponse.id(),
+                userResponse.uid(),
+                userResponse.password(),
+                userResponse.roleType(),
+                userResponse.name(),
+                userResponse.email(),
+                userResponse.nickname(),
+                userResponse.phone()
         );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = Objects.requireNonNullElse(roleType, RoleType.USER).getRoleName();
-        return Set.of(new SimpleGrantedAuthority(role));
+        return Set.of(new SimpleGrantedAuthority(roleType.getRoleName()));
     }
 
     @Override

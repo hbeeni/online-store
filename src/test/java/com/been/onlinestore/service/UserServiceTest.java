@@ -1,20 +1,28 @@
 package com.been.onlinestore.service;
 
 import com.been.onlinestore.domain.User;
-import com.been.onlinestore.dto.UserDto;
+import com.been.onlinestore.domain.constant.RoleType;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.UserServiceRequest;
+import com.been.onlinestore.service.response.UserResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static com.been.onlinestore.util.UserTestDataUtil.createAdmin;
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -32,18 +40,19 @@ class UserServiceTest {
     void test_signUpUser() {
         //Given
         User user = createUser();
-        given(userRepository.save(any())).willReturn(user);
-
-        //When
-        Long id = sut.signUp(
+        UserServiceRequest.SignUp serviceRequest = UserServiceRequest.SignUp.of(
                 user.getUid(),
                 user.getPassword(),
                 user.getName(),
                 user.getEmail(),
                 user.getNickname(),
                 user.getPhone(),
-                null
+                user.getRoleType()
         );
+        given(userRepository.save(any())).willReturn(user);
+
+        //When
+        Long id = sut.signUp(serviceRequest, serviceRequest.password());
 
         //Then
         assertThat(id).isEqualTo(user.getId());
@@ -55,10 +64,7 @@ class UserServiceTest {
     void test_signUpAdmin() {
         //Given
         User admin = createAdmin();
-        given(userRepository.save(any())).willReturn(admin);
-
-        //When
-        Long id = sut.signUp(
+        UserServiceRequest.SignUp serviceRequest = UserServiceRequest.SignUp.of(
                 admin.getUid(),
                 admin.getPassword(),
                 admin.getName(),
@@ -67,6 +73,10 @@ class UserServiceTest {
                 admin.getPhone(),
                 admin.getRoleType()
         );
+        given(userRepository.save(any())).willReturn(admin);
+
+        //When
+        Long id = sut.signUp(serviceRequest, serviceRequest.password());
 
         //Then
         assertThat(id).isEqualTo(admin.getId());
@@ -81,7 +91,7 @@ class UserServiceTest {
         given(userRepository.findByUid(uid)).willReturn(Optional.of(createUser(uid)));
 
         //When
-        Optional<UserDto> result = sut.searchUser(uid);
+        Optional<UserResponse> result = sut.searchUser(uid);
 
         //Then
         assertThat(result).isPresent();
@@ -96,10 +106,84 @@ class UserServiceTest {
         given(userRepository.findByUid(uid)).willReturn(Optional.empty());
 
         //When
-        Optional<UserDto> result = sut.searchUser(uid);
+        Optional<UserResponse> result = sut.searchUser(uid);
 
         //Then
         assertThat(result).isEmpty();
         then(userRepository).should().findByUid(uid);
+    }
+
+    @DisplayName("본인의 정보(닉네임, 휴대폰 번호)를 변경한 후, 변경한 회원의 id를 반환한다.")
+    @Test
+    void test_updateInfo() {
+        //Given
+        long id = 1L;
+        given(userRepository.findById(id)).willReturn(Optional.of(createUser(id)));
+
+        //When
+        Long result = sut.updateInfo(id, "nickname", "01012341234");
+
+        //Then
+        assertThat(result).isNotNull();
+        then(userRepository).should().findById(id);
+    }
+
+    @DisplayName("[어드민] 모든 회원 정보를 반환한다.")
+    @Test
+    void test_findUsers() {
+        //Given
+        Pageable pageable = PageRequest.of(0, 10);
+        given(userRepository.findAll(pageable)).willReturn(Page.empty());
+
+        //When
+        Page<UserResponse> result = sut.findUsers(pageable);
+
+        //Then
+        assertThat(result).isNotNull();
+        then(userRepository).should().findAll(pageable);
+    }
+
+    @DisplayName("[어드민] 회원의 상세 정보를 반환한다.")
+    @Test
+    void test_findUser() {
+        //Given
+        long id = 1L;
+        given(userRepository.findById(id)).willReturn(Optional.of(createUser()));
+
+        //When
+        UserResponse result = sut.findUser(id);
+
+        //Then
+        assertThat(result).isNotNull();
+        then(userRepository).should().findById(id);
+    }
+
+    @DisplayName("[어드민] 존재하지 않는 회원의 정보를 조회하면, 예외를 던진다.")
+    @Test
+    void test_findUser_throwsEntityNotFoundException() {
+        //Given
+        long id = 1L;
+        given(userRepository.findById(id)).willReturn(Optional.empty());
+
+        //When & Then
+        assertThatThrownBy(() -> sut.findUser(id))
+                .isInstanceOf(EntityNotFoundException.class);
+        then(userRepository).should().findById(id);
+    }
+
+    @Disabled("연관된 엔티티가 많아서 마지막에 구현")
+    @DisplayName("[어드민] 일반 회원을 강제탈퇴 시킨 후, 삭제한 회원의 id를 반환한다.")
+    @Test
+    void test_deleteUser() {
+        //Given
+        long id = 1L;
+        given(userRepository.existsByIdAndRoleType(id, RoleType.USER)).willReturn(true);
+
+        //When
+        Long result = sut.deleteUser(id);
+
+        //Then
+        assertThat(result).isNotNull();
+        then(userRepository).should().existsByIdAndRoleType(id, RoleType.USER);
     }
 }

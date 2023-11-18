@@ -58,15 +58,16 @@ public class User extends BaseTimeEntity {
         this.email = email;
         this.nickname = nickname;
         this.phone = phone;
-        this.roleType = roleType;
-    }
-
-    public static User of(String uid, String password, String name, String email, String nickname, String phone) {
-        return new User(uid, password, name, email, nickname, phone, RoleType.USER);
+        this.roleType = roleType != null ? roleType : RoleType.USER;
     }
 
     public static User of(String uid, String password, String name, String email, String nickname, String phone, RoleType roleType) {
         return new User(uid, password, name, email, nickname, phone, roleType);
+    }
+
+    public void updateInfo(String nickname, String phone) {
+        this.nickname = nickname;
+        this.phone = phone;
     }
 
     @Override
