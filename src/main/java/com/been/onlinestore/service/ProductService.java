@@ -4,6 +4,7 @@ import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.User;
+import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
@@ -77,13 +78,16 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
     }
 
-    public Long addProduct(Long sellerId, ProductServiceRequest serviceRequest) {
+    public Long addProduct(Long sellerId, ProductServiceRequest.Create serviceRequest) {
         Category category = categoryRepository.getReferenceById(serviceRequest.categoryId());
         User user = userRepository.getReferenceById(sellerId);
+        if (serviceRequest.saleStatus() == null) {
+            return productRepository.save(serviceRequest.toEntity(category, user, SaleStatus.WAIT)).getId();
+        }
         return productRepository.save(serviceRequest.toEntity(category, user)).getId();
     }
 
-    public Long updateProductInfo(Long productId, Long sellerId, ProductServiceRequest serviceRequest) {
+    public Long updateProductInfo(Long productId, Long sellerId, ProductServiceRequest.Update serviceRequest) {
         Product product = productRepository.findByIdAndSeller_Id(productId, sellerId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
         Category category = categoryRepository.getReferenceById(serviceRequest.categoryId());
