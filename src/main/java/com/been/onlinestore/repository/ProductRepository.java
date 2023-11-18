@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     @Query("select p from Product p where p.saleStatus = 'SALE' and p.category.id = :categoryId")
     Page<Product> findAllOnSaleByCategory(@Param("categoryId") Long categoryId, Pageable pageable);
 
-    @Query(value = "select p from Product p join p.category where p.saleStatus = 'SALE'",
+    @Query(value = "select p from Product p join fetch p.category where p.saleStatus = 'SALE'",
             countQuery = "select count(p) from Product p where p.saleStatus = 'SALE'")
     Page<Product> findAllOnSale(Pageable pageable);
 
