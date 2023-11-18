@@ -37,10 +37,6 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     @Override
     public Page<AdminProductResponse> searchProducts(Long sellerId, ProductSearchCondition cond, Pageable pageable) {
-        if (cond == null) {
-            cond = ProductSearchCondition.empty();
-        }
-
         List<AdminProductResponse> content = queryFactory
                 .select(getAdminProductResponseProjection())
                 .from(product)
