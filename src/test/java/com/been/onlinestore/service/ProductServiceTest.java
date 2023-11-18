@@ -230,8 +230,8 @@ class ProductServiceTest {
         long categoryId = 1L;
         long productId = 1L;
         long sellerId = 1L;
-        ProductServiceRequest serviceRequest =
-                ProductServiceRequest.of(categoryId, "product", 10000, "des", 100, null, 3000, null);
+        ProductServiceRequest.Create serviceRequest =
+                ProductServiceRequest.Create.of(categoryId, "product", 10000, "des", 100, null, 3000, null);
 
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
         given(userRepository.getReferenceById(sellerId)).willReturn(createUser("user"));
@@ -254,8 +254,8 @@ class ProductServiceTest {
         long productId = 1L;
         long sellerId = 1L;
         long categoryId = 1L;
-        ProductServiceRequest serviceRequest =
-                ProductServiceRequest.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000, null);
+        ProductServiceRequest.Update serviceRequest =
+                ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000, null);
 
         given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.of(createProduct(productId)));
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
@@ -276,8 +276,8 @@ class ProductServiceTest {
         long categoryId = 1L;
         long sellerId = 1L;
         long productId = 1L;
-        ProductServiceRequest serviceRequest =
-                ProductServiceRequest.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000, null);
+        ProductServiceRequest.Update serviceRequest =
+                ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000, null);
 
         given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.empty());
 

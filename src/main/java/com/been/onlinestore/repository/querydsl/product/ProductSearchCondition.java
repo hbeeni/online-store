@@ -8,10 +8,6 @@ public record ProductSearchCondition(
         SaleStatus saleStatus
 ) {
 
-    public static ProductSearchCondition empty() {
-        return ProductSearchCondition.of(null, null, null);
-    }
-
     public static ProductSearchCondition of(Long categoryId, String name, SaleStatus saleStatus) {
         return new ProductSearchCondition(categoryId, name, saleStatus);
     }
