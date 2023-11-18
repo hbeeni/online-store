@@ -2,7 +2,6 @@ package com.been.onlinestore.util;
 
 import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.dto.AddressDto;
-import com.been.onlinestore.dto.UserDto;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
@@ -43,7 +42,7 @@ public class AddressTestDataUtil {
     public static AddressDto createAddressDto(Long id) {
         return AddressDto.of(
                 id,
-                UserDto.from(createUser()),
+                null,
                 "detail",
                 "zipcode",
                 false,
