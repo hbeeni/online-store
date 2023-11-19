@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.been.onlinestore.util.AddressTestDataUtil.createAddress;
-import static com.been.onlinestore.util.AddressTestDataUtil.createUpdateAddressRequest;
+import static com.been.onlinestore.util.AddressTestDataUtil.createAddressServiceRequest;
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,14 +41,14 @@ class AddressServiceTest {
     void test_findAddresses() {
         //Given
         long userId = 1L;
-        given(addressRepository.findAllByUser_Id(userId)).willReturn(List.of(createAddress()));
+        given(addressRepository.findAllByUser_IdOrderByDefaultAddressDesc(userId)).willReturn(List.of(createAddress()));
 
         //When
         List<AddressResponse> result = sut.findAddresses(userId);
 
         //Then
         assertThat(result.size()).isEqualTo(1);
-        then(addressRepository).should().findAllByUser_Id(userId);
+        then(addressRepository).should().findAllByUser_IdOrderByDefaultAddressDesc(userId);
     }
 
     @DisplayName("배송지를 조회하면, 배송지 정보를 반환한다.")
@@ -87,7 +87,8 @@ class AddressServiceTest {
         //Given
         long addressId = 1L;
         Long userId = 1L;
-        AddressServiceRequest.Create serviceRequest = AddressServiceRequest.Create.of("detail", "13232", false);
+
+        AddressServiceRequest serviceRequest = createAddressServiceRequest("detail", "13232", false);
 
         given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.empty());
         given(userRepository.getReferenceById(userId)).willReturn(createUser("user"));
@@ -111,7 +112,7 @@ class AddressServiceTest {
         long defaultAddressId = 2L;
         Address defaultAddress = createAddress(defaultAddressId, true);
 
-        AddressServiceRequest.Create serviceRequest = AddressServiceRequest.Create.of("detail", "13232", true);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest("detail", "13232", false);
 
         given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.empty());
         given(userRepository.getReferenceById(userId)).willReturn(createUser("user"));
@@ -140,7 +141,7 @@ class AddressServiceTest {
         long newDefaultAddressId = 2L;
         Address newDefaultAddress = createAddress(newDefaultAddressId, true);
 
-        AddressServiceRequest.Create serviceRequest = AddressServiceRequest.Create.of("detail", "13232", true);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest("detail", "13232", false);
 
         given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.of(existingDefaultAddress));
         given(userRepository.getReferenceById(userId)).willReturn(createUser("user"));
@@ -166,7 +167,7 @@ class AddressServiceTest {
         long userId = 1L;
 
         Address address = createAddress(addressId);
-        AddressServiceRequest.Update serviceRequest = createUpdateAddressRequest(true);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest(true);
 
         given(addressRepository.findByIdAndUser_Id(addressId, userId)).willReturn(Optional.of(address));
 
@@ -189,7 +190,7 @@ class AddressServiceTest {
         long addressId = 1L;
         long userId = 1L;
 
-        AddressServiceRequest.Update serviceRequest = createUpdateAddressRequest(true);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest(true);
 
         given(addressRepository.findByIdAndUser_Id(addressId, userId)).willReturn(Optional.empty());
 
@@ -206,7 +207,7 @@ class AddressServiceTest {
         long addressId = 1L;
         long requestUserId = 1L;
 
-        AddressServiceRequest.Update serviceRequest = createUpdateAddressRequest(true);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest(true);
 
         given(addressRepository.findByIdAndUser_Id(addressId, requestUserId)).willReturn(Optional.empty());
 
@@ -224,7 +225,7 @@ class AddressServiceTest {
         long userId = 1L;
 
         Address address = createAddress(addressId, false);
-        AddressServiceRequest.Update serviceRequest = createUpdateAddressRequest(true);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest(true);
 
         given(addressRepository.findByIdAndUser_Id(addressId, userId)).willReturn(Optional.of(address));
         given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.empty());
@@ -251,7 +252,7 @@ class AddressServiceTest {
         long newDefaultAddressId = 2L;
         Address newDefaultAddress = createAddress(newDefaultAddressId, false);
         
-        AddressServiceRequest.Update serviceRequest = createUpdateAddressRequest(true);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest(true);
 
         given(addressRepository.findByIdAndUser_Id(newDefaultAddressId, userId)).willReturn(Optional.of(newDefaultAddress));
         given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.of(existingDefaultAddress));

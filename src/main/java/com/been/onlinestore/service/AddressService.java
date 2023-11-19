@@ -25,7 +25,7 @@ public class AddressService {
 
     @Transactional(readOnly = true)
     public List<AddressResponse> findAddresses(Long userId) {
-        return addressRepository.findAllByUser_Id(userId).stream()
+        return addressRepository.findAllByUser_IdOrderByDefaultAddressDesc(userId).stream()
                 .map(AddressResponse::from)
                 .toList();
     }
@@ -37,7 +37,7 @@ public class AddressService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
     }
 
-    public Long addAddress(Long userId, AddressServiceRequest.Create serviceRequest) {
+    public Long addAddress(Long userId, AddressServiceRequest serviceRequest) {
         Optional<Address> originalDefaultAddressOptional = addressRepository.findDefaultAddressByUserId(userId);
         boolean defaultAddress = serviceRequest.defaultAddress();
 
@@ -54,7 +54,7 @@ public class AddressService {
         return addressRepository.save(serviceRequest.toEntity(user, defaultAddress)).getId();
     }
 
-    public Long updateAddress(Long addressId, Long userId, AddressServiceRequest.Update serviceRequest) {
+    public Long updateAddress(Long addressId, Long userId, AddressServiceRequest serviceRequest) {
         Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 
