@@ -11,6 +11,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @TestConfiguration
 public class TestSecurityConfig {
 
+    public static final Long SELLER_ID = 1L;
+    public static final Long USER_ID = 2L;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -21,14 +24,26 @@ public class TestSecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> PrincipalDetails.of(
-                1L,
-                "seller",
+        return username -> {
+            if (username.equals("seller")) {
+                return createPrincipalDetails(SELLER_ID, "seller", RoleType.SELLER);
+            }
+            if (username.equals("user")) {
+                return createPrincipalDetails(USER_ID, "user", RoleType.USER);
+            }
+            return null;
+        };
+    }
+
+    private PrincipalDetails createPrincipalDetails(Long id, String uid, RoleType roleType) {
+        return PrincipalDetails.of(
+                id,
+                uid,
                 "pw",
-                RoleType.SELLER,
-                "seller",
-                "seller@mail.com",
-                "seller",
+                roleType,
+                uid,
+                uid + "@mail.com",
+                uid,
                 "01011112222"
         );
     }

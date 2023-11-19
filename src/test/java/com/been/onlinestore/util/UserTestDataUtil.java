@@ -2,7 +2,10 @@ package com.been.onlinestore.util;
 
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.RoleType;
+import com.been.onlinestore.service.response.UserResponse;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import static java.time.LocalDateTime.now;
 
 public class UserTestDataUtil {
 
@@ -54,5 +57,20 @@ public class UserTestDataUtil {
         );
         ReflectionTestUtils.setField(admin, "id", 1L);
         return admin;
+    }
+
+    public static UserResponse createUserResponse(Long id, String uid) {
+        return UserResponse.of(
+                id,
+                uid,
+                "pw",
+                uid,
+                uid + "@mail.com",
+                uid,
+                "01011112222",
+                RoleType.USER,
+                now(),
+                now()
+        );
     }
 }
