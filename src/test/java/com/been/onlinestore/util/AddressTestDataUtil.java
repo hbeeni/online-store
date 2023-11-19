@@ -1,11 +1,10 @@
 package com.been.onlinestore.util;
 
 import com.been.onlinestore.domain.Address;
-import com.been.onlinestore.dto.AddressDto;
+import com.been.onlinestore.service.request.AddressServiceRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
-import static java.time.LocalDateTime.now;
 
 public class AddressTestDataUtil {
 
@@ -39,15 +38,9 @@ public class AddressTestDataUtil {
         return address;
     }
 
-    public static AddressDto createAddressDto(Long id) {
-        return AddressDto.of(
-                id,
-                null,
-                "detail",
-                "zipcode",
-                false,
-                now(),
-                now()
-        );
+    public static AddressServiceRequest.Update createUpdateAddressRequest(boolean defaultAddress) {
+        String detail = "update detail";
+        String zipcode = "update zipcode";
+        return AddressServiceRequest.Update.of(detail, zipcode, defaultAddress);
     }
 }
