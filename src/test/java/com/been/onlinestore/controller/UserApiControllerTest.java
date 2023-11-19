@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("API 컨트롤러 - 회원 (공통)")
+@DisplayName("API 컨트롤러 - 회원")
 @Import(TestSecurityConfig.class)
 @WebMvcTest(UserApiController.class)
 class UserApiControllerTest {
