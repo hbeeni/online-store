@@ -3,13 +3,15 @@ package com.been.onlinestore.service;
 import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.domain.User;
-import com.been.onlinestore.dto.AddressDto;
 import com.been.onlinestore.repository.AddressRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.AddressServiceRequest;
+import com.been.onlinestore.service.response.AddressResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,68 +24,58 @@ public class AddressService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<AddressDto> findAddresses(Long userId) {
+    public List<AddressResponse> findAddresses(Long userId) {
         return addressRepository.findAllByUser_Id(userId).stream()
-                .map(AddressDto::from)
+                .map(AddressResponse::from)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public AddressDto findAddress(Long addressId, Long userId) {
+    public AddressResponse findAddress(Long addressId, Long userId) {
         return addressRepository.findByIdAndUser_Id(addressId, userId)
-                .map(AddressDto::from)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+                .map(AddressResponse::from)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
     }
 
-    public Long addAddress(Long userId, AddressDto dto) {
-        boolean defaultAddress;
-        if (addressRepository.countByUser_Id(userId) == 0) {
+    public Long addAddress(Long userId, AddressServiceRequest.Create serviceRequest) {
+        Optional<Address> originalDefaultAddressOptional = addressRepository.findDefaultAddressByUserId(userId);
+        boolean defaultAddress = serviceRequest.defaultAddress();
+
+        if (originalDefaultAddressOptional.isEmpty()) {
             defaultAddress = true;
         } else {
-            defaultAddress = dto.defaultAddress();
+            if (defaultAddress) {
+                Address originalDefaultAddress = originalDefaultAddressOptional.get();
+                originalDefaultAddress.updateDefaultAddress(false);
+            }
         }
 
         User user = userRepository.getReferenceById(userId);
-        return addressRepository.save(dto.toEntity(user, defaultAddress)).getId();
+        return addressRepository.save(serviceRequest.toEntity(user, defaultAddress)).getId();
     }
 
-    public Long updateAddressInfo(Long addressId, Long userId, String updateDetail, String updateZipcode) {
-        Address address = addressRepository.getReferenceById(addressId);
-        User user = userRepository.getReferenceById(userId);
+    public Long updateAddress(Long addressId, Long userId, AddressServiceRequest.Update serviceRequest) {
+        Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 
-        String detail = address.getDetail();
-        String zipcode = address.getZipcode();
-
-        if (address.getUser().equals(user)) {
-            if (updateDetail != null) {
-                detail = updateDetail;
-            }
-            if (updateZipcode != null) {
-                zipcode = updateZipcode;
-            }
-            address.updateInfo(detail, zipcode);
-            return addressId;
-        } else {
-            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage());
+        if (serviceRequest.defaultAddress()) {
+            addressRepository.findDefaultAddressByUserId(userId)
+                    .ifPresent(a -> a.updateDefaultAddress(false));
         }
-    }
 
-    public Long setDefaultAddress(Long addressId, Long userId) {
-        Address updateDefaultAddress = addressRepository.getReferenceById(addressId);
-        Optional<Address> originalDefaultAddress = addressRepository.findDefaultAddressByUserId(userId);
-        User user = userRepository.getReferenceById(userId);
-
-        if (updateDefaultAddress.getUser().equals(user)) {
-            originalDefaultAddress.ifPresent(address -> address.updateDefaultAddress(false));
-            updateDefaultAddress.updateDefaultAddress(true);
-            return addressId;
-        } else {
-            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage());
-        }
+        address.updateInfo(serviceRequest.detail(), serviceRequest.zipcode(), serviceRequest.defaultAddress());
+        return addressId;
     }
 
     public Long deleteAddress(Long addressId, Long userId) {
-        addressRepository.deleteByIdAndUser_Id(addressId, userId);
+        Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+
+        if (address.getDefaultAddress()) {
+            throw new IllegalArgumentException(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS.getMessage());
+        }
+
+        addressRepository.deleteById(addressId);
         return addressId;
     }
 }

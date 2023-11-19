@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
-    List<Address> findAllByUser_Id(Long userId);
-    int countByUser_Id(Long userId);
 
+    List<Address> findAllByUser_Id(Long userId);
     Optional<Address> findByIdAndUser_Id(Long addressId, Long userId);
-    void deleteByIdAndUser_Id(Long addressId, Long userId);
 
     @Query("select a from Address a where a.defaultAddress = true and a.user.id = :userId")
     Optional<Address> findDefaultAddressByUserId(@Param("userId") Long userId);
