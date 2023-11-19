@@ -52,9 +52,10 @@ public class Address extends BaseTimeEntity {
         return new Address(user, detail, zipcode, defaultAddress);
     }
 
-    public void updateInfo(String detail, String zipcode) {
+    public void updateInfo(String detail, String zipcode, Boolean defaultAddress) {
         this.detail = detail;
         this.zipcode = zipcode;
+        this.defaultAddress = defaultAddress;
     }
 
     public void updateDefaultAddress(boolean defaultAddress) {
