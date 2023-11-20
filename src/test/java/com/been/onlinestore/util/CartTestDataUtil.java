@@ -2,7 +2,6 @@ package com.been.onlinestore.util;
 
 import com.been.onlinestore.domain.Cart;
 import com.been.onlinestore.domain.CartProduct;
-import com.been.onlinestore.dto.CartProductDto;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.been.onlinestore.util.ProductTestDataUtil.createProduct;
@@ -20,14 +19,5 @@ public class CartTestDataUtil {
         CartProduct cartProduct = CartProduct.of(createCart(cartId, 1L), createProduct(productId), 10);
         ReflectionTestUtils.setField(cartProduct, "id", cartProductId);
         return cartProduct;
-    }
-
-    public static CartProductDto createCartProductDto(Long cartProductId, Long cartId) {
-        return CartProductDto.of(
-                cartProductId,
-                cartId,
-                null,
-                10
-        );
     }
 }
