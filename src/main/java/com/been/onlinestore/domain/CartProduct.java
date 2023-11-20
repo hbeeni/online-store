@@ -1,6 +1,7 @@
 package com.been.onlinestore.domain;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -22,6 +23,7 @@ public class CartProduct {
     private Long id;
 
 
+    @Setter
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     private Cart cart;
@@ -42,6 +44,10 @@ public class CartProduct {
         this.productQuantity = productQuantity;
     }
 
+    public static CartProduct of(Product product, int productQuantity) {
+        return new CartProduct(null, product, productQuantity);
+    }
+
     public static CartProduct of(Cart cart, Product product, int productQuantity) {
         return new CartProduct(cart, product, productQuantity);
     }
@@ -50,6 +56,10 @@ public class CartProduct {
         if (productQuantity > 0) {
             this.productQuantity = productQuantity;
         }
+    }
+
+    public int getTotalPrice() {
+        return product.getPrice() * productQuantity;
     }
 
     @Override
