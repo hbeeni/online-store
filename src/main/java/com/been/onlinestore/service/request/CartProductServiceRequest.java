@@ -11,6 +11,10 @@ public record CartProductServiceRequest() {
             Integer productQuantity
     ) {
 
+        public static Create of(Long productId, Integer productQuantity) {
+            return new Create(productId, productQuantity);
+        }
+
         public CartProduct toEntity(Cart cart, Product product) {
             return CartProduct.of(
                     cart,

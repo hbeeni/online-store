@@ -8,6 +8,4 @@ import java.util.Optional;
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
     Optional<Cart> findFirstByUser_IdOrderByCreatedAtDesc(Long userId);
-
-    void deleteByIdAndUser_Id(Long cartId, Long userId);
 }
