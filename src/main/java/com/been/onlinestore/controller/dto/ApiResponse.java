@@ -32,6 +32,18 @@ public class ApiResponse<T> {
     }
 
     /**
+     * <p>성공 응답 - 성공 응답 상태 코드를 반환합니다.</p>
+     * <pre>
+     * {
+     *     "status": "success",
+     * }
+     * </pre>
+     */
+    public static ApiResponse<Void> success() {
+        return new ApiResponse<>(STATUS_SUCCESS, null, null, null);
+    }
+
+    /**
      * <p>성공 응답 - 성공 응답 상태 코드, 데이터를 반환합니다.</p>
      * <pre>
      * {
