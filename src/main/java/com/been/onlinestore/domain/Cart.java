@@ -3,7 +3,6 @@ package com.been.onlinestore.domain;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,9 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @ToString
@@ -30,8 +29,8 @@ public class Cart extends BaseTimeEntity {
     private User user;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartProduct> cartProducts = new ArrayList<>();
+    @OneToMany(mappedBy = "cart")
+    private Set<CartProduct> cartProducts = new LinkedHashSet<>();
 
     protected Cart() {}
 

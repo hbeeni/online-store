@@ -5,6 +5,7 @@ import com.been.onlinestore.domain.User;
 import com.been.onlinestore.repository.CartRepository;
 import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.service.request.CartProductServiceRequest;
+import com.been.onlinestore.service.response.CartIdAndCartProductIdResponse;
 import com.been.onlinestore.service.response.CartWithCartProductsResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.been.onlinestore.util.CartTestDataUtil.createCart;
 import static com.been.onlinestore.util.CartTestDataUtil.createCartProduct;
@@ -79,18 +80,18 @@ class CartServiceTest {
 
         given(cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId)).willReturn(Optional.empty());
         given(userRepository.getReferenceById(userId)).willReturn(user);
-        given(cartProductService.addCartProduct(any(Cart.class), eq(serviceRequest))).willReturn(createCartProduct(1L, cartId, productId));
         given(cartRepository.save(any(Cart.class))).willReturn(createCart(cartId, userId));
+        given(cartProductService.addCartProduct(any(Cart.class), eq(serviceRequest))).willReturn(createCartProduct(1L, cartId, productId));
 
         //When
-        Map<String, Long> result = sut.addCartProductToCart(userId, serviceRequest);
+        CartIdAndCartProductIdResponse result = sut.addCartProductToCart(userId, serviceRequest);
 
         //Then
         assertThat(result).isNotNull();
         then(cartRepository).should().findFirstByUser_IdOrderByCreatedAtDesc(userId);
         then(userRepository).should().getReferenceById(userId);
-        then(cartProductService).should().addCartProduct(any(Cart.class), eq(serviceRequest));
         then(cartRepository).should().save(any(Cart.class));
+        then(cartProductService).should().addCartProduct(any(Cart.class), eq(serviceRequest));
     }
 
     @DisplayName("장바구니에 상품을 추가할 때, 현재 존재하는 장바구니가 있으면 상품을 추가하고, 장바구니의 id를 반환한다.")
@@ -107,7 +108,7 @@ class CartServiceTest {
         given(cartProductService.addCartProduct(any(Cart.class), eq(serviceRequest))).willReturn(createCartProduct(1L, cartId, productId));
 
         //When
-        Map<String, Long> result = sut.addCartProductToCart(userId, serviceRequest);
+        CartIdAndCartProductIdResponse result = sut.addCartProductToCart(userId, serviceRequest);
 
         //Then
         assertThat(result).isNotNull();
@@ -123,13 +124,18 @@ class CartServiceTest {
         long cartId = 1L;
         long userId = 1L;
 
-        willDoNothing().given(cartRepository).deleteByIdAndUser_Id(cartId, userId);
+        Cart cart = createCart(cartId, userId);
+
+        given(cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId)).willReturn(Optional.of(cart));
+        willDoNothing().given(cartProductService).deleteCartProductsInCart(Set.of());
+        willDoNothing().given(cartRepository).delete(cart);
 
         //When
-        Long result = sut.deleteCart(userId, cartId);
+        sut.deleteCart(userId);
 
         //Then
-        assertThat(result).isNotNull();
-        then(cartRepository).should().deleteByIdAndUser_Id(cartId, userId);
+        then(cartRepository).should().findFirstByUser_IdOrderByCreatedAtDesc(userId);
+        then(cartProductService).should().deleteCartProductsInCart(Set.of());
+        then(cartRepository).should().delete(cart);
     }
 }
