@@ -141,7 +141,7 @@ class AddressServiceTest {
         long newDefaultAddressId = 2L;
         Address newDefaultAddress = createAddress(newDefaultAddressId, true);
 
-        AddressServiceRequest serviceRequest = createAddressServiceRequest("detail", "13232", false);
+        AddressServiceRequest serviceRequest = createAddressServiceRequest("detail", "13232", true);
 
         given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.of(existingDefaultAddress));
         given(userRepository.getReferenceById(userId)).willReturn(createUser("user"));
