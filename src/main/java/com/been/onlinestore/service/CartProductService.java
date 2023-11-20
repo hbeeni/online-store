@@ -4,16 +4,17 @@ import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Cart;
 import com.been.onlinestore.domain.CartProduct;
 import com.been.onlinestore.domain.Product;
-import com.been.onlinestore.dto.CartProductDto;
 import com.been.onlinestore.repository.CartProductRepository;
-import com.been.onlinestore.repository.CartRepository;
 import com.been.onlinestore.repository.ProductRepository;
+import com.been.onlinestore.service.request.CartProductServiceRequest;
+import com.been.onlinestore.service.response.CartProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -21,70 +22,40 @@ import java.util.Map;
 public class CartProductService {
 
     private final CartProductRepository cartProductRepository;
-    private final CartRepository cartRepository;
     private final ProductRepository productRepository;
 
-    @Transactional(readOnly = true)
-    public CartProductDto findCartProduct(Long id) {
-        return cartProductRepository.findById(id)
-                .map(CartProductDto::from)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART_PRODUCT.getMessage()));
+    protected CartProduct addCartProduct(Cart cart, CartProductServiceRequest.Create serviceRequest) {
+        Product product = productRepository.getReferenceById(serviceRequest.productId());
+        Optional<CartProduct> cartProductOptional = cartProductRepository.findByCart_IdAndProduct_Id(cart.getId(), serviceRequest.productId());
+
+        CartProduct cartProduct;
+        if (cartProductOptional.isPresent()) {
+            cartProduct = cartProductOptional.get();
+            cartProduct.updateProductQuantity(serviceRequest.productQuantity());
+        }  else {
+            cartProduct = serviceRequest.toEntity(cart, product);
+        }
+
+        cart.addCartProduct(cartProduct);
+        return cartProduct;
     }
 
-    protected CartProductDto addCartProduct(Cart cart, CartProductDto dto) {
-        Long productId = 1L; //TODO: 임시로 넣은 값, 수정 필요
-        Product product = productRepository.getReferenceById(productId);
-
-        CartProduct cartProduct = cartProductRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)
-                .orElseGet(() -> cartProductRepository.save(dto.toEntity(cart, product)));
-        cartProduct.updateProductQuantity(dto.productQuantity());
-
-        return CartProductDto.from(cartProduct);
-    }
-
-    public CartProductDto updateCartProductQuantity(Long cartProductId, Long cartId, Long userId, int updateProductQuantity) {
-        validateCartBelongsToUser(cartId, userId);
-
-        CartProduct cartProduct = cartProductRepository.findByIdAndCart_Id(cartProductId, cartId)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART_PRODUCT_IN_CART.getMessage()));
-
+    public CartProductResponse updateCartProductQuantity(Long cartProductId, Long cartId, Long userId, int updateProductQuantity) {
+        CartProduct cartProduct = cartProductRepository.findCartProduct(cartProductId, cartId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_CART_PRODUCT.getMessage()));
         cartProduct.updateProductQuantity(updateProductQuantity);
-        return CartProductDto.from(cartProduct);
+        return CartProductResponse.from(cartProduct);
     }
 
-    protected void deleteCartProducts(Long cartId) {
-        cartProductRepository.deleteByCartId(cartId);
+    //TODO: 모든 장바구니 상품을 삭제하면 장바구니도 삭제해야 하는데 어떻게 할건지
+    public IdsMap deleteCartProducts(List<Long> cartProductIds, Long cartId, Long userId) {
+        cartProductRepository.deleteCartProducts(cartProductIds, cartId, userId);
+        return makeCartIdAndCartProductIdsMap(cartId, cartProductIds);
     }
 
-    public Map<String, Long> deleteCartProduct(Long cartProductId, Long cartId, Long userId) {
-        validateCartBelongsToUser(cartId, userId);
-
-        cartProductRepository.deleteByIdAndCart_Id(cartProductId, cartId);
-        if (isCartEmpty(cartId)) {
-            cartRepository.deleteById(cartId);
-        }
-
-        return makeCartIdAndCartProductIdMap(cartId, cartProductId);
+    private IdsMap makeCartIdAndCartProductIdsMap(Long cartId, List<Long> cartProductIds) {
+        return new IdsMap(cartId, cartProductIds);
     }
 
-    private void validateCartBelongsToUser(Long cartId, Long userId) {
-        if (!isCartExistByUserId(cartId, userId)) {
-            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART.getMessage());
-        }
-    }
-
-    private boolean isCartExistByUserId(Long cartId, Long userId) {
-        return cartRepository.existsByIdAndUser_Id(cartId, userId);
-    }
-
-    private boolean isCartEmpty(Long cartId) {
-        return !cartProductRepository.existsByCart_Id(cartId);
-    }
-
-    private Map<String, Long> makeCartIdAndCartProductIdMap(Long cartId, Long cartProductId) {
-        Map<String, Long> map = new HashMap<>();
-        map.put("cartId", cartId);
-        map.put("cartProductId", cartProductId);
-        return map;
-    }
+    public record IdsMap(Long cartId, List<Long> cartProductId) {}
 }

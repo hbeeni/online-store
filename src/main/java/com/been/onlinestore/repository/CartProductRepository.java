@@ -6,18 +6,17 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CartProductRepository extends JpaRepository<CartProduct, Long> {
 
-    boolean existsByCart_Id(Long cartId);
-
-    Optional<CartProduct> findByIdAndCart_Id(Long cartProductId, Long cartId);
     Optional<CartProduct> findByCart_IdAndProduct_Id(Long cartId, Long cartProductId);
 
-    void deleteByIdAndCart_Id(Long cartProductId, Long cartId);
+    @Query("select cp from CartProduct cp join fetch Product p where cp.id = :cartProductId and cp.cart.id = :cartId and cp.cart.user.id = :userId")
+    Optional<CartProduct> findCartProduct(@Param("cartProductId") Long cartProductId, @Param("cartId") Long cartId, @Param("userId") Long userId);
 
-    @Modifying
-    @Query("delete from CartProduct cp where cp.cart.id = :cartId")
-    void deleteByCartId(@Param("cartId") Long cartId);
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete CartProduct cp where cp.id in :cartProductIds and cp.cart.id = :cartId and cp.product.id = :productId")
+    void deleteCartProducts(@Param("cartProductId") List<Long> cartProductIds, @Param("cartId") Long cartId, @Param("productId") Long userId);
 }

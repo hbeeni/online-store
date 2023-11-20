@@ -1,12 +1,12 @@
 package com.been.onlinestore.service;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Cart;
+import com.been.onlinestore.domain.CartProduct;
 import com.been.onlinestore.domain.User;
-import com.been.onlinestore.dto.CartProductDto;
-import com.been.onlinestore.dto.CartWithCartProductsDto;
 import com.been.onlinestore.repository.CartRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.CartProductServiceRequest;
+import com.been.onlinestore.service.response.CartWithCartProductsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,34 +25,35 @@ public class CartService {
     private final CartProductService cartProductService;
 
     @Transactional(readOnly = true)
-    public Optional<CartWithCartProductsDto> findCart(Long userId) {
-        return cartRepository.findByUser_Id(userId)
-                .map(CartWithCartProductsDto::from);
+    public Optional<CartWithCartProductsResponse> findCart(Long userId) {
+        return cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId)
+                .map(CartWithCartProductsResponse::from);
     }
 
-    public Map<String, Long> addCartProductToCart(Long userId, CartProductDto cartProductDto) {
-        Cart cart = getCartByUser(userId);
-        CartProductDto savedCartProductDto = cartProductService.addCartProduct(cart, cartProductDto);
-        return makeCartIdAndCartProductIdMap(cart.getId(), savedCartProductDto.id());
+    public Map<String, Long> addCartProductToCart(Long userId, CartProductServiceRequest.Create serviceRequest) {
+        Cart cart;
+        boolean isCartExist = false;
+
+        Optional<Cart> cartOptional = cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId);
+        if (cartOptional.isPresent()) {
+            cart = cartOptional.get();
+            isCartExist = true;
+        } else {
+            User user = userRepository.getReferenceById(userId);
+            cart = Cart.of(user);
+        }
+
+        CartProduct cartProduct = cartProductService.addCartProduct(cart, serviceRequest);
+        if (!isCartExist) {
+            cartRepository.save(cart);
+        }
+
+        return makeCartIdAndCartProductIdMap(cart.getId(), cartProduct.getId());
     }
 
     public Long deleteCart(Long cartId, Long userId) {
-        if (cartRepository.existsByIdAndUser_Id(cartId, userId)) {
-            cartProductService.deleteCartProducts(cartId);
-            cartRepository.deleteById(cartId);
-            return cartId;
-        } else {
-            throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_CART.getMessage());
-        }
-    }
-
-    private Cart getCartByUser(Long userId) {
-        return cartRepository.findByUser_Id(userId)
-                .orElseGet(() -> {
-                            User user = userRepository.getReferenceById(userId);
-                            return cartRepository.save(Cart.of(user));
-                        }
-                );
+        cartRepository.deleteByIdAndUser_Id(cartId, userId);
+        return cartId;
     }
 
     private Map<String, Long> makeCartIdAndCartProductIdMap(Long cartId, Long cartProductId) {
