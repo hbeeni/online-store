@@ -3,6 +3,7 @@ package com.been.onlinestore.domain;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,7 +30,7 @@ public class Cart extends BaseTimeEntity {
     private User user;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartProduct> cartProducts = new ArrayList<>();
 
     protected Cart() {}
@@ -40,6 +41,17 @@ public class Cart extends BaseTimeEntity {
 
     public static Cart of(User user) {
         return new Cart(user);
+    }
+
+    public void addCartProduct(CartProduct cartProduct) {
+        this.cartProducts.add(cartProduct);
+        cartProduct.setCart(this);
+    }
+
+    public int getTotalPrice() {
+        return cartProducts.stream()
+                .mapToInt(CartProduct::getTotalPrice)
+                .sum();
     }
 
     @Override

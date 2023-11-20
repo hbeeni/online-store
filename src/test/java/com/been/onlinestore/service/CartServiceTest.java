@@ -1,10 +1,11 @@
 package com.been.onlinestore.service;
 
 import com.been.onlinestore.domain.Cart;
-import com.been.onlinestore.dto.CartProductDto;
-import com.been.onlinestore.dto.CartWithCartProductsDto;
+import com.been.onlinestore.domain.User;
 import com.been.onlinestore.repository.CartRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.CartProductServiceRequest;
+import com.been.onlinestore.service.response.CartWithCartProductsResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,10 +17,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.been.onlinestore.util.CartTestDataUtil.createCart;
-import static com.been.onlinestore.util.CartTestDataUtil.createCartProductDto;
+import static com.been.onlinestore.util.CartTestDataUtil.createCartProduct;
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -36,32 +38,32 @@ class CartServiceTest {
 
     @DisplayName("회원의 현재 장바구니가 있을 경우, 장바구니 정보를 반환한다.")
     @Test
-    void test_searchCart() {
+    void test_findCart() {
         //Given
         long userId = 1L;
-        given(cartRepository.findByUser_Id(userId)).willReturn(Optional.of(createCart(1L, userId)));
+        given(cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId)).willReturn(Optional.of(createCart(1L, userId)));
 
         //When
-        Optional<CartWithCartProductsDto> result = sut.findCart(userId);
+        Optional<CartWithCartProductsResponse> result = sut.findCart(userId);
 
         //Then
         assertThat(result).isPresent();
-        then(cartRepository).should().findByUser_Id(userId);
+        then(cartRepository).should().findFirstByUser_IdOrderByCreatedAtDesc(userId);
     }
 
     @DisplayName("회원의 현재 장바구니가 없을 경우, 빈 Optional을 반환한다.")
     @Test
-    void test_searchCart_returnEmptyOptional() {
+    void test_findCart_returnEmptyOptional() {
         //Given
         long userId = 1L;
-        given(cartRepository.findByUser_Id(userId)).willReturn(Optional.empty());
+        given(cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId)).willReturn(Optional.empty());
 
         //When
-        Optional<CartWithCartProductsDto> result = sut.findCart(userId);
+        Optional<CartWithCartProductsResponse> result = sut.findCart(userId);
 
         //Then
         assertThat(result).isEmpty();
-        then(cartRepository).should().findByUser_Id(userId);
+        then(cartRepository).should().findFirstByUser_IdOrderByCreatedAtDesc(userId);
     }
 
     @DisplayName("장바구니에 상품을 추가할 때, 현재 존재하는 장바구니가 없으면 장바구니를 생성 후 상품을 추가하고, 저장된 장바구니의 id를 반환한다.")
@@ -70,25 +72,25 @@ class CartServiceTest {
         //Given
         long cartId = 1L;
         long userId = 1L;
-        long cartProductId = 1L;
+        long productId = 1L;
 
-        Cart cart = createCart(cartId, userId);
-        CartProductDto cartProductDto = createCartProductDto(cartProductId, cartId);
+        User user = createUser(userId);
+        CartProductServiceRequest.Create serviceRequest = new CartProductServiceRequest.Create(productId, 10);
 
-        given(cartRepository.findByUser_Id(userId)).willReturn(Optional.empty());
-        given(userRepository.getReferenceById(userId)).willReturn(createUser(userId));
-        given(cartRepository.save(any())).willReturn(cart);
-        given(cartProductService.addCartProduct(cart, cartProductDto)).willReturn(cartProductDto);
+        given(cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId)).willReturn(Optional.empty());
+        given(userRepository.getReferenceById(userId)).willReturn(user);
+        given(cartProductService.addCartProduct(any(Cart.class), eq(serviceRequest))).willReturn(createCartProduct(1L, cartId, productId));
+        given(cartRepository.save(any(Cart.class))).willReturn(createCart(cartId, userId));
 
         //When
-        Map<String, Long> result = sut.addCartProductToCart(userId, cartProductDto);
+        Map<String, Long> result = sut.addCartProductToCart(userId, serviceRequest);
 
         //Then
         assertThat(result).isNotNull();
-        then(cartRepository).should().findByUser_Id(userId);
+        then(cartRepository).should().findFirstByUser_IdOrderByCreatedAtDesc(userId);
         then(userRepository).should().getReferenceById(userId);
-        then(cartRepository).should().save(any());
-        then(cartProductService).should().addCartProduct(cart, cartProductDto);
+        then(cartProductService).should().addCartProduct(any(Cart.class), eq(serviceRequest));
+        then(cartRepository).should().save(any(Cart.class));
     }
 
     @DisplayName("장바구니에 상품을 추가할 때, 현재 존재하는 장바구니가 있으면 상품을 추가하고, 장바구니의 id를 반환한다.")
@@ -97,21 +99,21 @@ class CartServiceTest {
         //Given
         long cartId = 1L;
         long userId = 1L;
-        long cartProductId = 1L;
+        long productId = 1L;
 
-        Cart cart = createCart(cartId, userId);
-        CartProductDto cartProductDto = createCartProductDto(cartProductId, cartId);
+        CartProductServiceRequest.Create serviceRequest = new CartProductServiceRequest.Create(productId, 10);
 
-        given(cartRepository.findByUser_Id(userId)).willReturn(Optional.of(cart));
-        given(cartProductService.addCartProduct(cart, cartProductDto)).willReturn(cartProductDto);
+        given(cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId)).willReturn(Optional.of(createCart(cartId, userId)));
+        given(cartProductService.addCartProduct(any(Cart.class), eq(serviceRequest))).willReturn(createCartProduct(1L, cartId, productId));
 
         //When
-        Map<String, Long> result = sut.addCartProductToCart(userId, cartProductDto);
+        Map<String, Long> result = sut.addCartProductToCart(userId, serviceRequest);
 
         //Then
         assertThat(result).isNotNull();
-        then(cartRepository).should().findByUser_Id(userId);
-        then(cartProductService).should().addCartProduct(cart, cartProductDto);
+        then(cartRepository).should().findFirstByUser_IdOrderByCreatedAtDesc(userId);
+        then(cartProductService).should().addCartProduct(any(Cart.class), eq(serviceRequest));
+        then(cartRepository).shouldHaveNoMoreInteractions();
     }
 
     @DisplayName("장바구니를 삭제하면, 장바구니 상품을 모두 삭제하고, 삭제된 장바구니의 id를 반환한다.")
@@ -121,17 +123,13 @@ class CartServiceTest {
         long cartId = 1L;
         long userId = 1L;
 
-        given(cartRepository.existsByIdAndUser_Id(cartId, userId)).willReturn(true);
-        willDoNothing().given(cartProductService).deleteCartProducts(cartId);
-        willDoNothing().given(cartRepository).deleteById(cartId);
+        willDoNothing().given(cartRepository).deleteByIdAndUser_Id(cartId, userId);
 
         //When
         Long result = sut.deleteCart(userId, cartId);
 
         //Then
         assertThat(result).isNotNull();
-        then(cartRepository).should().existsByIdAndUser_Id(cartId, userId);
-        then(cartProductService).should().deleteCartProducts(cartId);
-        then(cartRepository).should().deleteById(cartId);
+        then(cartRepository).should().deleteByIdAndUser_Id(cartId, userId);
     }
 }
