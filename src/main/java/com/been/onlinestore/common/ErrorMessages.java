@@ -14,8 +14,6 @@ public enum ErrorMessages {
     NOT_FOUND_CART_PRODUCT_IN_CART("장바구니에 해당 상품이 존재하지 않습니다."),
     NOT_FOUND_ORDER("존재하지 않는 주문입니다."),
 
-    NOT_MATCH_ORDER_PRODUCT_COUNT_TO_QUANTITY_COUNT("입력된 주문 상품의 수와 수량의 수가 맞지 않습니다."),
-    NOT_SALE_PRODUCT("판매하지 않는 상품을 주문하였습니다."),
     NOT_ENOUGH_STOCK("재고가 부족합니다."),
 
     FAIL_TO_UPDATE_CATEGORY("카테고리 수정 실패. 카테고리를 수정하는데 필요한 정보를 찾을 수 없습니다."),
