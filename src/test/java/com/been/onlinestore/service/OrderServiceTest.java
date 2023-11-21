@@ -1,9 +1,10 @@
 package com.been.onlinestore.service;
 
-import com.been.onlinestore.dto.response.OrderResponse;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.OrderServiceRequest;
+import com.been.onlinestore.service.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,12 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import static com.been.onlinestore.util.OrderTestDataUtil.createOrder;
-import static com.been.onlinestore.util.OrderTestDataUtil.createOrderDto;
 import static com.been.onlinestore.util.ProductTestDataUtil.createProduct;
 import static com.been.onlinestore.util.UserTestDataUtil.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +42,7 @@ class OrderServiceTest {
 
     @DisplayName("[일반 회원] 모든 주문 내역을 조회하면, 주문내역 페이지를 반환한다.")
     @Test
-    void test_searchOrders() {
+    void test_findOrdersByOrderer() {
         //Given
         long ordererId = 1L;
         Pageable pageable = PageRequest.of(1, 2);
@@ -56,7 +58,7 @@ class OrderServiceTest {
 
     @DisplayName("[일반 회원] 주문을 조회하면, 주문 상세 정보를 반환한다.")
     @Test
-    void test_searchOrder() {
+    void test_findOrderByOrderer() {
         //Given
         long orderId = 1L;
         long ordererId = 1L;
@@ -72,7 +74,7 @@ class OrderServiceTest {
 
     @DisplayName("[일반 회원] 주문을 조회할 때, 주문을 찾지 못하면 예외를 던진다.")
     @Test
-    void test_searchOrder_throwsIllegalArgumentException() {
+    void test_findOrderByOrderer_throwsEntityNotFoundException() {
         //Given
         long orderId = 1L;
         long ordererId = 1L;
@@ -80,7 +82,7 @@ class OrderServiceTest {
 
         //When & Then
         assertThatThrownBy(() -> sut.findOrderByOrderer(orderId, ordererId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotFoundException.class);
         then(orderRepository).should().findOrderByOrderer(orderId, ordererId);
     }
 
@@ -91,21 +93,20 @@ class OrderServiceTest {
         long orderId = 1L;
         long ordererId = 1L;
         long productId = 1L;
-        int quantity = 3;
-        List<Long> productIds = List.of(productId);
-        List<Integer> quantities = List.of(quantity);
+        Map<Long, Integer> productIdToQuantityMap = Map.of(productId, 10);
+        OrderServiceRequest.Create serviceRequest = new OrderServiceRequest.Create(productIdToQuantityMap, "address", "name", "01011112222");
 
-        given(userRepository.getReferenceById(ordererId)).willReturn(createUser(ordererId));
         given(productRepository.findAllOnSaleById(Set.of(productId))).willReturn(List.of(createProduct(productId)));
+        given(userRepository.getReferenceById(ordererId)).willReturn(createUser(ordererId));
         given(orderRepository.save(any())).willReturn(createOrder(orderId));
 
         //When
-        Long result = sut.order(ordererId, productIds, quantities, createOrderDto(orderId));
+        Long result = sut.order(ordererId, serviceRequest);
 
         //Then
         assertThat(result).isEqualTo(orderId);
-        then(userRepository).should().getReferenceById(ordererId);
         then(productRepository).should().findAllOnSaleById(Set.of(productId));
+        then(userRepository).should().getReferenceById(ordererId);
         then(orderRepository).should().save(any());
     }
 
@@ -127,7 +128,7 @@ class OrderServiceTest {
 
     @DisplayName("[일반 회원] 주문을 취소할 때, 취소할 주문을 찾지 못하면 예외를 던진다.")
     @Test
-    void test_cancelOrder_throwsIllegalArgumentException() {
+    void test_cancelOrder_throwsEntityNotFoundException() {
         //Given
         long orderId = 1L;
         long ordererId = 1L;
@@ -135,13 +136,13 @@ class OrderServiceTest {
 
         //When & Then
         assertThatThrownBy(() -> sut.cancelOrder(orderId, ordererId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotFoundException.class);
         then(orderRepository).should().findByIdAndOrdererId(orderId, ordererId);
     }
 
     @DisplayName("[판매자] 모든 주문 내역을 조회하면, 주문내역 페이지를 반환한다.")
     @Test
-    void test_seller_searchOrders() {
+    void test_findOrdersBySeller() {
         //Given
         long sellerId = 1L;
         Pageable pageable = PageRequest.of(1, 2);
@@ -158,7 +159,7 @@ class OrderServiceTest {
 
     @DisplayName("[판매자] 주문을 조회하면, 주문 정보를 반환한다.")
     @Test
-    void test_seller_searchOrder() {
+    void test_findOrderBySeller() {
         //Given
         long orderId = 1L;
         long sellerId = 1L;
@@ -174,7 +175,7 @@ class OrderServiceTest {
 
     @DisplayName("[판매자] 주문을 조회할 때, 해당 주문이 없으면 예외를 던진다.")
     @Test
-    void test_seller_searchOrder_throwIllegalArgumentException() {
+    void test_findOrderBySeller_throwEntityNotFoundException() {
         //Given
         long orderId = 1L;
         long sellerId = 1L;
@@ -182,7 +183,7 @@ class OrderServiceTest {
 
         //When & Then
         assertThatThrownBy(() -> sut.findOrderBySeller(orderId, sellerId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EntityNotFoundException.class);
         then(orderRepository).should().findOrderBySeller(orderId, sellerId);
     }
 }

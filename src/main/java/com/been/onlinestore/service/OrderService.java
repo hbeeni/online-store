@@ -7,17 +7,18 @@ import com.been.onlinestore.domain.OrderProduct;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.OrderStatus;
-import com.been.onlinestore.dto.OrderDto;
-import com.been.onlinestore.dto.response.OrderResponse;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.OrderServiceRequest;
+import com.been.onlinestore.service.response.OrderResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class OrderService {
     public OrderResponse findOrderByOrderer(Long orderId, Long ordererId) {
         return orderRepository.findOrderByOrderer(orderId, ordererId)
                 .map(OrderResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
     }
 
     @Transactional(readOnly = true)
@@ -55,25 +56,24 @@ public class OrderService {
     public OrderResponse findOrderBySeller(Long orderId, Long sellerId) {
         return orderRepository.findOrderBySeller(orderId, sellerId)
                 .map(OrderResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
     }
 
-    public Long order(Long ordererId, List<Long> productIds, List<Integer> quantities, OrderDto dto) {
-        User orderer = userRepository.getReferenceById(ordererId);
+    public Long order(Long ordererId, OrderServiceRequest.Create serviceRequest) {
+        Map<Long, Integer> productIdToQuantityMap = serviceRequest.productIdToQuantityMap();
 
-        Map<Long, Integer> productIdToQuantityMap = makeProductIdToQuantityMap(productIds, quantities);
         List<Product> products = productRepository.findAllOnSaleById(productIdToQuantityMap.keySet());
-
         if (productIdToQuantityMap.keySet().size() != products.size()) {
-            throw new IllegalArgumentException(ErrorMessages.NOT_SALE_PRODUCT.getMessage());
+            throw new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage());
         }
 
         Map<Product, Integer> productToQuantityMap = convertToProductToQuantityMap(productIdToQuantityMap, products);
         List<OrderProduct> orderProducts = createOrderProducts(productToQuantityMap);
 
+        User orderer = userRepository.getReferenceById(ordererId);
         Order order = Order.of(
                 orderer,
-                DeliveryRequest.of(dto.deliveryRequestDto().deliveryAddress(), dto.deliveryRequestDto().receiverName(), dto.deliveryRequestDto().receiverPhone()),
+                DeliveryRequest.of(serviceRequest.deliveryAddress(), serviceRequest.receiverName(), serviceRequest.receiverPhone()),
                 orderer.getPhone(),
                 OrderStatus.ORDER
         );
@@ -83,18 +83,9 @@ public class OrderService {
 
     public Long cancelOrder(Long orderId, Long ordererId) {
         Order order = orderRepository.findByIdAndOrdererId(orderId, ordererId)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
         order.cancel();
         return order.getId();
-    }
-
-    private Map<Long, Integer> makeProductIdToQuantityMap(List<Long> productIds, List<Integer> quantities) {
-        if (productIds.size() != quantities.size()) {
-            throw new IllegalArgumentException(ErrorMessages.NOT_MATCH_ORDER_PRODUCT_COUNT_TO_QUANTITY_COUNT.getMessage());
-        }
-        return IntStream.range(0, productIds.size())
-                .boxed()
-                .collect(Collectors.toMap(productIds::get, quantities::get, Integer::sum));
     }
 
     private Map<Product, Integer> convertToProductToQuantityMap(Map<Long, Integer> productIdToQuantityMap, List<Product> products) {

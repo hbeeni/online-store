@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.been.onlinestore.util.OrderTestDataUtil.createOrderProduct;
 import static org.mockito.BDDMockito.given;
@@ -29,7 +30,7 @@ class OrderProductServiceTest {
         //Given
         long orderProductId = 1L;
         long sellerId = 1L;
-        List<Long> orderProductIds = List.of(orderProductId);
+        Set<Long> orderProductIds = Set.of(orderProductId);
         given(orderProductRepository.findAllByIdAndSellerId(orderProductIds, sellerId)).willReturn(List.of(createOrderProduct(orderProductId, DeliveryStatus.ACCEPT)));
 
         //When
@@ -45,7 +46,7 @@ class OrderProductServiceTest {
         //Given
         long orderProductId = 1L;
         long sellerId = 1L;
-        List<Long> orderProductIds = List.of(orderProductId);
+        Set<Long> orderProductIds = Set.of(orderProductId);
         given(orderProductRepository.findAllByIdAndSellerId(orderProductIds, sellerId)).willReturn(List.of(createOrderProduct(orderProductId, DeliveryStatus.PREPARING)));
 
         //When
@@ -61,7 +62,7 @@ class OrderProductServiceTest {
         //Given
         long orderProductId = 1L;
         long sellerId = 1L;
-        List<Long> orderProductIds = List.of(orderProductId);
+        Set<Long> orderProductIds = Set.of(orderProductId);
         given(orderProductRepository.findAllByIdAndSellerId(orderProductIds, sellerId)).willReturn(List.of(createOrderProduct(orderProductId, DeliveryStatus.DELIVERING)));
 
         //When
