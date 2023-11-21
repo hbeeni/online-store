@@ -27,7 +27,7 @@ class DeliveryTest {
         assertThatThrownBy(deliveryFinalDelivery::startPreparing).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("배송 상태가 INSTRUCT일 때만 배송을 시작할 수 있다.")
+    @DisplayName("배송 상태가 PREPARING일 때만 배송을 시작할 수 있다.")
     @Test
     void startDelivery() {
         Delivery deliveryAccept = Delivery.of(DeliveryStatus.ACCEPT, 3000, LocalDateTime.now());
