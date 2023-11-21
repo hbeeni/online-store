@@ -81,8 +81,8 @@ public class Order extends BaseTimeEntity {
     }
 
     public void cancel() {
-        this.orderStatus = OrderStatus.CANCEL;
         orderProducts.forEach(OrderProduct::cancel);
+        this.orderStatus = OrderStatus.CANCEL;
     }
 
     @Override
