@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
 
@@ -13,5 +14,5 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Long
             "join fetch op.delivery d " +
             "join fetch op.product p " +
             "where op.id in :orderProductIds and p.seller.id = :sellerId")
-    List<OrderProduct> findAllByIdAndSellerId(@Param("orderProductIds") List<Long> orderProductIds, @Param("sellerId") Long sellerId);
+    List<OrderProduct> findAllByIdAndSellerId(@Param("orderProductIds") Set<Long> orderProductIds, @Param("sellerId") Long sellerId);
 }
