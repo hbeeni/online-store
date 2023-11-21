@@ -31,7 +31,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             countQuery = "select count(p) from Product p where p.saleStatus = 'SALE' and p.name like concat('%', :name, '%')")
     Page<Product> findAllOnSaleByName(@Param("name") String name, Pageable pageable);
 
-    @Query("select p from Product p join fetch p.category where p.saleStatus = 'SALE' and p.id in :ids")
+    @Query("select p from Product p where p.saleStatus = 'SALE' and p.id in :ids")
     List<Product> findAllOnSaleById(@Param("ids") Collection<Long> ids);
 
 
