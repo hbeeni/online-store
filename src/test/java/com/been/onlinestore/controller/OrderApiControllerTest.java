@@ -1,8 +1,10 @@
-package com.been.onlinestore.controller.seller;
+package com.been.onlinestore.controller;
 
 import com.been.onlinestore.config.TestSecurityConfig;
+import com.been.onlinestore.controller.dto.OrderRequest;
 import com.been.onlinestore.service.OrderService;
 import com.been.onlinestore.service.response.OrderResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,31 +21,35 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.been.onlinestore.util.OrderTestDataUtil.createOrderResponse;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("API 컨트롤러 - 주문")
 @Import(TestSecurityConfig.class)
-@WebMvcTest(SellerOrderApiController.class)
-class SellerOrderApiControllerTest {
+@WebMvcTest(OrderApiController.class)
+class OrderApiControllerTest {
 
     @Autowired private MockMvc mvc;
+    @Autowired private ObjectMapper mapper;
 
     @MockBean private OrderService orderService;
 
-    @WithUserDetails("seller")
-    @DisplayName("[API][GET] 주문 리스트 조회 + 페이징")
+    @WithUserDetails
+    @DisplayName("[API][GET] 주문 리스트 조회 + 페이징 - 생성일 내림차순")
     @Test
     void test_getOrderList_withPagination() throws Exception {
         //Given
         long orderId = 1L;
-        long sellerId = TestSecurityConfig.SELLER_ID;
+        long userId = TestSecurityConfig.USER_ID;
         long orderProductId = 1L;
 
         String sortName = "createdAt";
@@ -55,11 +61,11 @@ class SellerOrderApiControllerTest {
         OrderResponse response = createOrderResponse(orderId, "uid", orderProductId);
         Page<OrderResponse> page = new PageImpl<>(List.of(response), pageable, 1);
 
-        given(orderService.findOrdersBySeller(sellerId, pageable)).willReturn(page);
+        given(orderService.findOrdersByOrderer(userId, pageable)).willReturn(page);
 
         //When & Then
         mvc.perform(
-                        get("/api/seller/orders")
+                        get("/api/orders")
                                 .queryParam("page", String.valueOf(pageNumber))
                                 .queryParam("size", String.valueOf(pageSize))
                                 .queryParam("sort", sortName + "," + direction)
@@ -77,23 +83,23 @@ class SellerOrderApiControllerTest {
                 .andExpect(jsonPath("$.page.size").value(page.getSize()))
                 .andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
                 .andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()));
-        then(orderService).should().findOrdersBySeller(sellerId, pageable);
+        then(orderService).should().findOrdersByOrderer(userId, pageable);
     }
 
-    @WithUserDetails("seller")
+    @WithUserDetails
     @DisplayName("[API][GET] 주문 상세 조회")
     @Test
     void test_getOrder() throws Exception {
         //Given
         long orderId = 1L;
-        long sellerId = TestSecurityConfig.SELLER_ID;
+        long userId = TestSecurityConfig.USER_ID;
         long orderProductId = 1L;
 
         OrderResponse response = createOrderResponse(orderId, "uid", orderProductId);
-        given(orderService.findOrderBySeller(orderId, sellerId)).willReturn(response);
+        given(orderService.findOrderByOrderer(orderId, userId)).willReturn(response);
 
         //When & Then
-        mvc.perform(get("/api/seller/orders/" + orderId))
+        mvc.perform(get("/api/orders/" + orderId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
@@ -102,5 +108,51 @@ class SellerOrderApiControllerTest {
                 .andExpect(jsonPath("$.data.deliveryRequest.deliveryAddress").isNotEmpty())
                 .andExpect(jsonPath("$.data.orderProducts").isArray())
                 .andExpect(jsonPath("$.data.orderProducts[0].id").value(orderProductId));
+        then(orderService).should().findOrderByOrderer(orderId, userId);
+    }
+
+    @WithUserDetails
+    @DisplayName("[API][POST] 주문하기")
+    @Test
+    void test_order() throws Exception {
+        //Given
+        long orderId = 1L;
+        long userId = TestSecurityConfig.USER_ID;
+        OrderRequest request = new OrderRequest(Map.of(1L, 10), "address", "name", "01011112222");
+
+        given(orderService.order(userId, request.toServiceRequest())).willReturn(orderId);
+
+        //When & Then
+        mvc.perform(
+                        post("/api/orders")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .characterEncoding("UTF-8")
+                                .content(mapper.writeValueAsString(request))
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.id").value(orderId));
+        then(orderService).should().order(userId, request.toServiceRequest());
+    }
+
+    @WithUserDetails
+    @DisplayName("[API][PUT] 주문 취소")
+    @Test
+    void test_cancelOrder() throws Exception {
+        //Given
+        long orderId = 1L;
+        long userId = TestSecurityConfig.USER_ID;
+
+        given(orderService.cancelOrder(orderId, userId)).willReturn(orderId);
+
+        //When & Then
+        mvc.perform(put("/api/orders/" + orderId + "/cancel"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.id").value(orderId));
+        then(orderService).should().cancelOrder(orderId, userId);
     }
 }

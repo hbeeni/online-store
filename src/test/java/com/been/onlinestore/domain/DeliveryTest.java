@@ -7,55 +7,48 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DeliveryTest {
 
     @DisplayName("배송 상태가 ACCEPT일 때만 상품 준비를 시작할 수 있다.")
     @Test
     void startInstruct() {
-        Delivery deliveryAccept = Delivery.of(DeliveryStatus.ACCEPT, 3000, LocalDateTime.now());
-        Delivery deliveryInstruct = Delivery.of(DeliveryStatus.PREPARING, 3000, LocalDateTime.now());
-        Delivery deliveryDelivering = Delivery.of(DeliveryStatus.DELIVERING, 3000, LocalDateTime.now());
-        Delivery deliveryFinalDelivery = Delivery.of(DeliveryStatus.FINAL_DELIVERY, 3000, LocalDateTime.now());
+        Delivery accept = Delivery.of(DeliveryStatus.ACCEPT, 3000, LocalDateTime.now());
+        Delivery preparing = Delivery.of(DeliveryStatus.PREPARING, 3000, LocalDateTime.now());
+        Delivery delivering = Delivery.of(DeliveryStatus.DELIVERING, 3000, LocalDateTime.now());
+        Delivery finalDelivery = Delivery.of(DeliveryStatus.FINAL_DELIVERY, 3000, LocalDateTime.now());
 
-        deliveryAccept.startPreparing();
-
-        assertThat(deliveryAccept.getDeliveryStatus()).isEqualTo(DeliveryStatus.PREPARING);
-        assertThatThrownBy(deliveryInstruct::startPreparing).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(deliveryDelivering::startPreparing).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(deliveryFinalDelivery::startPreparing).isInstanceOf(IllegalArgumentException.class);
+        assertThat(accept.canStartPreparing()).isTrue();
+        assertThat(preparing.canStartPreparing()).isFalse();
+        assertThat(delivering.canStartPreparing()).isFalse();
+        assertThat(finalDelivery.canStartPreparing()).isFalse();
     }
 
     @DisplayName("배송 상태가 PREPARING일 때만 배송을 시작할 수 있다.")
     @Test
     void startDelivery() {
-        Delivery deliveryAccept = Delivery.of(DeliveryStatus.ACCEPT, 3000, LocalDateTime.now());
-        Delivery deliveryInstruct = Delivery.of(DeliveryStatus.PREPARING, 3000, LocalDateTime.now());
-        Delivery deliveryDelivering = Delivery.of(DeliveryStatus.DELIVERING, 3000, LocalDateTime.now());
-        Delivery deliveryFinalDelivery = Delivery.of(DeliveryStatus.FINAL_DELIVERY, 3000, LocalDateTime.now());
+        Delivery accept = Delivery.of(DeliveryStatus.ACCEPT, 3000, LocalDateTime.now());
+        Delivery preparing = Delivery.of(DeliveryStatus.PREPARING, 3000, LocalDateTime.now());
+        Delivery delivering = Delivery.of(DeliveryStatus.DELIVERING, 3000, LocalDateTime.now());
+        Delivery finalDelivery = Delivery.of(DeliveryStatus.FINAL_DELIVERY, 3000, LocalDateTime.now());
 
-        deliveryInstruct.startDelivery();
-
-        assertThatThrownBy(deliveryAccept::startDelivery).isInstanceOf(IllegalArgumentException.class);
-        assertThat(deliveryInstruct.getDeliveryStatus()).isEqualTo(DeliveryStatus.DELIVERING);
-        assertThatThrownBy(deliveryDelivering::startDelivery).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(deliveryFinalDelivery::startDelivery).isInstanceOf(IllegalArgumentException.class);
+        assertThat(accept.canStartDelivery()).isFalse();
+        assertThat(preparing.canStartDelivery()).isTrue();
+        assertThat(delivering.canStartDelivery()).isFalse();
+        assertThat(finalDelivery.canStartDelivery()).isFalse();
     }
 
     @DisplayName("배송 상태가 DELIVERING일 때만 배송을 완료할 수 있다.")
     @Test
     void completeDelivery() {
-        Delivery deliveryAccept = Delivery.of(DeliveryStatus.ACCEPT, 3000, LocalDateTime.now());
-        Delivery deliveryInstruct = Delivery.of(DeliveryStatus.PREPARING, 3000, LocalDateTime.now());
-        Delivery deliveryDelivering = Delivery.of(DeliveryStatus.DELIVERING, 3000, LocalDateTime.now());
-        Delivery deliveryFinalDelivery = Delivery.of(DeliveryStatus.FINAL_DELIVERY, 3000, LocalDateTime.now());
+        Delivery accept = Delivery.of(DeliveryStatus.ACCEPT, 3000, LocalDateTime.now());
+        Delivery preparing = Delivery.of(DeliveryStatus.PREPARING, 3000, LocalDateTime.now());
+        Delivery delivering = Delivery.of(DeliveryStatus.DELIVERING, 3000, LocalDateTime.now());
+        Delivery finalDelivery = Delivery.of(DeliveryStatus.FINAL_DELIVERY, 3000, LocalDateTime.now());
 
-        deliveryDelivering.completeDelivery();
-
-        assertThatThrownBy(deliveryAccept::completeDelivery).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(deliveryInstruct::completeDelivery).isInstanceOf(IllegalArgumentException.class);
-        assertThat(deliveryDelivering.getDeliveryStatus()).isEqualTo(DeliveryStatus.FINAL_DELIVERY);
-        assertThatThrownBy(deliveryFinalDelivery::completeDelivery).isInstanceOf(IllegalArgumentException.class);
+        assertThat(accept.canCompleteDelivery()).isFalse();
+        assertThat(preparing.canCompleteDelivery()).isFalse();
+        assertThat(delivering.canCompleteDelivery()).isTrue();
+        assertThat(finalDelivery.canCompleteDelivery()).isFalse();
     }
 }

@@ -61,13 +61,9 @@ public class OrderProduct {
      * 자동으로 배송 정보를 생성하고, 상품의 재고를 감소시킨다.
      */
     public static OrderProduct of(Product product, int quantity) {
-        Delivery delivery = Delivery.of(DeliveryStatus.ACCEPT, product.getDeliveryFee(), null);
         product.removeStock(quantity);
-        return OrderProduct.of(null, product, delivery, quantity);
-    }
-
-    public static OrderProduct of(Order order, Product product, Delivery delivery, int quantity) {
-        return new OrderProduct(order, product, delivery, product.getPrice(), quantity);
+        Delivery delivery = Delivery.of(DeliveryStatus.ACCEPT, product.getDeliveryFee(), null);
+        return new OrderProduct(null, product, delivery, product.getPrice(), quantity);
     }
 
     public int getTotalPrice() {
@@ -81,16 +77,16 @@ public class OrderProduct {
         product.addStock(this.quantity);
     }
 
-    public void startPreparing() {
-        this.getDelivery().startPreparing();
+    public boolean canStartPreparing() {
+        return this.getDelivery().canStartPreparing();
     }
 
-    public void startDelivery() {
-        this.getDelivery().startDelivery();
+    public boolean canStartDelivery() {
+        return this.getDelivery().canStartDelivery();
     }
 
-    public void completeDelivery() {
-        this.getDelivery().completeDelivery();
+    public boolean canCompleteDelivery() {
+        return this.getDelivery().canCompleteDelivery();
     }
 
     @Override
