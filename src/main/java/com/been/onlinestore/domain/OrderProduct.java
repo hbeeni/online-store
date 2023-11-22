@@ -77,16 +77,16 @@ public class OrderProduct {
         product.addStock(this.quantity);
     }
 
-    public void startPreparing() {
-        this.getDelivery().startPreparing();
+    public boolean canStartPreparing() {
+        return this.getDelivery().canStartPreparing();
     }
 
-    public void startDelivery() {
-        this.getDelivery().startDelivery();
+    public boolean canStartDelivery() {
+        return this.getDelivery().canStartDelivery();
     }
 
-    public void completeDelivery() {
-        this.getDelivery().completeDelivery();
+    public boolean canCompleteDelivery() {
+        return this.getDelivery().canCompleteDelivery();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.been.onlinestore.domain;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,8 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import static java.time.LocalDateTime.now;
 
 @Getter
 @ToString(callSuper = true)
@@ -52,26 +49,16 @@ public class Delivery {
         return new Delivery(deliveryStatus, deliveryFee, deliveredAt);
     }
 
-    public void startPreparing() {
-        if (this.deliveryStatus != DeliveryStatus.ACCEPT) {
-            throw new IllegalArgumentException(ErrorMessages.CANNOT_PREPARING.getMessage());
-        }
-        this.deliveryStatus = DeliveryStatus.PREPARING;
+    public boolean canStartPreparing() {
+        return this.deliveryStatus == DeliveryStatus.ACCEPT;
     }
 
-    public void startDelivery() {
-        if (this.deliveryStatus != DeliveryStatus.PREPARING) {
-            throw new IllegalArgumentException(ErrorMessages.CANNOT_DELIVERING.getMessage());
-        }
-        this.deliveryStatus = DeliveryStatus.DELIVERING;
+    public boolean canStartDelivery() {
+        return this.deliveryStatus == DeliveryStatus.PREPARING;
     }
 
-    public void completeDelivery() {
-        if (this.deliveryStatus != DeliveryStatus.DELIVERING) {
-            throw new IllegalArgumentException(ErrorMessages.CANNOT_FINAL_DELIVERY.getMessage());
-        }
-        this.deliveryStatus = DeliveryStatus.FINAL_DELIVERY;
-        this.deliveredAt = now();
+    public boolean canCompleteDelivery() {
+        return this.deliveryStatus == DeliveryStatus.DELIVERING;
     }
 
     @Override
