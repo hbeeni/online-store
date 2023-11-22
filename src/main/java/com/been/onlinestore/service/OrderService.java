@@ -59,7 +59,7 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
     }
 
-    public Long order(Long ordererId, OrderServiceRequest.Create serviceRequest) {
+    public Long order(Long ordererId, OrderServiceRequest serviceRequest) {
         Map<Long, Integer> productIdToQuantityMap = serviceRequest.productIdToQuantityMap();
 
         List<Product> products = productRepository.findAllOnSaleById(productIdToQuantityMap.keySet());

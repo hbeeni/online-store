@@ -94,7 +94,7 @@ class OrderServiceTest {
         long ordererId = 1L;
         long productId = 1L;
         Map<Long, Integer> productIdToQuantityMap = Map.of(productId, 10);
-        OrderServiceRequest.Create serviceRequest = new OrderServiceRequest.Create(productIdToQuantityMap, "address", "name", "01011112222");
+        OrderServiceRequest serviceRequest = new OrderServiceRequest(productIdToQuantityMap, "address", "name", "01011112222");
 
         given(productRepository.findAllOnSaleById(Set.of(productId))).willReturn(List.of(createProduct(productId)));
         given(userRepository.getReferenceById(ordererId)).willReturn(createUser(ordererId));
