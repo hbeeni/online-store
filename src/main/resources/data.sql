@@ -1,8 +1,10 @@
 -- 회원: 비밀번호 test12
 insert into users (created_at, modified_at, email, name, nickname, password, phone, role_type, uid)
-values (now(), now(), 'user@mail.com', 'user', 'test user', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'USER','user'),
-       (now(), now(), 'seller@mail.com', 'seller', 'test seller', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'SELLER', 'seller'),
-       (now(), now(), 'admin@mail.com', 'admin', 'test admin', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'ADMIN', 'admin');
+values (now(), now(), 'user1@mail.com', 'user1', 'test user1', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'USER','user1'),
+       (now(), now(), 'seller1@mail.com', 'seller1', 'test seller1', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'SELLER', 'seller1'),
+       (now(), now(), 'admin@mail.com', 'admin', 'test admin', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'ADMIN', 'admin'),
+       (now(), now(), 'user2@mail.com', 'user2', 'test user2', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'USER','user2'),
+       (now(), now(), 'seller2@mail.com', 'seller2', 'test seller2', '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'SELLER', 'seller2');
 
 -- 카테고리
 insert into category (created_at, modified_at, created_by, modified_by, description, name)
@@ -19,10 +21,10 @@ values (now(), now(), 'admin', 'admin', '패션의류', '패션의류'),
 
 -- 상품
 insert into product (created_at, modified_at, created_by, modified_by, delivery_fee, description, image_url, name, price, sale_status, sales_volume, stock_quantity, category_id, seller_id)
-values (now(), now(), 'seller', 'seller', 3000, '꽃무늬 바지', null, '꽃무늬 바지', 12000, 'SALE', 10, 100, 1, 2),
+values (now(), now(), 'seller', 'seller', 3000, '꽃무늬 바지', null, '꽃무늬 바지', 12000, 'SALE', 10, 100, 1, 5),
        (now(), now(), 'seller', 'seller', 3000, '꽃무늬 셔츠', null, '꽃무늬 셔츠', 15500, 'SALE', 20, 121, 1, 2),
        (now(), now(), 'seller', 'seller', 0, '프렌치 코트', null, '프렌치 코트', 53000, 'WAIT', 0, 55, 1, 2),
-       (now(), now(), 'seller', 'seller', 3000, '아보카도', null, '아보카도', 2300, 'SALE', 120, 20, 3, 2),
+       (now(), now(), 'seller', 'seller', 3000, '아보카도', null, '아보카도', 2300, 'SALE', 120, 20, 3, 5),
        (now(), now(), 'seller', 'seller', 3000, '요거트', null, '요거트', 3500, 'SALE', 22, 56, 3, 2);
 
 -- 배송 요청
@@ -37,23 +39,23 @@ values ('주소 1', '수령인 1', '01011111111'),
 -- 주문
 insert into orders (created_at, modified_at, order_status, orderer_phone, delivery_request_id, orderer_id)
 values (now(), now(), 'ORDER', '01012341234', 1, 1),
-       (now(), now(), 'ORDER', '01012341234', 2, 2),
-       (now(), now(), 'ORDER', '01012341234', 3, 1),
+       (now(), now(), 'ORDER', '01012341234', 2, 4),
+       (now(), now(), 'ORDER', '01012341234', 3, 4),
        (now(), now(), 'ORDER', '01012341234', 4, 1),
        (now(), now(), 'ORDER', '01012341234', 5, 1),
-       (now(), now(), 'ORDER', '01012341234', 6, 2);
+       (now(), now(), 'ORDER', '01012341234', 6, 4);
 
 -- 배송
 insert into delivery (delivered_at, delivery_fee, delivery_status)
-values (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT'),
-       (now(), 3000, 'ACCEPT');
+values (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT'),
+       (NULL, 3000, 'ACCEPT');
 
 -- 주문 상품
 insert into order_product (price, quantity, delivery_id, order_id, product_id)
@@ -62,7 +64,7 @@ values (12000, 10, 1, 1, 1),
        (53000, 30, 3, 1, 3),
        (12000, 10, 4, 2, 1),
        (15500, 20, 5, 2, 2),
-       (15500, 20, 6, 3, 2),
+       (15500, 20, 6, 3, 4),
        (15500, 20, 7, 4, 2),
-       (15500, 20, 8, 5, 2),
-       (15500, 20, 9, 6, 2);
+       (15500, 20, 8, 5, 5),
+       (15500, 20, 9, 6, 4);
