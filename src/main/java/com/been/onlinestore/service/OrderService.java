@@ -84,7 +84,9 @@ public class OrderService {
     public Long cancelOrder(Long orderId, Long ordererId) {
         Order order = orderRepository.findByIdAndOrdererId(orderId, ordererId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
-        order.cancel();
+        if (order.getOrderStatus() == OrderStatus.ORDER) {
+            order.cancel();
+        }
         return order.getId();
     }
 
