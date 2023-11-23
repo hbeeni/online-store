@@ -7,12 +7,13 @@ import com.been.onlinestore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -22,14 +23,10 @@ public class UserApiController {
     private final UserService userService;
 
     @PutMapping("/info")
-    public ResponseEntity<ApiResponse<?>> updateUserInfo(
+    public ResponseEntity<ApiResponse<Map<String, Long>>> updateUserInfo(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated UserRequest.Update request,
-            BindingResult bindingResult
+            @RequestBody @Validated UserRequest.Update request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
         return ResponseEntity.ok(ApiResponse.successId(userService.updateInfo(principalDetails.id(), request.nickname(), request.phone())));
     }
 }

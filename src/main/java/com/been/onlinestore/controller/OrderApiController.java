@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,15 +44,10 @@ public class OrderApiController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> order(
+    public ResponseEntity<ApiResponse<Map<String, Long>>> order(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated OrderRequest request,
-            BindingResult bindingResult
+            @RequestBody @Validated OrderRequest request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
-
         return ResponseEntity.ok(ApiResponse.successId(orderService.order(principalDetails.id(), request.toServiceRequest())));
     }
 

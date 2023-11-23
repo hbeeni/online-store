@@ -8,7 +8,6 @@ import com.been.onlinestore.service.response.AddressResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,27 +39,19 @@ public class AddressApiController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> addAddress(
+    public ResponseEntity<ApiResponse<Map<String, Long>>> addAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated AddressRequest request,
-            BindingResult bindingResult
+            @RequestBody @Validated AddressRequest request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
         return ResponseEntity.ok(ApiResponse.successId(addressService.addAddress(principalDetails.id(), request.toServiceRequest())));
     }
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<ApiResponse<?>> updateAddress(
+    public ResponseEntity<ApiResponse<Map<String, Long>>> updateAddress(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long addressId,
-            @RequestBody @Validated AddressRequest request,
-            BindingResult bindingResult
+            @RequestBody @Validated AddressRequest request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
         return ResponseEntity.ok(ApiResponse.successId(addressService.updateAddress(addressId, principalDetails.id(), request.toServiceRequest())));
     }
 

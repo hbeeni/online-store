@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/seller/products")
@@ -35,7 +35,7 @@ public class SellerProductApiController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<AdminProductResponse>>> getProducts(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @ModelAttribute ProductSearchCondition cond,
+            @ModelAttribute @Validated ProductSearchCondition cond,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsForSeller(principalDetails.id(), cond, pageable)));
@@ -47,27 +47,19 @@ public class SellerProductApiController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> addProduct(
+    public ResponseEntity<ApiResponse<Map<String, Long>>> addProduct(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated ProductRequest.Create request,
-            BindingResult bindingResult
+            @RequestBody @Validated ProductRequest.Create request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
         return ResponseEntity.ok(ApiResponse.successId(productService.addProduct(principalDetails.id(), request.toServiceRequest())));
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<ApiResponse<?>> updateProduct(
+    public ResponseEntity<ApiResponse<Map<String, Long>>> updateProduct(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long productId,
-            @RequestBody @Validated ProductRequest.Update request,
-            BindingResult bindingResult
+            @RequestBody @Validated ProductRequest.Update request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
         return ResponseEntity.ok(ApiResponse.successId(productService.updateProductInfo(productId, principalDetails.id(), request.toServiceRequest())));
     }
 }
