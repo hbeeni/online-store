@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -81,7 +80,7 @@ public class CartApiController {
     @DeleteMapping("/products")
     public ResponseEntity<ApiResponse<Void>> deleteCartProducts(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestParam @Validated @NotEmpty Set<Long> ids //TODO: 내부의 Long 검증 어떻게 할지 생각해야 함
+            @RequestParam Set<Long> ids
     ) {
         cartProductService.deleteCartProducts(ids, principalDetails.id());
         return ResponseEntity.ok(ApiResponse.success());
