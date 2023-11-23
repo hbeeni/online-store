@@ -6,6 +6,8 @@ import lombok.Builder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 public record ProductRequest() {
@@ -23,24 +25,24 @@ public record ProductRequest() {
      */
     @Builder
     public record Create(
-            @NotNull
+            @NotNull @Positive
             Long categoryId,
 
             @NotBlank @Size(max = 100)
             String name,
 
-            @NotNull
+            @NotNull @PositiveOrZero
             Integer price,
 
             @Size(max = 255)
             String description,
 
-            @NotNull
+            @NotNull @PositiveOrZero
             Integer stockQuantity,
 
             SaleStatus saleStatus,
 
-            @NotNull
+            @NotNull @PositiveOrZero
             Integer deliveryFee,
 
             @Size(max = 200)
@@ -74,25 +76,25 @@ public record ProductRequest() {
      */
     @Builder
     public record Update(
-            @NotNull
+            @NotNull @Positive
             Long categoryId,
 
             @NotBlank @Size(max = 100)
             String name,
 
-            @NotNull
+            @NotNull @PositiveOrZero
             Integer price,
 
             @Size(max = 255)
             String description,
 
-            @NotNull
+            @NotNull @PositiveOrZero
             Integer stockQuantity,
 
             @NotNull
             SaleStatus saleStatus,
 
-            @NotNull
+            @NotNull @PositiveOrZero
             Integer deliveryFee,
 
             @Size(max = 200)

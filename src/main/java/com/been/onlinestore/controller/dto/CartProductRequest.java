@@ -3,17 +3,18 @@ package com.been.onlinestore.controller.dto;
 import com.been.onlinestore.service.request.CartProductServiceRequest;
 import lombok.Builder;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 public record CartProductRequest() {
 
     @Builder
     public record Create(
-            @NotNull @Min(1)
+            @NotNull @Positive
             Long productId,
 
-            @NotNull @Min(1)
+            @NotNull @PositiveOrZero
             Integer productQuantity
     ) {
 
@@ -27,7 +28,7 @@ public record CartProductRequest() {
 
     @Builder
     public record Update(
-            @NotNull @Min(1)
+            @NotNull @PositiveOrZero
             Integer productQuantity
     ) {}
 }
