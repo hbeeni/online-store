@@ -11,21 +11,15 @@ public enum ErrorMessages {
     NOT_FOUND_ADDRESS("존재하지 않는 주소입니다."),
     NOT_FOUND_CART("존재하지 않는 장바구니입니다."),
     NOT_FOUND_CART_PRODUCT("존재하지 않는 장바구니 상품입니다."),
-    NOT_FOUND_CART_PRODUCT_IN_CART("장바구니에 해당 상품이 존재하지 않습니다."),
     NOT_FOUND_ORDER("존재하지 않는 주문입니다."),
 
     NOT_ENOUGH_STOCK("재고가 부족합니다."),
 
     FAIL_TO_UPDATE_CATEGORY("카테고리 수정 실패. 카테고리를 수정하는데 필요한 정보를 찾을 수 없습니다."),
     FAIL_TO_UPDATE_PRODUCT("상품 수정 실패. 상품을 수정하는데 필요한 정보를 찾을 수 없습니다."),
-
     FAIL_TO_DELETE_DEFAULT_ADDRESS("다른 배송지를 기본 배송지로 변경해야 삭제할 수 있습니다."),
 
-    CANNOT_PREPARING("상품을 준비할 수 없습니다. 결제 완료 단계에서만 상품 준비중 단계로 넘어갈 수 있습니다."),
-    CANNOT_DELIVERING("배송을 시작할 수 없습니다. 상품 준비 중 단계에서만 배송 중 단계로 넘어갈 수 있습니다."),
-    CANNOT_FINAL_DELIVERY("배송을 완료할 수 없습니다. 배송 중 단계에서만 배송 완료 단계로 넘어갈 수 있습니다."),
     CANNOT_CANCEL_ORDER_PRODUCT("결제 완료 상태인 상품만 취소할 수 있습니다.");
-
 
     private final String message;
 

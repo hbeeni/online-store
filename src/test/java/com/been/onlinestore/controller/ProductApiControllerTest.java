@@ -97,7 +97,7 @@ class ProductApiControllerTest {
                             .queryParam("page", String.valueOf(pageNumber))
                             .queryParam("size", String.valueOf(pageSize))
                             .queryParam("sort", sortName + ",desc")
-                            .queryParam("name", productName)
+                            .queryParam("searchName", productName)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

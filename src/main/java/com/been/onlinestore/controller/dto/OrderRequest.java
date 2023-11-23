@@ -5,12 +5,13 @@ import com.been.onlinestore.service.request.OrderServiceRequest;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.Map;
 
 public record OrderRequest(
         @NotNull
-        Map<Long, Integer> productIdToQuantity,
+        Map<@Positive Long, @Positive Integer> productIdToQuantity,
 
         @NotEmpty @Size(max = 50)
         String deliveryAddress,

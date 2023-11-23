@@ -38,20 +38,19 @@ public class AddressService {
     }
 
     public Long addAddress(Long userId, AddressServiceRequest serviceRequest) {
-        Optional<Address> originalDefaultAddressOptional = addressRepository.findDefaultAddressByUserId(userId);
-        boolean defaultAddress = serviceRequest.defaultAddress();
+        Optional<Address> originalDefaultAddress = addressRepository.findDefaultAddressByUserId(userId);
+        boolean defaultAddressRequest = serviceRequest.defaultAddress();
 
-        if (originalDefaultAddressOptional.isEmpty()) {
-            defaultAddress = true;
-        } else {
-            if (defaultAddress) {
-                Address originalDefaultAddress = originalDefaultAddressOptional.get();
-                originalDefaultAddress.updateDefaultAddress(false);
+        if (originalDefaultAddress.isPresent()) {
+            if (defaultAddressRequest) {
+                originalDefaultAddress.get().updateDefaultAddress(false);
             }
+        } else {
+            defaultAddressRequest = true;
         }
 
         User user = userRepository.getReferenceById(userId);
-        return addressRepository.save(serviceRequest.toEntity(user, defaultAddress)).getId();
+        return addressRepository.save(serviceRequest.toEntity(user, defaultAddressRequest)).getId();
     }
 
     public Long updateAddress(Long addressId, Long userId, AddressServiceRequest serviceRequest) {
@@ -60,7 +59,7 @@ public class AddressService {
 
         if (serviceRequest.defaultAddress()) {
             addressRepository.findDefaultAddressByUserId(userId)
-                    .ifPresent(a -> a.updateDefaultAddress(false));
+                    .ifPresent(originalDefaultAddress -> originalDefaultAddress.updateDefaultAddress(false));
         }
 
         address.updateInfo(serviceRequest.detail(), serviceRequest.zipcode(), serviceRequest.defaultAddress());

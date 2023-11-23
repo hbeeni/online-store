@@ -46,12 +46,12 @@ public class CartService {
         Optional<Cart> cartOptional = cartRepository.findFirstByUser_IdOrderByCreatedAtDesc(userId);
         if (cartOptional.isPresent()) {
             Cart cart = cartOptional.get();
-            cartProductService.deleteCartProductsInCart(getCartProductsSet(cart));
+            cartProductService.deleteCartProductsInCart(getCartProductIds(cart));
             cartRepository.delete(cart);
         }
     }
 
-    private Set<Long> getCartProductsSet(Cart cart) {
+    private Set<Long> getCartProductIds(Cart cart) {
         return cart.getCartProducts().stream()
                 .map(CartProduct::getId)
                 .collect(Collectors.toSet());

@@ -19,10 +19,10 @@ public class ApiResponse<T> {
     private static final String STATUS_FAIL = "fail";
     private static final String STATUS_ERROR = "error";
 
-    private String status;
-    private T data;
-    private PageInfo page;
-    private String message;
+    private final String status;
+    private final T data;
+    private final PageInfo page;
+    private final String message;
 
     private ApiResponse(String status, T data, PageInfo page, String message) {
         this.status = status;

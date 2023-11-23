@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -25,7 +24,7 @@ public class SellerOrderProductApiController {
     @PutMapping("/deliveries/prepare")
     public ResponseEntity<ApiResponse<DeliveryStatusChangeResponse>> prepareProducts(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestParam @NotNull Set<Long> orderProductIds
+            @RequestParam Set<Long> orderProductIds
     ) {
         return ResponseEntity.ok(ApiResponse.success(orderProductService.startPreparing(orderProductIds, principalDetails.id())));
     }
@@ -33,7 +32,7 @@ public class SellerOrderProductApiController {
     @PutMapping("/deliveries/start")
     public ResponseEntity<ApiResponse<DeliveryStatusChangeResponse>> startDelivery(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestParam @NotNull Set<Long> orderProductIds
+            @RequestParam Set<Long> orderProductIds
     ) {
         return ResponseEntity.ok(ApiResponse.success(orderProductService.startDelivery(orderProductIds, principalDetails.id())));
     }
@@ -41,7 +40,7 @@ public class SellerOrderProductApiController {
     @PutMapping("/deliveries/complete")
     public ResponseEntity<ApiResponse<DeliveryStatusChangeResponse>> completeDelivery(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestParam @NotNull Set<Long> orderProductIds
+            @RequestParam Set<Long> orderProductIds
     ) {
         return ResponseEntity.ok(ApiResponse.success(orderProductService.completeDelivery(orderProductIds, principalDetails.id())));
     }
