@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class CategoryService {
     public AdminCategoryResponse findCategory(Long categoryId) {
         return categoryRepository.findById(categoryId)
                 .map(AdminCategoryResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_CATEGORY.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_CATEGORY.getMessage()));
     }
 
     public Long addCategory(CategoryServiceRequest.Create serviceRequest) {
