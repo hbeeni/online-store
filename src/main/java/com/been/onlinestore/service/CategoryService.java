@@ -55,17 +55,8 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.FAIL_TO_UPDATE_CATEGORY.getMessage()));
 
-        String name = category.getName();
-        String description = category.getDescription();
-
-        if (StringUtils.hasText(serviceRequest.name())) {
-            name = serviceRequest.name();
-        }
-        if (StringUtils.hasText(serviceRequest.description())) {
-            description = serviceRequest.description();
-        }
-
-        category.updateCategory(name, description);
+        String description = StringUtils.hasText(serviceRequest.description()) ? serviceRequest.description() : category.getDescription();
+        category.updateCategory(serviceRequest.name(), description);
         return category.getId();
     }
 

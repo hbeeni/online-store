@@ -27,7 +27,7 @@ public record CategoryRequest() {
 
     @Builder
     public record Update(
-            @Size(max = 20)
+            @NotBlank @Size(max = 20)
             String name,
 
             @Size(max = 100)
