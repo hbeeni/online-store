@@ -23,10 +23,10 @@ public class UserService {
 
     public Long signUp(UserServiceRequest.SignUp serviceRequest, String encodedPassword) {
         if (userRepository.existsByUid(serviceRequest.uid())) {
-            throw new IllegalStateException(ErrorMessages.DUPLICATE_ID.getMessage());
+            throw new IllegalArgumentException(ErrorMessages.DUPLICATE_ID.getMessage());
         }
         if (userRepository.existsByEmail(serviceRequest.email())) {
-            throw new IllegalStateException(ErrorMessages.ALREADY_SIGNED_UP_USER.getMessage());
+            throw new IllegalArgumentException(ErrorMessages.ALREADY_SIGNED_UP_USER.getMessage());
         }
         return userRepository.save(serviceRequest.toEntity(encodedPassword)).getId();
     }
