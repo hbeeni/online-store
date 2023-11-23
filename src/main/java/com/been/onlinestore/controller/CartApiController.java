@@ -5,11 +5,12 @@ import com.been.onlinestore.controller.dto.CartProductRequest;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.service.CartProductService;
 import com.been.onlinestore.service.CartService;
+import com.been.onlinestore.service.response.CartIdAndCartProductIdResponse;
+import com.been.onlinestore.service.response.CartProductResponse;
 import com.been.onlinestore.service.response.CartWithCartProductsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,29 +44,19 @@ public class CartApiController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> addProductToCart(
+    public ResponseEntity<ApiResponse<CartIdAndCartProductIdResponse>> addProductToCart(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated CartProductRequest.Create request,
-            BindingResult bindingResult
+            @RequestBody @Validated CartProductRequest.Create request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
-
         return ResponseEntity.ok(ApiResponse.success(cartService.addCartProductToCart(principalDetails.id(), request.toServiceRequest())));
     }
 
     @PutMapping("/products/{cartProductId}")
-    public ResponseEntity<ApiResponse<?>> updateProductInCart(
+    public ResponseEntity<ApiResponse<CartProductResponse>> updateProductInCart(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long cartProductId,
-            @RequestBody @Validated CartProductRequest.Update request,
-            BindingResult bindingResult
+            @RequestBody @Validated CartProductRequest.Update request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
-
         return ResponseEntity.ok(ApiResponse.success(
                 cartProductService.updateCartProductQuantity(cartProductId, principalDetails.id(), request.productQuantity()))
         );

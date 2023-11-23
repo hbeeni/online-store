@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ public class AdminProductApiController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AdminProductResponse>>> getProducts(
-            @ModelAttribute ProductSearchCondition cond,
+            @ModelAttribute @Validated ProductSearchCondition cond,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsForAdmin(cond, pageable)));

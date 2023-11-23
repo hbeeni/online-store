@@ -4,6 +4,7 @@ import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.service.CategoryService;
 import com.been.onlinestore.service.ProductService;
 import com.been.onlinestore.service.response.CategoryResponse;
+import com.been.onlinestore.service.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +31,7 @@ public class CategoryApiController {
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<?> getAllProductsInCategory(@PathVariable Long categoryId, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProductsInCategory(@PathVariable Long categoryId, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsInCategoryForUser(categoryId, pageable)));
     }
 }

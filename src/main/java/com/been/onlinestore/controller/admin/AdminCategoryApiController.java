@@ -6,7 +6,6 @@ import com.been.onlinestore.service.CategoryService;
 import com.been.onlinestore.service.response.admin.AdminCategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,22 +37,15 @@ public class AdminCategoryApiController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> addCategory(@RequestBody @Validated CategoryRequest.Create request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
+    public ResponseEntity<ApiResponse<Map<String, Long>>> addCategory(@RequestBody @Validated CategoryRequest.Create request) {
         return ResponseEntity.ok(ApiResponse.successId(categoryService.addCategory(request.toServiceRequest())));
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse<?>> updateCategory(
+    public ResponseEntity<ApiResponse<Map<String, Long>>> updateCategory(
             @PathVariable Long categoryId,
-            @RequestBody @Validated CategoryRequest.Update request,
-            BindingResult bindingResult
+            @RequestBody @Validated CategoryRequest.Update request
     ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(ApiResponse.fail(bindingResult));
-        }
         return ResponseEntity.ok(ApiResponse.successId(categoryService.updateCategory(categoryId, request.toServiceRequest())));
     }
 
