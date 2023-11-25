@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/java,gradle,intellij+all,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,gradle,intellij+all,windows
 
+### Swagger
+/src/main/resources/static/docs/
+
 ### Querydsl
 /src/main/generated
 

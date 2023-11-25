@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class TestSecurityConfig {
 
     public static final Long SELLER_ID = 1L;
-    public static final Long USER_ID = 2L;
+    public static final Long USER_ID = 1L;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

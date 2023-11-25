@@ -21,7 +21,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-public class AuthController {
+public class AuthApiController {
 
     private final UserService userService;
 
