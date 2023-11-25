@@ -16,13 +16,11 @@ public class ApiResponse<T> {
     private final String status;
     private final T data;
     private final PageInfo page;
-    private final String message;
 
-    private ApiResponse(T data, PageInfo page, String message) {
+    private ApiResponse(T data, PageInfo page) {
         this.status = "success";
         this.data = data;
         this.page = page;
-        this.message = message;
     }
 
     /**
@@ -34,7 +32,7 @@ public class ApiResponse<T> {
      * </pre>
      */
     public static ApiResponse<Void> success() {
-        return new ApiResponse<>(null, null, null);
+        return new ApiResponse<>(null, null);
     }
 
     /**
@@ -47,7 +45,7 @@ public class ApiResponse<T> {
      * </pre>
      */
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(data, null, null);
+        return new ApiResponse<>(data, null);
     }
 
     /**
@@ -62,7 +60,7 @@ public class ApiResponse<T> {
      * </pre>
      */
     public static ApiResponse<Map<String, Long>> successId(Long id) {
-        return new ApiResponse<>(Map.of("id", id), null, null);
+        return new ApiResponse<>(Map.of("id", id), null);
     }
 
     /**
@@ -83,8 +81,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<List<T>> pagination(Page<T> page) {
         return new ApiResponse<>(
                 page.getContent(),
-                PageInfo.of(page.getNumber(), page.getSize(), page.getTotalPages(), page.getTotalElements()),
-                null
+                PageInfo.of(page.getNumber(), page.getSize(), page.getTotalPages(), page.getTotalElements())
         );
     }
 
