@@ -1,24 +1,35 @@
 package com.been.onlinestore.controller.seller;
 
 import com.been.onlinestore.config.TestSecurityConfig;
+import com.been.onlinestore.controller.restdocs.RestDocsSupport;
+import com.been.onlinestore.controller.restdocs.RestDocsUtils;
+import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.service.OrderProductService;
 import com.been.onlinestore.service.response.DeliveryStatusChangeResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Set;
 
-import static com.been.onlinestore.util.OrderTestDataUtil.createDeliveryStatusChangeResponse;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.ORDER_PRODUCT_ID;
+import static com.been.onlinestore.controller.restdocs.RestDocsUtils.userApiDescription;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,9 +37,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("API 컨트롤러 - 주문 상품")
 @Import(TestSecurityConfig.class)
 @WebMvcTest(SellerOrderProductApiController.class)
-class SellerOrderProductApiControllerTest {
+class SellerOrderProductApiControllerTest extends RestDocsSupport {
 
-    @Autowired private MockMvc mvc;
+    public static final String NOT_FOUND = "존재하지 않는 주문 상품 시퀀스";
+    public static final String SUCCEEDED = "변경 성공 주문 상품 시퀀스";
+    public static final String FAILED = "변경 실패 주문 상품 시퀀스";
 
     @MockBean private OrderProductService orderProductService;
 
@@ -42,7 +55,11 @@ class SellerOrderProductApiControllerTest {
         long orderProductId2 = 2L;
         Set<Long> orderProductIds = Set.of(orderProductId1, orderProductId2);
 
-        DeliveryStatusChangeResponse response = createDeliveryStatusChangeResponse(orderProductIds);
+        DeliveryStatusChangeResponse response = DeliveryStatusChangeResponse.of(
+                null,
+                orderProductIds,
+                null
+        );
 
         given(orderProductService.startPreparing(orderProductIds, sellerId)).willReturn(response);
 
@@ -57,7 +74,22 @@ class SellerOrderProductApiControllerTest {
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.notFountOrderProductIds").doesNotExist())
                 .andExpect(jsonPath("$.data.succeededOrderProductIds").exists())
-                .andExpect(jsonPath("$.data.failedOrderProductIds").doesNotExist());
+                .andExpect(jsonPath("$.data.failedOrderProductIds").doesNotExist())
+                .andDo(document(
+                        "seller/orderProduct/prepareProducts",
+                        userApiDescription(TagDescription.ORDER_PRODUCT, "주문상품 상품 준비 중 처리"),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("orderProductIds").description(ORDER_PRODUCT_ID.getDescription() + " (복수)")
+                        ),
+                        responseFields(
+                                RestDocsUtils.STATUS,
+                                fieldWithPath("data.notFountOrderProductIds").type(JsonFieldType.ARRAY).description(NOT_FOUND).optional(),
+                                fieldWithPath("data.succeededOrderProductIds").type(JsonFieldType.ARRAY).description(SUCCEEDED).optional(),
+                                fieldWithPath("data.failedOrderProductIds").type(JsonFieldType.ARRAY).description(FAILED).optional()
+                        )
+                ));
         then(orderProductService).should().startPreparing(orderProductIds, sellerId);
     }
 
@@ -71,7 +103,11 @@ class SellerOrderProductApiControllerTest {
         long orderProductId2 = 2L;
         Set<Long> orderProductIds = Set.of(orderProductId1, orderProductId2);
 
-        DeliveryStatusChangeResponse response = createDeliveryStatusChangeResponse(orderProductIds);
+        DeliveryStatusChangeResponse response = DeliveryStatusChangeResponse.of(
+                null,
+                orderProductIds,
+                null
+        );
 
         given(orderProductService.startDelivery(orderProductIds, sellerId)).willReturn(response);
 
@@ -86,7 +122,22 @@ class SellerOrderProductApiControllerTest {
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.notFountOrderProductIds").doesNotExist())
                 .andExpect(jsonPath("$.data.succeededOrderProductIds").exists())
-                .andExpect(jsonPath("$.data.failedOrderProductIds").doesNotExist());
+                .andExpect(jsonPath("$.data.failedOrderProductIds").doesNotExist())
+                .andDo(document(
+                        "seller/orderProduct/startDelivery",
+                        userApiDescription(TagDescription.ORDER_PRODUCT, "주문상품 배송 중 처리"),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("orderProductIds").description(ORDER_PRODUCT_ID.getDescription() + " (복수)")
+                        ),
+                        responseFields(
+                                RestDocsUtils.STATUS,
+                                fieldWithPath("data.notFountOrderProductIds").type(JsonFieldType.ARRAY).description(NOT_FOUND).optional(),
+                                fieldWithPath("data.succeededOrderProductIds").type(JsonFieldType.ARRAY).description(SUCCEEDED).optional(),
+                                fieldWithPath("data.failedOrderProductIds").type(JsonFieldType.ARRAY).description(FAILED).optional()
+                        )
+                ));
         then(orderProductService).should().startDelivery(orderProductIds, sellerId);
     }
 
@@ -100,7 +151,11 @@ class SellerOrderProductApiControllerTest {
         long orderProductId2 = 2L;
         Set<Long> orderProductIds = Set.of(orderProductId1, orderProductId2);
 
-        DeliveryStatusChangeResponse response = createDeliveryStatusChangeResponse(orderProductIds);
+        DeliveryStatusChangeResponse response = DeliveryStatusChangeResponse.of(
+                null,
+                orderProductIds,
+                null
+        );
 
         given(orderProductService.completeDelivery(orderProductIds, sellerId)).willReturn(response);
 
@@ -115,7 +170,22 @@ class SellerOrderProductApiControllerTest {
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.notFountOrderProductIds").doesNotExist())
                 .andExpect(jsonPath("$.data.succeededOrderProductIds").exists())
-                .andExpect(jsonPath("$.data.failedOrderProductIds").doesNotExist());
+                .andExpect(jsonPath("$.data.failedOrderProductIds").doesNotExist())
+                .andDo(document(
+                        "seller/orderProduct/completeDelivery",
+                        userApiDescription(TagDescription.ORDER_PRODUCT, "주문상품 배송 완료 처리"),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("orderProductIds").description(ORDER_PRODUCT_ID.getDescription() + " (복수)")
+                        ),
+                        responseFields(
+                                RestDocsUtils.STATUS,
+                                fieldWithPath("data.notFountOrderProductIds").type(JsonFieldType.ARRAY).description(NOT_FOUND).optional(),
+                                fieldWithPath("data.succeededOrderProductIds").type(JsonFieldType.ARRAY).description(SUCCEEDED).optional(),
+                                fieldWithPath("data.failedOrderProductIds").type(JsonFieldType.ARRAY).description(FAILED).optional()
+                        )
+                ));
         then(orderProductService).should().completeDelivery(orderProductIds, sellerId);
     }
 }

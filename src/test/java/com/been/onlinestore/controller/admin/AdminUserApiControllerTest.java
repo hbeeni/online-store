@@ -1,12 +1,14 @@
 package com.been.onlinestore.controller.admin;
 
 import com.been.onlinestore.config.TestSecurityConfig;
+import com.been.onlinestore.controller.restdocs.RestDocsSupport;
+import com.been.onlinestore.controller.restdocs.TagDescription;
+import com.been.onlinestore.domain.constant.RoleType;
 import com.been.onlinestore.service.UserService;
 import com.been.onlinestore.service.response.UserResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -16,15 +18,38 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.been.onlinestore.util.UserTestDataUtil.createUserResponse;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_CREATED_AT;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_EMAIL;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_ID;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_MODIFIED_AT;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_NAME;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_NICKNAME;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_PHONE;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_ROLE_TYPE;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.USER_UID;
+import static com.been.onlinestore.controller.restdocs.RestDocsUtils.PAGE_INFO;
+import static com.been.onlinestore.controller.restdocs.RestDocsUtils.PAGE_REQUEST_PARAM;
+import static com.been.onlinestore.controller.restdocs.RestDocsUtils.STATUS;
+import static com.been.onlinestore.controller.restdocs.RestDocsUtils.adminApiDescription;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static java.time.LocalDateTime.now;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,9 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("API 컨트롤러 - 회원 (관리자)")
 @Import(TestSecurityConfig.class)
 @WebMvcTest(AdminUserApiController.class)
-class AdminUserApiControllerTest {
-
-    @Autowired private MockMvc mvc;
+class AdminUserApiControllerTest extends RestDocsSupport {
 
     @MockBean UserService userService;
 
@@ -42,17 +65,38 @@ class AdminUserApiControllerTest {
     @Test
     void test_getUsers_withPagination() throws Exception {
         //Given
-        long id = 1L;
-        String uid = "testId";
-
         String sortName = "name";
         String direction = "asc";
         int pageNumber = 0;
         int pageSize = 10;
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.asc(sortName)));
-        UserResponse response = createUserResponse(id, uid);
-        Page<UserResponse> page = new PageImpl<>(List.of(response), pageable, 1);
+        UserResponse userResponse = UserResponse.of(
+                1L,
+                "user",
+                "$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
+                "user",
+                "user@mail.com",
+                "test user",
+                "01012345678",
+                RoleType.USER,
+                LocalDateTime.now().minusDays(3),
+                now()
+        );
+        UserResponse sellerResponse = UserResponse.of(
+                2L,
+                "seller",
+                "$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
+                "seller",
+                "seller@mail.com",
+                "test user",
+                "01012123434",
+                RoleType.SELLER,
+                now().minusDays(30),
+                now().minusDays(22)
+        );
+        List<UserResponse> content = List.of(sellerResponse, userResponse);
+        Page<UserResponse> page = new PageImpl<>(content, pageable, content.size());
 
         given(userService.findUsers(pageable)).willReturn(page);
 
@@ -67,14 +111,33 @@ class AdminUserApiControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
                 .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data[0].id").value(response.id()))
-                .andExpect(jsonPath("$.data[0].uid").value(response.uid()))
-                .andExpect(jsonPath("$.data[0].name").value(response.name()))
+                .andExpect(jsonPath("$.data[0].id").value(sellerResponse.id()))
+                .andExpect(jsonPath("$.data[0].uid").value(sellerResponse.uid()))
+                .andExpect(jsonPath("$.data[0].name").value(sellerResponse.name()))
                 .andExpect(jsonPath("$.data[0].password").doesNotExist())
                 .andExpect(jsonPath("$.page.number").value(page.getNumber()))
                 .andExpect(jsonPath("$.page.size").value(page.getSize()))
                 .andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
-                .andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()));
+                .andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
+                .andDo(document(
+                        "admin/user/getUsers",
+                        adminApiDescription(TagDescription.USER, "회원 페이징 조회"),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(PAGE_REQUEST_PARAM),
+                        responseFields(
+                                STATUS,
+                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description(USER_ID.getDescription()),
+                                fieldWithPath("data[].uid").type(JsonFieldType.STRING).description(USER_UID.getDescription()),
+                                fieldWithPath("data[].name").type(JsonFieldType.STRING).description(USER_NAME.getDescription()),
+                                fieldWithPath("data[].email").type(JsonFieldType.STRING).description(USER_EMAIL.getDescription()),
+                                fieldWithPath("data[].nickname").type(JsonFieldType.STRING).description(USER_NICKNAME.getDescription()),
+                                fieldWithPath("data[].phone").type(JsonFieldType.STRING).description(USER_PHONE.getDescription()),
+                                fieldWithPath("data[].roleType").type(JsonFieldType.STRING).description(USER_ROLE_TYPE.getDescription()),
+                                fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description(USER_CREATED_AT.getDescription()),
+                                fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING).description(USER_MODIFIED_AT.getDescription())
+                        ).and(PAGE_INFO)
+                ));
         then(userService).should().findUsers(pageable);
     }
 
@@ -84,19 +147,51 @@ class AdminUserApiControllerTest {
         //Given
         long id = 1L;
         String uid = "testId";
-        UserResponse response = createUserResponse(id, uid);
+        UserResponse response = UserResponse.of(
+                id,
+                uid,
+                "$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
+                "user",
+                uid + "@mail.com",
+                "test user",
+                "01012345678",
+                RoleType.USER,
+                LocalDateTime.now().minusDays(3),
+                now()
+        );
 
         given(userService.findUser(id)).willReturn(response);
 
         //When & Then
-        mvc.perform(get("/api/admin/users/" + id))
+        mvc.perform(get("/api/admin/users/{userId}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("success"))
                 .andExpect(jsonPath("$.data.id").value(response.id()))
                 .andExpect(jsonPath("$.data.uid").value(response.uid()))
                 .andExpect(jsonPath("$.data.name").value(response.name()))
-                .andExpect(jsonPath("$.data[0].password").doesNotExist());
+                .andExpect(jsonPath("$.data[0].password").doesNotExist())
+                .andDo(document(
+                        "admin/user/getUser",
+                        adminApiDescription(TagDescription.USER, "회원 상세 조회"),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("userId").description(USER_ID.getDescription())
+                        ),
+                        responseFields(
+                                STATUS,
+                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(USER_ID.getDescription()),
+                                fieldWithPath("data.uid").type(JsonFieldType.STRING).description(USER_UID.getDescription()),
+                                fieldWithPath("data.name").type(JsonFieldType.STRING).description(USER_NAME.getDescription()),
+                                fieldWithPath("data.email").type(JsonFieldType.STRING).description(USER_EMAIL.getDescription()),
+                                fieldWithPath("data.nickname").type(JsonFieldType.STRING).description(USER_NICKNAME.getDescription()),
+                                fieldWithPath("data.phone").type(JsonFieldType.STRING).description(USER_PHONE.getDescription()),
+                        fieldWithPath("data.roleType").type(JsonFieldType.STRING).description(USER_ROLE_TYPE.getDescription()),
+                        fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description(USER_CREATED_AT.getDescription()),
+                        fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING).description(USER_MODIFIED_AT.getDescription())
+                )
+        ));
         then(userService).should().findUser(id);
     }
 
@@ -106,8 +201,6 @@ class AdminUserApiControllerTest {
     void test_deleteUser() throws Exception {
         //Given
         long id = 1L;
-        String uid = "testId";
-        String name = "test name";
 
         //When & Then
         mvc.perform(delete("/api/admin/users/" + id))
