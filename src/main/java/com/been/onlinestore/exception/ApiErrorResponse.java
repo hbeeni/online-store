@@ -55,6 +55,19 @@ public class ApiErrorResponse<T> {
     }
 
     /**
+     * <p>에러 응답 - 실패 응답 상태 코드, 메시지를 반환합니다.</p>
+     * <pre>
+     * {
+     *     "status": "fail",
+     *     "message": "실패 메시지"
+     * }
+     * </pre>
+     */
+    public static ApiErrorResponse<Void> fail(String message) {
+        return new ApiErrorResponse<>(STATUS_FAIL, null, message);
+    }
+
+    /**
      * <p>에러 응답 - 에러 응답 상태 코드, 메시지를 반환합니다.</p>
      * <pre>
      * {

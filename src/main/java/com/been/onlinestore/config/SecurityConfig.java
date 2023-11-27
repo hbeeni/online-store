@@ -1,5 +1,7 @@
 package com.been.onlinestore.config;
 
+import com.been.onlinestore.config.jwt.CustomAccessDeniedHandler;
+import com.been.onlinestore.config.jwt.CustomAuthenticationEntryPoint;
 import com.been.onlinestore.config.jwt.JwtProperties;
 import com.been.onlinestore.config.jwt.JwtSecurityConfig;
 import com.been.onlinestore.config.jwt.JwtTokenProvider;
@@ -51,6 +53,9 @@ public class SecurityConfig {
                         .mvcMatchers("/api/seller/**").hasRole(RoleType.SELLER.name())
                         .mvcMatchers("/api/**").hasRole(RoleType.USER.name())
                 )
+                .exceptionHandling(configurer -> configurer
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()))
                 .logout(logout -> logout.logoutSuccessUrl("/"))
                 .build();
     }
