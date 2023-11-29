@@ -1,6 +1,5 @@
 package com.been.onlinestore.controller.dto;
 
-import com.been.onlinestore.service.request.CartProductServiceRequest;
 import lombok.Builder;
 
 import javax.validation.constraints.NotNull;
@@ -16,15 +15,7 @@ public record CartProductRequest() {
 
             @NotNull @PositiveOrZero
             Integer productQuantity
-    ) {
-
-        public CartProductServiceRequest.Create toServiceRequest() {
-            return CartProductServiceRequest.Create.of(
-                    productId,
-                    productQuantity
-            );
-        }
-    }
+    ) {}
 
     @Builder
     public record Update(

@@ -11,6 +11,7 @@ import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
 import com.been.onlinestore.service.request.ProductServiceRequest;
+import com.been.onlinestore.service.response.CartResponse;
 import com.been.onlinestore.service.response.CategoryProductResponse;
 import com.been.onlinestore.service.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Map;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -54,6 +57,12 @@ public class ProductService {
         return productRepository.findOnSaleById(id)
                 .map(CategoryProductResponse::from)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+    }
+
+    public List<CartResponse> findProductsInCart(Map<Long, Integer> productToQuantityMap) {
+        return productRepository.findAllOnSaleById(productToQuantityMap.keySet()).stream()
+                .map(product -> CartResponse.from(product, productToQuantityMap))
+                .toList();
     }
 
     @Transactional(readOnly = true)
