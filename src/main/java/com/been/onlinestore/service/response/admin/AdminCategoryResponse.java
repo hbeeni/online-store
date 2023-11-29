@@ -1,17 +1,20 @@
 package com.been.onlinestore.service.response.admin;
 
 import com.been.onlinestore.domain.Category;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
+
+import static com.been.onlinestore.service.response.JsonFormatConst.DATE_TIME_PATTERN;
 
 public record AdminCategoryResponse(
         Long id,
         String name,
         String description,
         int productCount,
-        LocalDateTime createdAt,
+        @JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime createdAt,
         String createdBy,
-        LocalDateTime modifiedAt,
+        @JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime modifiedAt,
         String modifiedBy
 ) {
 

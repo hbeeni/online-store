@@ -3,9 +3,12 @@ package com.been.onlinestore.service.response;
 import com.been.onlinestore.domain.DeliveryRequest;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.been.onlinestore.service.response.JsonFormatConst.DATE_TIME_PATTERN;
 
 public record OrderResponse(
         Long id,
@@ -14,8 +17,8 @@ public record OrderResponse(
         List<OrderProductResponse> orderProducts,
         int totalPrice,
         OrderStatus orderStatus,
-        LocalDateTime createdAt,
-        LocalDateTime modifiedAt
+        @JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime createdAt,
+        @JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime modifiedAt
 ) {
 
     public static OrderResponse of(Long id, OrdererResponse orderer, DeliveryRequestResponse deliveryRequest, List<OrderProductResponse> orderProducts, int totalPrice, OrderStatus orderStatus, LocalDateTime createdAt, LocalDateTime modifiedAt) {

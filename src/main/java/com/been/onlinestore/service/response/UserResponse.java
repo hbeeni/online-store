@@ -2,9 +2,12 @@ package com.been.onlinestore.service.response;
 
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.RoleType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
+
+import static com.been.onlinestore.service.response.JsonFormatConst.DATE_TIME_PATTERN;
 
 public record UserResponse(
         Long id,
@@ -15,8 +18,8 @@ public record UserResponse(
         String nickname,
         String phone,
         RoleType roleType,
-        LocalDateTime createdAt,
-        LocalDateTime modifiedAt
+        @JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime createdAt,
+        @JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime modifiedAt
 ) {
 
     public static UserResponse of(Long id, String uid, String password, String name, String email, String nickname, String phone, RoleType roleType, LocalDateTime createdAt, LocalDateTime modifiedAt) {
