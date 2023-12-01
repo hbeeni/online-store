@@ -6,11 +6,13 @@ import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.RestDocsUtils;
 import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
 import com.been.onlinestore.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -20,10 +22,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 import static com.been.onlinestore.controller.restdocs.FieldDescription.ADD;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.CATEGORY_ID;
@@ -35,6 +42,7 @@ import static com.been.onlinestore.controller.restdocs.FieldDescription.MODIFIED
 import static com.been.onlinestore.controller.restdocs.FieldDescription.PRODUCT_DELIVERY_FEE;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.PRODUCT_DESCRIPTION;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.PRODUCT_ID;
+import static com.been.onlinestore.controller.restdocs.FieldDescription.PRODUCT_IMAGE;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.PRODUCT_IMAGE_URL;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.PRODUCT_NAME;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.PRODUCT_PRICE;
@@ -50,20 +58,24 @@ import static com.been.onlinestore.util.ProductTestDataUtil.createAdminProductRe
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static java.time.LocalDateTime.now;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,6 +86,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SellerProductApiControllerTest extends RestDocsSupport {
 
     @MockBean private ProductService productService;
+    @MockBean private ImageStore imageStore;
+
+    @Value("${image.path}")
+    private String imagePath;
 
     @WithUserDetails
     @DisplayName("[API][GET] 상품 리스트 조회 + 페이징")
@@ -142,7 +158,7 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                 1002,
                 SaleStatus.SALE,
                 2500,
-                null,
+                imagePath + UUID.randomUUID() + ".png",
                 now().minusMonths(6),
                 "sellerA",
                 now().minusMonths(1),
@@ -159,7 +175,7 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                 22,
                 SaleStatus.SALE,
                 3000,
-                null,
+                imagePath + UUID.randomUUID() + ".png",
                 now().minusMonths(2),
                 "sellerA",
                 now().minusMonths(1),
@@ -215,7 +231,7 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                                 fieldWithPath("data[].salesVolume").type(JsonFieldType.NUMBER).description(PRODUCT_SALES_VOLUME.getDescription()),
                                 fieldWithPath("data[].saleStatus").type(JsonFieldType.STRING).description(PRODUCT_SALE_STATUS.getDescription()),
                                 fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER).description(PRODUCT_DELIVERY_FEE.getDescription()),
-                                fieldWithPath("data[].imageUrl").type(JsonFieldType.VARIES).description(PRODUCT_IMAGE_URL.getDescription()),
+                                fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING).description(PRODUCT_IMAGE_URL.getDescription()),
                                 fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description(CREATED_AT.getDescription()),
                                 fieldWithPath("data[].createdBy").type(JsonFieldType.STRING).description(CREATED_BY.getDescription()),
                                 fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING).description(MODIFIED_AT.getDescription()),
@@ -242,7 +258,7 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                 1002,
                 SaleStatus.SALE,
                 2500,
-                null,
+                imagePath + UUID.randomUUID() + ".png",
                 now().minusMonths(6),
                 "sellerA",
                 now().minusMonths(1),
@@ -277,7 +293,7 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.salesVolume").type(JsonFieldType.NUMBER).description(PRODUCT_SALES_VOLUME.getDescription()),
                                 fieldWithPath("data.saleStatus").type(JsonFieldType.STRING).description(PRODUCT_SALE_STATUS.getDescription()),
                                 fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER).description(PRODUCT_DELIVERY_FEE.getDescription()),
-                                fieldWithPath("data.imageUrl").type(JsonFieldType.VARIES).description(PRODUCT_IMAGE_URL.getDescription()),
+                                fieldWithPath("data.imageUrl").type(JsonFieldType.STRING).description(PRODUCT_IMAGE_URL.getDescription()),
                                 fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description(CREATED_AT.getDescription()),
                                 fieldWithPath("data.createdBy").type(JsonFieldType.STRING).description(CREATED_BY.getDescription()),
                                 fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING).description(MODIFIED_AT.getDescription()),
@@ -293,7 +309,7 @@ class SellerProductApiControllerTest extends RestDocsSupport {
     void test_addProduct() throws Exception {
         //Given
         long productId = 1L;
-        ProductRequest.Create request = ProductRequest.Create.builder()
+        ProductRequest.Create data = ProductRequest.Create.builder()
                 .categoryId(1L)
                 .name("name")
                 .price(10000)
@@ -301,15 +317,18 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                 .saleStatus(SaleStatus.SALE)
                 .deliveryFee(2500)
                 .build();
-        given(productService.addProduct(any(), eq(request.toServiceRequest()))).willReturn(productId);
+        String imageName = UUID.randomUUID() + ".png";
+        MockMultipartFile image = new MockMultipartFile("image", imageName, MediaType.IMAGE_PNG_VALUE, "image".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile request = new MockMultipartFile("request", "request", MediaType.APPLICATION_JSON_VALUE, mapper.writeValueAsString(data).getBytes(StandardCharsets.UTF_8));
+
+        given(imageStore.saveImage(image)).willReturn(imageName);
+        given(productService.addProduct(any(), eq(data.toServiceRequest()), eq(imageName))).willReturn(productId);
 
         //When & Then
         mvc.perform(
-                        post("/api/seller/products")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .characterEncoding("UTF-8")
-                                .content(mapper.writeValueAsString(request))
+                        multipart("/api/seller/products")
+                                .file(request)
+                                .file(image)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -320,28 +339,32 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                         sellerApiDescription(TagDescription.PRODUCT, "상품 등록"),
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
+                        requestParts(
+                                partWithName("request").description("상품 데이터"),
+                                partWithName("image").description(PRODUCT_IMAGE.getDescription())
+                        ),
+                        requestPartFields(
+                                "request",
                                 fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description(CATEGORY_ID.getDescription()),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description(PRODUCT_NAME.getDescription()),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description(PRODUCT_PRICE.getDescription()),
                                 fieldWithPath("description").type(JsonFieldType.VARIES).description(PRODUCT_DESCRIPTION.getDescription()).optional(),
                                 fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description(PRODUCT_STOCK_QUANTITY.getDescription()),
                                 fieldWithPath("saleStatus").type(JsonFieldType.VARIES).description(PRODUCT_SALE_STATUS.getDescription()).optional(),
-                                fieldWithPath("deliveryFee").type(JsonFieldType.NUMBER).description(PRODUCT_DELIVERY_FEE.getDescription()),
-                                fieldWithPath("imageUrl").type(JsonFieldType.VARIES).description(PRODUCT_IMAGE_URL.getDescription()).optional()
-                        ),
+                                fieldWithPath("deliveryFee").type(JsonFieldType.NUMBER).description(PRODUCT_DELIVERY_FEE.getDescription())
+                                ),
                         responseFields(
                                 RestDocsUtils.STATUS,
                                 fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(ADD.getDescription() + PRODUCT_ID.getDescription())
                         )
                 ));
-        then(productService).should().addProduct(any(), eq(request.toServiceRequest()));
+        then(productService).should().addProduct(any(), eq(data.toServiceRequest()), eq(imageName));
     }
 
     @WithUserDetails
-    @DisplayName("[API][PUT] 상품 수정")
+    @DisplayName("[API][PUT] 상품 정보 수정")
     @Test
-    void test_updateProduct() throws Exception {
+    void test_updateProductInfo() throws Exception {
         //Given
         long productId = 1L;
         ProductRequest.Update request = ProductRequest.Update.builder()
@@ -353,7 +376,7 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                 .deliveryFee(2500)
                 .build();
 
-        given(productService.updateProductInfo(eq(productId), any(), eq(request.toServiceRequest()))).willReturn(productId);
+        given(productService.updateProductInfo(eq(productId), anyLong(), eq(request.toServiceRequest()))).willReturn(productId);
 
         //When & Then
         mvc.perform(
@@ -368,8 +391,8 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                 .andExpect(jsonPath("$.status").value("success"))
                 .andExpect(jsonPath("$.data.id").value(productId))
                 .andDo(document(
-                        "seller/product/updateProduct",
-                        sellerApiDescription(TagDescription.PRODUCT, "상품 수정"),
+                        "seller/product/updateProductInfo",
+                        sellerApiDescription(TagDescription.PRODUCT, "상품 정보 수정"),
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
@@ -380,13 +403,53 @@ class SellerProductApiControllerTest extends RestDocsSupport {
                                 fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description(PRODUCT_STOCK_QUANTITY.getDescription()),
                                 fieldWithPath("saleStatus").type(JsonFieldType.STRING).description(PRODUCT_SALE_STATUS.getDescription()),
                                 fieldWithPath("deliveryFee").type(JsonFieldType.NUMBER).description(PRODUCT_DELIVERY_FEE.getDescription()),
-                                fieldWithPath("imageUrl").type(JsonFieldType.VARIES).description(PRODUCT_IMAGE_URL.getDescription()).optional()
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description(PRODUCT_IMAGE_URL.getDescription()).optional()
                         ),
                         responseFields(
                                 RestDocsUtils.STATUS,
                                 fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("수정한 " + PRODUCT_ID.getDescription())
                         )
                 ));
-        then(productService).should().updateProductInfo(eq(productId), any(), eq(request.toServiceRequest()));
+        then(productService).should().updateProductInfo(eq(productId), anyLong(), eq(request.toServiceRequest()));
+    }
+
+    @WithUserDetails
+    @DisplayName("[API][POST] 상품 이미지 수정")
+    @Test
+    void test_updateProductImage() throws Exception {
+        //Given
+        long productId = 1L;
+        String imageName = UUID.randomUUID() + ".png";
+        MockMultipartFile image = new MockMultipartFile("image", imageName, MediaType.IMAGE_PNG_VALUE, "image".getBytes(StandardCharsets.UTF_8));
+
+        MockMultipartHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/api/seller/products/{productId}/img", productId);
+        builder.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+
+        given(imageStore.saveImage(image)).willReturn(imageName);
+        given(productService.updateProductImage(eq(productId), anyLong(), eq(imageName))).willReturn(productId);
+
+        //When & Then
+        mvc.perform(builder.file(image))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.id").value(productId))
+                .andDo(document(
+                        "seller/product/updateProductInfo",
+                        sellerApiDescription(TagDescription.PRODUCT, "상품 이미지 수정"),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description(PRODUCT_IMAGE.getDescription())
+                        ),
+                        responseFields(
+                                RestDocsUtils.STATUS,
+                                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(ADD.getDescription() + PRODUCT_ID.getDescription())
+                        )
+                ));
+        then(productService).should().updateProductImage(eq(productId), anyLong(), eq(imageName));
     }
 }

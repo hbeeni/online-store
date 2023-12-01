@@ -28,7 +28,7 @@ public record AdminProductResponse(
         return new AdminProductResponse(id, category, seller, name, price, description, stockQuantity, salesVolume, saleStatus, deliveryFee, imageUrl, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
-    public static AdminProductResponse from(Product entity) {
+    public static AdminProductResponse from(Product entity, String imageUrl) {
         return AdminProductResponse.of(
                 entity.getId(),
                 entity.getCategory().getName(),
@@ -40,7 +40,7 @@ public record AdminProductResponse(
                 entity.getSalesVolume(),
                 entity.getSaleStatus(),
                 entity.getDeliveryFee(),
-                entity.getImageUrl(),
+                imageUrl,
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),

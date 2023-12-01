@@ -15,14 +15,14 @@ public record ProductResponse(
         return new ProductResponse(id, name, price, description, deliveryFee, imageUrl);
     }
 
-    public static ProductResponse from(Product entity) {
+    public static ProductResponse from(Product entity, String imageUrl) {
         return ProductResponse.of(
                 entity.getId(),
                 entity.getName(),
                 entity.getPrice(),
                 entity.getDescription(),
                 entity.getDeliveryFee(),
-                entity.getImageUrl()
+                imageUrl
         );
     }
 }

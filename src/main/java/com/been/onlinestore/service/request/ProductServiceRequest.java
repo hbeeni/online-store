@@ -14,19 +14,18 @@ public record ProductServiceRequest() {
             String description,
             Integer stockQuantity,
             SaleStatus saleStatus,
-            Integer deliveryFee,
-            String imageUrl
+            Integer deliveryFee
     ) {
 
-        public static Create of(Long categoryId, String name, Integer price, String description, Integer stockQuantity, SaleStatus saleStatus, Integer deliveryFee, String imageUrl) {
-            return new Create(categoryId, name, price, description, stockQuantity, saleStatus, deliveryFee, imageUrl);
+        public static Create of(Long categoryId, String name, Integer price, String description, Integer stockQuantity, SaleStatus saleStatus, Integer deliveryFee) {
+            return new Create(categoryId, name, price, description, stockQuantity, saleStatus, deliveryFee);
         }
 
-        public Product toEntity(Category category, User seller) {
-            return toEntity(category, seller, saleStatus);
+        public Product toEntity(Category category, User seller, String imageName) {
+            return toEntity(category, seller, saleStatus, imageName);
         }
 
-        public Product toEntity(Category category, User seller, SaleStatus saleStatus) {
+        public Product toEntity(Category category, User seller, SaleStatus saleStatus, String imageName) {
             return Product.of(
                     category,
                     seller,
@@ -37,7 +36,7 @@ public record ProductServiceRequest() {
                     0,
                     saleStatus,
                     deliveryFee,
-                    imageUrl
+                    imageName
             );
         }
     }
@@ -49,12 +48,11 @@ public record ProductServiceRequest() {
             String description,
             Integer stockQuantity,
             SaleStatus saleStatus,
-            Integer deliveryFee,
-            String imageUrl
+            Integer deliveryFee
     ) {
 
-        public static Update of(Long categoryId, String name, Integer price, String description, Integer stockQuantity, SaleStatus saleStatus, Integer deliveryFee, String imageUrl) {
-            return new Update(categoryId, name, price, description, stockQuantity, saleStatus, deliveryFee, imageUrl);
+        public static Update of(Long categoryId, String name, Integer price, String description, Integer stockQuantity, SaleStatus saleStatus, Integer deliveryFee) {
+            return new Update(categoryId, name, price, description, stockQuantity, saleStatus, deliveryFee);
         }
     }
 }
