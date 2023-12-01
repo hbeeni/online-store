@@ -1,6 +1,7 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.converter.DefaultAddressConverter;
+
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
 import java.util.Objects;
 
 @Getter
@@ -19,58 +21,59 @@ import java.util.Objects;
 @Entity
 public class Address extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
+	@ToString.Exclude
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User user;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+	@Column(nullable = false, length = 50)
+	private String detail;
 
+	@Column(nullable = false, length = 20)
+	private String zipcode;
 
-    @Column(nullable = false, length = 50)
-    private String detail;
+	@Convert(converter = DefaultAddressConverter.class)
+	@Column(columnDefinition = "char(1) not null default 'N'")
+	private Boolean defaultAddress;
 
-    @Column(nullable = false, length = 20)
-    private String zipcode;
+	protected Address() {
+	}
 
-    @Convert(converter = DefaultAddressConverter.class)
-    @Column(columnDefinition = "char(1) not null default 'N'")
-    private Boolean defaultAddress;
+	private Address(User user, String detail, String zipcode, Boolean defaultAddress) {
+		this.user = user;
+		this.detail = detail;
+		this.zipcode = zipcode;
+		this.defaultAddress = defaultAddress;
+	}
 
-    protected Address() {}
+	public static Address of(User user, String detail, String zipcode, Boolean defaultAddress) {
+		return new Address(user, detail, zipcode, defaultAddress);
+	}
 
-    private Address(User user, String detail, String zipcode, Boolean defaultAddress) {
-        this.user = user;
-        this.detail = detail;
-        this.zipcode = zipcode;
-        this.defaultAddress = defaultAddress;
-    }
+	public void updateInfo(String detail, String zipcode, Boolean defaultAddress) {
+		this.detail = detail;
+		this.zipcode = zipcode;
+		this.defaultAddress = defaultAddress;
+	}
 
-    public static Address of(User user, String detail, String zipcode, Boolean defaultAddress) {
-        return new Address(user, detail, zipcode, defaultAddress);
-    }
+	public void updateDefaultAddress(boolean defaultAddress) {
+		this.defaultAddress = defaultAddress;
+	}
 
-    public void updateInfo(String detail, String zipcode, Boolean defaultAddress) {
-        this.detail = detail;
-        this.zipcode = zipcode;
-        this.defaultAddress = defaultAddress;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Address that))
+			return false;
+		return this.getId() != null && Objects.equals(this.getId(), that.getId());
+	}
 
-    public void updateDefaultAddress(boolean defaultAddress) {
-        this.defaultAddress = defaultAddress;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Address that)) return false;
-        return this.getId() != null && Objects.equals(this.getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getId());
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getId());
+	}
 }

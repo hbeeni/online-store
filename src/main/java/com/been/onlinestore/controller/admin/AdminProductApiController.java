@@ -4,7 +4,9 @@ import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
 import com.been.onlinestore.service.ProductService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -23,18 +25,18 @@ import java.util.List;
 @RestController
 public class AdminProductApiController {
 
-    private final ProductService productService;
+	private final ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<AdminProductResponse>>> getProducts(
-            @ModelAttribute @Validated ProductSearchCondition cond,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-        return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsForAdmin(cond, pageable)));
-    }
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<AdminProductResponse>>> getProducts(
+			@ModelAttribute @Validated ProductSearchCondition cond,
+			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+	) {
+		return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsForAdmin(cond, pageable)));
+	}
 
-    @GetMapping("/{productId}")
-    public ResponseEntity<ApiResponse<AdminProductResponse>> getProduct(@PathVariable Long productId) {
-        return ResponseEntity.ok(ApiResponse.success(productService.findProductForAdmin(productId)));
-    }
+	@GetMapping("/{productId}")
+	public ResponseEntity<ApiResponse<AdminProductResponse>> getProduct(@PathVariable Long productId) {
+		return ResponseEntity.ok(ApiResponse.success(productService.findProductForAdmin(productId)));
+	}
 }

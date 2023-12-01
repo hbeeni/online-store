@@ -5,7 +5,9 @@ import com.been.onlinestore.controller.dto.OrderRequest;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.service.OrderService;
 import com.been.onlinestore.service.response.OrderResponse;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -28,34 +30,37 @@ import java.util.Map;
 @RestController
 public class OrderApiController {
 
-    private final OrderService orderService;
+	private final OrderService orderService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-        return ResponseEntity.ok(ApiResponse.pagination(orderService.findOrdersByOrderer(principalDetails.id(), pageable)));
-    }
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrders(
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+	) {
+		return ResponseEntity.ok(
+				ApiResponse.pagination(orderService.findOrdersByOrderer(principalDetails.id(), pageable)));
+	}
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long orderId) {
-        return ResponseEntity.ok(ApiResponse.success(orderService.findOrderByOrderer(orderId, principalDetails.id())));
-    }
+	@GetMapping("/{orderId}")
+	public ResponseEntity<ApiResponse<OrderResponse>> getOrder(
+			@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long orderId) {
+		return ResponseEntity.ok(ApiResponse.success(orderService.findOrderByOrderer(orderId, principalDetails.id())));
+	}
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<Map<String, Long>>> order(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestBody @Validated OrderRequest request
-    ) {
-        return ResponseEntity.ok(ApiResponse.successId(orderService.order(principalDetails.id(), request.toServiceRequest())));
-    }
+	@PostMapping
+	public ResponseEntity<ApiResponse<Map<String, Long>>> order(
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@RequestBody @Validated OrderRequest request
+	) {
+		return ResponseEntity.ok(
+				ApiResponse.successId(orderService.order(principalDetails.id(), request.toServiceRequest())));
+	}
 
-    @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<ApiResponse<Map<String, Long>>> cancelOrder(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PathVariable Long orderId
-    ) {
-        return ResponseEntity.ok(ApiResponse.successId(orderService.cancelOrder(orderId, principalDetails.id())));
-    }
+	@PutMapping("/{orderId}/cancel")
+	public ResponseEntity<ApiResponse<Map<String, Long>>> cancelOrder(
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@PathVariable Long orderId
+	) {
+		return ResponseEntity.ok(ApiResponse.successId(orderService.cancelOrder(orderId, principalDetails.id())));
+	}
 }
