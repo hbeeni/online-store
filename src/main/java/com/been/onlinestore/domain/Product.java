@@ -58,12 +58,12 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private int deliveryFee;
 
-    @Column(length = 200)
-    private String imageUrl;
+    @Column(nullable = false, length = 200)
+    private String imageName;
 
     protected Product() {}
 
-    private Product(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageUrl) {
+    private Product(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageName) {
         this.category = category;
         this.seller = seller;
         this.name = name;
@@ -73,11 +73,11 @@ public class Product extends BaseEntity {
         this.salesVolume = salesVolume;
         this.saleStatus = saleStatus;
         this.deliveryFee = deliveryFee;
-        this.imageUrl = imageUrl;
+        this.imageName = imageName;
     }
 
-    public static Product of(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageUrl) {
-        return new Product(category, seller, name, price, description, stockQuantity, salesVolume, saleStatus, deliveryFee, imageUrl);
+    public static Product of(Category category, User seller, String name, int price, String description, int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageName) {
+        return new Product(category, seller, name, price, description, stockQuantity, salesVolume, saleStatus, deliveryFee, imageName);
     }
 
     public void updateInfo(Category category, String name, int price, String description, int stockQuantity, SaleStatus saleStatus, int deliveryFee, String imageUrl) {
