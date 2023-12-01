@@ -5,6 +5,7 @@ import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
@@ -36,26 +37,27 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final ImageStore imageStore;
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> findProductsInCategoryForUser(Long categoryId, Pageable pageable) {
         return productRepository.findAllOnSaleByCategory(categoryId, pageable)
-                .map(ProductResponse::from);
+                .map(product -> ProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
     }
 
     @Transactional(readOnly = true)
     public Page<CategoryProductResponse> findProductsOnSaleForUser(String name, Pageable pageable) {
         if (hasText(name)) {
-            return productRepository.findAllOnSaleByName(name, pageable).map(CategoryProductResponse::from);
+            return productRepository.findAllOnSaleByName(name, pageable).map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
         } else {
-            return productRepository.findAllOnSale(pageable).map(CategoryProductResponse::from);
+            return productRepository.findAllOnSale(pageable).map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
         }
     }
 
     @Transactional(readOnly = true)
     public CategoryProductResponse findProductOnSaleForUser(Long id) {
         return productRepository.findOnSaleById(id)
-                .map(CategoryProductResponse::from)
+                .map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())))
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
     }
 
@@ -87,20 +89,28 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
     }
 
-    public Long addProduct(Long sellerId, ProductServiceRequest.Create serviceRequest) {
+    public Long addProduct(Long sellerId, ProductServiceRequest.Create serviceRequest, String imageName) {
         Category category = categoryRepository.getReferenceById(serviceRequest.categoryId());
         User user = userRepository.getReferenceById(sellerId);
         if (serviceRequest.saleStatus() == null) {
-            return productRepository.save(serviceRequest.toEntity(category, user, SaleStatus.WAIT)).getId();
+            return productRepository.save(serviceRequest.toEntity(category, user, SaleStatus.WAIT, imageName)).getId();
         }
-        return productRepository.save(serviceRequest.toEntity(category, user)).getId();
+        return productRepository.save(serviceRequest.toEntity(category, user, imageName)).getId();
     }
 
     public Long updateProductInfo(Long productId, Long sellerId, ProductServiceRequest.Update serviceRequest) {
         Product product = productRepository.findByIdAndSeller_Id(productId, sellerId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
         Category category = categoryRepository.getReferenceById(serviceRequest.categoryId());
-        product.updateInfo(category, serviceRequest.name(), serviceRequest.price(), serviceRequest.description(), serviceRequest.stockQuantity(), serviceRequest.saleStatus(), serviceRequest.deliveryFee(), serviceRequest.imageUrl());
+        product.updateInfo(category, serviceRequest.name(), serviceRequest.price(), serviceRequest.description(), serviceRequest.stockQuantity(), serviceRequest.saleStatus(), serviceRequest.deliveryFee());
+        return product.getId();
+    }
+
+    public Long updateProductImage(Long productId, Long sellerId, String imageName) {
+        Product product = productRepository.findByIdAndSeller_Id(productId, sellerId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
+        imageStore.deleteImage(product.getImageName());
+        product.updateImage(imageName);
         return product.getId();
     }
 }

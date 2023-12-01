@@ -16,7 +16,7 @@ public record CategoryProductResponse(
         return new CategoryProductResponse(id, category, name, price, description, deliveryFee, imageUrl);
     }
 
-    public static CategoryProductResponse from(Product entity) {
+    public static CategoryProductResponse from(Product entity, String imageUrl) {
         return CategoryProductResponse.of(
                 entity.getId(),
                 entity.getCategory().getName(),
@@ -24,7 +24,7 @@ public record CategoryProductResponse(
                 entity.getPrice(),
                 entity.getDescription(),
                 entity.getDeliveryFee(),
-                entity.getImageUrl()
+                imageUrl
         );
     }
 }

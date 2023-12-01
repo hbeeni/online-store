@@ -2,6 +2,7 @@ package com.been.onlinestore.repository.querydsl.product;
 
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.file.ImageStore;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -29,10 +30,12 @@ import static org.springframework.util.StringUtils.hasText;
 public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport implements ProductRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+    private final ImageStore imageStore;
 
-    public ProductRepositoryCustomImpl(EntityManager em) {
+    public ProductRepositoryCustomImpl(EntityManager em, ImageStore imageStore) {
         super(Product.class);
         this.queryFactory = new JPAQueryFactory(em);
+        this.imageStore = imageStore;
     }
 
     @Override
@@ -83,7 +86,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
     private ConstructorExpression<AdminProductResponse> getAdminProductResponseProjection() {
         return Projections.constructor(AdminProductResponse.class,
                 product.id,
-                category.name.as("category"),
+                category.name,
                 Projections.constructor(AdminProductResponse.Seller.class,
                         user.id,
                         user.uid
@@ -95,7 +98,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 product.salesVolume,
                 product.saleStatus,
                 product.deliveryFee,
-                product.imageUrl,
+                product.imageName.prepend(imageStore.getImagePath()),
                 product.createdAt,
                 product.createdBy,
                 product.modifiedAt,

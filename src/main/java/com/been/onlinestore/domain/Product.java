@@ -80,7 +80,7 @@ public class Product extends BaseEntity {
         return new Product(category, seller, name, price, description, stockQuantity, salesVolume, saleStatus, deliveryFee, imageName);
     }
 
-    public void updateInfo(Category category, String name, int price, String description, int stockQuantity, SaleStatus saleStatus, int deliveryFee, String imageUrl) {
+    public void updateInfo(Category category, String name, int price, String description, int stockQuantity, SaleStatus saleStatus, int deliveryFee) {
         this.category = category;
         this.name = name;
         this.price = price;
@@ -88,7 +88,10 @@ public class Product extends BaseEntity {
         this.stockQuantity = stockQuantity;
         this.saleStatus = saleStatus;
         this.deliveryFee = deliveryFee;
-        this.imageUrl = imageUrl;
+    }
+
+    public void updateImage(String imageName) {
+        this.imageName = imageName;
     }
 
     public void addStock(int stockQuantity) {

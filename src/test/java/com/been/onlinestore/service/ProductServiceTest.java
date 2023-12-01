@@ -1,6 +1,7 @@
 package com.been.onlinestore.service;
 
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
@@ -30,8 +31,10 @@ import static com.been.onlinestore.util.UserTestDataUtil.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
 
 @DisplayName("비즈니스 로직 - 상품")
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +43,7 @@ class ProductServiceTest {
     @Mock private ProductRepository productRepository;
     @Mock private CategoryRepository categoryRepository;
     @Mock private UserRepository userRepository;
+    @Mock private ImageStore imageStore;
 
     @InjectMocks private ProductService sut;
 
@@ -96,6 +100,7 @@ class ProductServiceTest {
         //Given
         long id = 1L;
         given(productRepository.findOnSaleById(id)).willReturn(Optional.of(createProduct(id)));
+        given(imageStore.getImageUrl(anyString())).willReturn("image url");
 
         //When
         CategoryProductResponse result = sut.findProductOnSaleForUser(id);
@@ -231,14 +236,14 @@ class ProductServiceTest {
         long productId = 1L;
         long sellerId = 1L;
         ProductServiceRequest.Create serviceRequest =
-                ProductServiceRequest.Create.of(categoryId, "product", 10000, "des", 100, null, 3000, null);
+                ProductServiceRequest.Create.of(categoryId, "product", 10000, "des", 100, null, 3000);
 
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
         given(userRepository.getReferenceById(sellerId)).willReturn(createUser("user"));
         given(productRepository.save(any())).willReturn(createProduct());
 
         //When
-        Long result = sut.addProduct(sellerId, serviceRequest);
+        Long result = sut.addProduct(sellerId, serviceRequest, "image.png");
 
         //Then
         assertThat(result).isEqualTo(productId);
@@ -255,7 +260,7 @@ class ProductServiceTest {
         long sellerId = 1L;
         long categoryId = 1L;
         ProductServiceRequest.Update serviceRequest =
-                ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000, null);
+                ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
 
         given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.of(createProduct(productId)));
         given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
@@ -277,7 +282,7 @@ class ProductServiceTest {
         long sellerId = 1L;
         long productId = 1L;
         ProductServiceRequest.Update serviceRequest =
-                ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000, null);
+                ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
 
         given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.empty());
 
@@ -286,5 +291,25 @@ class ProductServiceTest {
                 .isInstanceOf(EntityNotFoundException.class);
         then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
         then(categoryRepository).shouldHaveNoInteractions();
+    }
+
+    @DisplayName("상품 이미지를 수정하면, 수정된 상품의 id를 반환한다.")
+    @Test
+    void test_updateProductImage() {
+        //Given
+        long productId = 1L;
+        long sellerId = 1L;
+        long categoryId = 1L;
+
+        given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.of(createProduct(productId)));
+        willDoNothing().given(imageStore).deleteImage(anyString());
+
+        //When
+        Long result = sut.updateProductImage(productId, categoryId, "image.png");
+
+        //Then
+        assertThat(result).isEqualTo(productId);
+        then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
+        then(imageStore).should().deleteImage(anyString());
     }
 }
