@@ -24,6 +24,7 @@ public enum FieldDescription {
     PRODUCT_SALES_VOLUME("상품 판매량"),
     PRODUCT_SALE_STATUS("상품 판매 상태 (WAIT, SALE, OUT_OF_STOCK, CLOSE)"),
     PRODUCT_DELIVERY_FEE("상품 배송비"),
+    PRODUCT_IMAGE("상품 이미지 파일"),
     PRODUCT_IMAGE_URL("상품 이미지 URL"),
 
     CATEGORY_ID("카테고리 시퀀스"),

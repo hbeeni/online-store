@@ -4,7 +4,6 @@ import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.service.response.CategoryProductResponse;
-import com.been.onlinestore.service.response.ProductResponse;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.been.onlinestore.util.CategoryTestDataUtil.createCategory;
@@ -28,21 +27,10 @@ public class ProductTestDataUtil {
                 0,
                 SaleStatus.SALE,
                 3000,
-                null
+                "image.png"
         );
         ReflectionTestUtils.setField(product, "id", id);
         return product;
-    }
-
-    public static ProductResponse createProductResponse(Long id) {
-        return ProductResponse.of(
-                id,
-                "name",
-                10000,
-                "description",
-                3000,
-                "-"
-        );
     }
 
     public static CategoryProductResponse createCategoryProductResponse(Long id, String productName, String categoryName) {

@@ -21,7 +21,6 @@ public record ProductRequest() {
      * @param stockQuantity 필수
      * @param saleStatus 옵션 - 기본값: WAIT
      * @param deliveryFee 필수
-     * @param imageUrl 옵션
      */
     @Builder
     public record Create(
@@ -43,10 +42,7 @@ public record ProductRequest() {
             SaleStatus saleStatus,
 
             @NotNull @PositiveOrZero
-            Integer deliveryFee,
-
-            @Size(max = 200)
-            String imageUrl
+            Integer deliveryFee
     ) {
 
         public ProductServiceRequest.Create toServiceRequest() {
@@ -57,8 +53,7 @@ public record ProductRequest() {
                     description,
                     stockQuantity,
                     saleStatus,
-                    deliveryFee,
-                    imageUrl
+                    deliveryFee
             );
         }
     }
@@ -72,7 +67,6 @@ public record ProductRequest() {
      * @param stockQuantity 필수
      * @param saleStatus 필수
      * @param deliveryFee 필수
-     * @param imageUrl 옵션
      */
     @Builder
     public record Update(
@@ -95,10 +89,7 @@ public record ProductRequest() {
             SaleStatus saleStatus,
 
             @NotNull @PositiveOrZero
-            Integer deliveryFee,
-
-            @Size(max = 200)
-            String imageUrl
+            Integer deliveryFee
     ) {
 
         public ProductServiceRequest.Update toServiceRequest() {
@@ -109,8 +100,7 @@ public record ProductRequest() {
                     description,
                     stockQuantity,
                     saleStatus,
-                    deliveryFee,
-                    imageUrl
+                    deliveryFee
             );
         }
     }
