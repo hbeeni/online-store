@@ -57,13 +57,15 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiErrorResponse<Void>> runtimeEx(RuntimeException e) {
-        log.error(e.getCause().getMessage());
+        Throwable t = e.getCause() == null ? e : e.getCause();
+        log.error(t.getMessage());
         return ResponseEntity.badRequest().body(ApiErrorResponse.fail(e));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse<Void>> internalServerError(Exception e) {
-        log.error(e.getCause().getMessage());
+        Throwable t = e.getCause() == null ? e : e.getCause();
+        log.error(t.getMessage());
         return ResponseEntity.internalServerError().body(ApiErrorResponse.error(e));
     }
 }
