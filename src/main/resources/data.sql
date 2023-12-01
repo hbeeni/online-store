@@ -20,12 +20,17 @@ values (now(), now(), 'admin', 'admin', '패션의류', '패션의류'),
        (now(), now(), 'admin', 'admin', '스포츠', '스포츠');
 
 -- 상품
-insert into product (created_at, modified_at, created_by, modified_by, delivery_fee, description, image_url, name, price, sale_status, sales_volume, stock_quantity, category_id, seller_id)
-values (now(), now(), 'seller', 'seller', 3000, '꽃무늬 바지', null, '꽃무늬 바지', 12000, 'SALE', 10, 100, 1, 5),
-       (now(), now(), 'seller', 'seller', 3000, '꽃무늬 셔츠', null, '꽃무늬 셔츠', 15500, 'SALE', 20, 121, 1, 2),
-       (now(), now(), 'seller', 'seller', 0, '프렌치 코트', null, '프렌치 코트', 53000, 'WAIT', 0, 55, 1, 2),
-       (now(), now(), 'seller', 'seller', 3000, '아보카도', null, '아보카도', 2300, 'SALE', 120, 20, 3, 5),
-       (now(), now(), 'seller', 'seller', 3000, '요거트', null, '요거트', 3500, 'SALE', 22, 56, 3, 2);
+insert into product (created_at, modified_at, created_by, modified_by, delivery_fee, name, image_name, description, price, sale_status, sales_volume, stock_quantity, category_id, seller_id)
+values (now(), now(), 'seller', 'seller', 3000, '부츠컷 바지', 'c07b62ee-14a7-4555-8f38-95eed42304cd.jpg', '부츠컷 바지', 12000, 'SALE', 10, 100, 1, 5),
+       (now(), now(), 'seller', 'seller', 0, '빨간색 셔츠', '02b817ac-f7db-44ee-b291-4f6f48a2f7f6.jpg', '여성용 빨간 셔츠', 15500, 'SALE', 20, 121, 1, 2),
+       (now(), now(), 'seller', 'seller', 10000, '컴퓨터', '29be2acd-a54b-4259-b7ed-51541604c412.jpg', '아이맥', 1240000, 'SALE', 0, 55, 5, 2),
+       (now(), now(), 'seller', 'seller', 3000, '아보카도', 'c1cf8d7a-be86-4f00-8b20-8d8f1d7d26ba.jpg', '아보카도', 2300, 'SALE', 120, 20, 3, 5),
+       (now(), now(), 'seller', 'seller', 3000, '요거트', '53b3fcc9-1be6-4671-b3a8-7af81cfe205d.jpg', '요거트', 3500, 'SALE', 22, 56, 3, 2),
+       (now(), now(), 'seller', 'seller', 2500, '런닝화', '13200308-8faa-480c-a467-b8024014e498.jpg', '분홍색 여성용 런닝화', 57000, 'WAIT', 0, 199, 1, 2),
+       (now(), now(), 'seller', 'seller', 7000, '카메라', 'b819c1c9-05e7-406a-bf12-df597daff3cc.jpg', '캐논 카메라', 770000, 'OUT_OF_STOCK', 55, 0, 5, 5),
+       (now(), now(), 'seller', 'seller', 2500, '강아지 옷', 'b19b76dd-c442-4383-bbc2-8e6743bf1cdd.jpg', '겨울에 입힐 수 있는 강아지 니트', 3500, 'SALE', 1333, 22, 8, 2),
+       (now(), now(), 'seller', 'seller', 3000, '인라인 스케이트', '4413ce8c-f236-4c42-8452-6cc7158b7d85.jpg', '아동용 인라인 스케이트', 135000, 'OUT_OF_STOCK', 1540, 0, 10, 2),
+       (now(), now(), 'seller', 'seller', 0, '레드 립스틱', 'c78e0088-3686-4f25-946f-9937bdf77074.jpg', '진한 빨간색이 돋보이는 립스틱', 12000, 'CLOSE', 3423, 22, 2, 5);
 
 -- 배송 요청
 insert into delivery_request (delivery_address, receiver_name, receiver_phone)
