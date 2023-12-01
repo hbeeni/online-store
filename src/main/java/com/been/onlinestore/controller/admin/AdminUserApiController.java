@@ -3,7 +3,9 @@ package com.been.onlinestore.controller.admin;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.service.UserService;
 import com.been.onlinestore.service.response.UserResponse;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -20,21 +22,22 @@ import java.util.List;
 @RestController
 public class AdminUserApiController {
 
-    private final UserService userService;
+	private final UserService userService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getUsers(@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.pagination(userService.findUsers(pageable)));
-    }
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<UserResponse>>> getUsers(
+			@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+		return ResponseEntity.ok(ApiResponse.pagination(userService.findUsers(pageable)));
+	}
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(ApiResponse.success(userService.findUser(userId)));
-    }
+	@GetMapping("/{userId}")
+	public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable Long userId) {
+		return ResponseEntity.ok(ApiResponse.success(userService.findUser(userId)));
+	}
 
-    //TODO: 마지막에 구현
-//    @DeleteMapping("/{userId}")
-//    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-//        return ResponseEntity.ok(ApiResponse.success(null));
-//    }
+	//TODO: 마지막에 구현
+	//    @DeleteMapping("/{userId}")
+	//    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+	//        return ResponseEntity.ok(ApiResponse.success(null));
+	//    }
 }

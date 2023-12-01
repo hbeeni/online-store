@@ -5,7 +5,9 @@ import com.been.onlinestore.service.CategoryService;
 import com.been.onlinestore.service.ProductService;
 import com.been.onlinestore.service.response.CategoryResponse;
 import com.been.onlinestore.service.response.ProductResponse;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -22,16 +24,18 @@ import java.util.List;
 @RestController
 public class CategoryApiController {
 
-    private final CategoryService categoryService;
-    private final ProductService productService;
+	private final CategoryService categoryService;
+	private final ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getCategories() {
-        return ResponseEntity.ok(ApiResponse.success(categoryService.findCategoriesForUser()));
-    }
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> getCategories() {
+		return ResponseEntity.ok(ApiResponse.success(categoryService.findCategoriesForUser()));
+	}
 
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProductsInCategory(@PathVariable Long categoryId, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsInCategoryForUser(categoryId, pageable)));
-    }
+	@GetMapping("/{categoryId}")
+	public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProductsInCategory(@PathVariable Long categoryId,
+			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		return ResponseEntity.ok(
+				ApiResponse.pagination(productService.findProductsInCategoryForUser(categoryId, pageable)));
+	}
 }

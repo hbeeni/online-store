@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface ProductRepositoryCustom {
-    Page<AdminProductResponse> searchProducts(Long sellerId, ProductSearchCondition cond, Pageable pageable);
-    Optional<AdminProductResponse> searchProduct(Long productId, Long sellerId);
+	Page<AdminProductResponse> searchProducts(Long sellerId, ProductSearchCondition cond, Pageable pageable);
+
+	Optional<AdminProductResponse> searchProduct(Long productId, Long sellerId);
 }

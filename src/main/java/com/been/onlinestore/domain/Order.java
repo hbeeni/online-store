@@ -1,9 +1,11 @@
 package com.been.onlinestore.domain;
 
 import com.been.onlinestore.domain.constant.OrderStatus;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.CascadeType;
@@ -19,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,71 +32,73 @@ import java.util.Objects;
 @Entity
 public class Order extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
+	@ToString.Exclude
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User orderer;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User orderer;
+	@ToString.Exclude
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	private DeliveryRequest deliveryRequest;
 
-    @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private DeliveryRequest deliveryRequest;
+	@ToString.Exclude
+	@Setter
+	@OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+	private List<OrderProduct> orderProducts = new ArrayList<>();
 
-    @ToString.Exclude
-    @Setter
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderProduct> orderProducts = new ArrayList<>();
+	@Column(nullable = false, length = 20)
+	private String ordererPhone;
 
+	@Enumerated(EnumType.STRING)
+	@ColumnDefault("'ORDER'")
+	@Column(nullable = false, length = 20)
+	private OrderStatus orderStatus;
 
-    @Column(nullable = false, length = 20)
-    private String ordererPhone;
+	protected Order() {
+	}
 
-    @Enumerated(EnumType.STRING)
-    @ColumnDefault("'ORDER'")
-    @Column(nullable = false, length = 20)
-    private OrderStatus orderStatus;
+	private Order(User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
+		this.orderer = orderer;
+		this.deliveryRequest = deliveryRequest;
+		this.ordererPhone = ordererPhone;
+		this.orderStatus = orderStatus;
+	}
 
-    protected Order() {}
+	public static Order of(User orderer, DeliveryRequest deliveryRequest, String ordererPhone,
+			OrderStatus orderStatus) {
+		return new Order(orderer, deliveryRequest, ordererPhone, orderStatus);
+	}
 
-    private Order(User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
-        this.orderer = orderer;
-        this.deliveryRequest = deliveryRequest;
-        this.ordererPhone = ordererPhone;
-        this.orderStatus = orderStatus;
-    }
+	public void addOrderProducts(List<OrderProduct> orderProducts) {
+		this.orderProducts = orderProducts;
+		orderProducts.forEach(orderProduct -> orderProduct.setOrder(this));
+	}
 
-    public static Order of(User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
-        return new Order(orderer, deliveryRequest, ordererPhone, orderStatus);
-    }
+	public int getTotalPrice() {
+		return orderProducts.stream()
+				.mapToInt(OrderProduct::getTotalPrice)
+				.sum();
+	}
 
-    public void addOrderProducts(List<OrderProduct> orderProducts) {
-        this.orderProducts = orderProducts;
-        orderProducts.forEach(orderProduct -> orderProduct.setOrder(this));
-    }
+	public void cancel() {
+		orderProducts.forEach(OrderProduct::cancel);
+		this.orderStatus = OrderStatus.CANCEL;
+	}
 
-    public int getTotalPrice() {
-        return orderProducts.stream()
-                .mapToInt(OrderProduct::getTotalPrice)
-                .sum();
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Order that))
+			return false;
+		return this.getId() != null && Objects.equals(this.getId(), that.getId());
+	}
 
-    public void cancel() {
-        orderProducts.forEach(OrderProduct::cancel);
-        this.orderStatus = OrderStatus.CANCEL;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order that)) return false;
-        return this.getId() != null && Objects.equals(this.getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getId());
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getId());
+	}
 }

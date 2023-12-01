@@ -3,7 +3,9 @@ package com.been.onlinestore.controller.seller;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.service.OrderService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -19,21 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SellerOrderApiController {
 
-    private final OrderService orderService;
+	private final OrderService orderService;
 
-    @GetMapping
-    public ResponseEntity<?> getOrders(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-        return ResponseEntity.ok(ApiResponse.pagination(orderService.findOrdersBySeller(principalDetails.id(), pageable)));
-    }
+	@GetMapping
+	public ResponseEntity<?> getOrders(
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+	) {
+		return ResponseEntity.ok(
+				ApiResponse.pagination(orderService.findOrdersBySeller(principalDetails.id(), pageable)));
+	}
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<?> getOrder(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PathVariable Long orderId
-    ) {
-        return ResponseEntity.ok(ApiResponse.success(orderService.findOrderBySeller(orderId, principalDetails.id())));
-    }
+	@GetMapping("/{orderId}")
+	public ResponseEntity<?> getOrder(
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@PathVariable Long orderId
+	) {
+		return ResponseEntity.ok(ApiResponse.success(orderService.findOrderBySeller(orderId, principalDetails.id())));
+	}
 }
