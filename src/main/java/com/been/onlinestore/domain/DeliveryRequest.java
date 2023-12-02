@@ -1,7 +1,6 @@
 package com.been.onlinestore.domain;
 
-import lombok.Getter;
-import lombok.ToString;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
@@ -44,10 +44,12 @@ public class DeliveryRequest {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof DeliveryRequest that))
+		}
+		if (!(o instanceof DeliveryRequest that)) {
 			return false;
+		}
 		return this.getId() != null && Objects.equals(this.getId(), that.getId());
 	}
 

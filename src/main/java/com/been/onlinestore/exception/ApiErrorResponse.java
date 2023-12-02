@@ -1,13 +1,13 @@
 package com.been.onlinestore.exception;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import lombok.Getter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.validation.BindingResult;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -52,8 +52,8 @@ public class ApiErrorResponse<T> {
 	 * }
 	 * </pre>
 	 */
-	public static ApiErrorResponse<Void> fail(Exception e) {
-		return new ApiErrorResponse<>(STATUS_FAIL, null, e.getLocalizedMessage());
+	public static ApiErrorResponse<Void> fail(Exception ex) {
+		return new ApiErrorResponse<>(STATUS_FAIL, null, ex.getLocalizedMessage());
 	}
 
 	/**

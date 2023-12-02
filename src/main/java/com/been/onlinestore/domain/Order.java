@@ -1,12 +1,8 @@
 package com.been.onlinestore.domain;
 
-import com.been.onlinestore.domain.constant.OrderStatus;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-import org.hibernate.annotations.ColumnDefault;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,9 +18,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import org.hibernate.annotations.ColumnDefault;
+
+import com.been.onlinestore.domain.constant.OrderStatus;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
@@ -90,10 +90,12 @@ public class Order extends BaseTimeEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof Order that))
+		}
+		if (!(o instanceof Order that)) {
 			return false;
+		}
 		return this.getId() != null && Objects.equals(this.getId(), that.getId());
 	}
 

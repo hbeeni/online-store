@@ -1,6 +1,6 @@
 package com.been.onlinestore.controller.dto;
 
-import com.been.onlinestore.service.request.OrderServiceRequest;
+import java.util.Map;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -8,7 +8,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import java.util.Map;
+import com.been.onlinestore.service.request.OrderServiceRequest;
 
 public record OrderRequest(
 		@NotNull

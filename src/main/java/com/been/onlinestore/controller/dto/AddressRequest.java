@@ -1,12 +1,12 @@
 package com.been.onlinestore.controller.dto;
 
-import com.been.onlinestore.service.request.AddressServiceRequest;
-
-import lombok.Builder;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.been.onlinestore.service.request.AddressServiceRequest;
+
+import lombok.Builder;
 
 @Builder
 public record AddressRequest(

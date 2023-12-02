@@ -1,15 +1,15 @@
 package com.been.onlinestore.service;
 
-import com.been.onlinestore.domain.constant.SaleStatus;
-import com.been.onlinestore.file.ImageStore;
-import com.been.onlinestore.repository.CategoryRepository;
-import com.been.onlinestore.repository.ProductRepository;
-import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
-import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
-import com.been.onlinestore.service.request.ProductServiceRequest;
-import com.been.onlinestore.service.response.CategoryProductResponse;
-import com.been.onlinestore.service.response.ProductResponse;
+import static com.been.onlinestore.util.CategoryTestDataUtil.*;
+import static com.been.onlinestore.util.ProductTestDataUtil.*;
+import static com.been.onlinestore.util.UserTestDataUtil.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,21 +22,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import javax.persistence.EntityNotFoundException;
-
-import java.util.Optional;
-
-import static com.been.onlinestore.util.CategoryTestDataUtil.createCategory;
-import static com.been.onlinestore.util.ProductTestDataUtil.createAdminProductResponse;
-import static com.been.onlinestore.util.ProductTestDataUtil.createProduct;
-import static com.been.onlinestore.util.UserTestDataUtil.createUser;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willDoNothing;
+import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.file.ImageStore;
+import com.been.onlinestore.repository.CategoryRepository;
+import com.been.onlinestore.repository.ProductRepository;
+import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
+import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
+import com.been.onlinestore.service.request.ProductServiceRequest;
+import com.been.onlinestore.service.response.CategoryProductResponse;
+import com.been.onlinestore.service.response.ProductResponse;
 
 @DisplayName("비즈니스 로직 - 상품")
 @ExtendWith(MockitoExtension.class)

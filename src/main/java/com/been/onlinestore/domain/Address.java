@@ -1,9 +1,6 @@
 package com.been.onlinestore.domain;
 
-import com.been.onlinestore.domain.converter.DefaultAddressConverter;
-
-import lombok.Getter;
-import lombok.ToString;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -14,7 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import java.util.Objects;
+import com.been.onlinestore.domain.converter.DefaultAddressConverter;
+
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
@@ -65,10 +65,12 @@ public class Address extends BaseTimeEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof Address that))
+		}
+		if (!(o instanceof Address that)) {
 			return false;
+		}
 		return this.getId() != null && Objects.equals(this.getId(), that.getId());
 	}
 

@@ -1,8 +1,8 @@
 package com.been.onlinestore.service.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record DeliveryStatusChangeResponse(

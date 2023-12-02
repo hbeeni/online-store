@@ -1,28 +1,28 @@
 package com.been.onlinestore.repository.querydsl.order;
 
-import com.been.onlinestore.domain.Order;
-import com.been.onlinestore.domain.OrderProduct;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import org.springframework.data.support.PageableExecutionUtils;
-
-import javax.persistence.EntityManager;
+import static com.been.onlinestore.domain.QDelivery.*;
+import static com.been.onlinestore.domain.QDeliveryRequest.*;
+import static com.been.onlinestore.domain.QOrder.*;
+import static com.been.onlinestore.domain.QOrderProduct.*;
+import static com.been.onlinestore.domain.QProduct.*;
+import static com.been.onlinestore.domain.QUser.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.been.onlinestore.domain.QDelivery.delivery;
-import static com.been.onlinestore.domain.QDeliveryRequest.deliveryRequest;
-import static com.been.onlinestore.domain.QOrder.order;
-import static com.been.onlinestore.domain.QOrderProduct.orderProduct;
-import static com.been.onlinestore.domain.QProduct.product;
-import static com.been.onlinestore.domain.QUser.user;
+import javax.persistence.EntityManager;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.data.support.PageableExecutionUtils;
+
+import com.been.onlinestore.domain.Order;
+import com.been.onlinestore.domain.OrderProduct;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport implements OrderRepositoryCustom {
 

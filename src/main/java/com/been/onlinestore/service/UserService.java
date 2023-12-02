@@ -1,5 +1,14 @@
 package com.been.onlinestore.service;
 
+import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.repository.UserRepository;
@@ -7,15 +16,6 @@ import com.been.onlinestore.service.request.UserServiceRequest;
 import com.been.onlinestore.service.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional

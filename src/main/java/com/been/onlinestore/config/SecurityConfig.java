@@ -1,13 +1,6 @@
 package com.been.onlinestore.config;
 
-import com.been.onlinestore.config.jwt.CustomAccessDeniedHandler;
-import com.been.onlinestore.config.jwt.CustomAuthenticationEntryPoint;
-import com.been.onlinestore.config.jwt.JwtProperties;
-import com.been.onlinestore.config.jwt.JwtSecurityConfig;
-import com.been.onlinestore.config.jwt.JwtTokenProvider;
-import com.been.onlinestore.domain.constant.RoleType;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +19,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import com.been.onlinestore.config.jwt.CustomAccessDeniedHandler;
+import com.been.onlinestore.config.jwt.CustomAuthenticationEntryPoint;
+import com.been.onlinestore.config.jwt.JwtProperties;
+import com.been.onlinestore.config.jwt.JwtSecurityConfig;
+import com.been.onlinestore.config.jwt.JwtTokenProvider;
+import com.been.onlinestore.domain.constant.RoleType;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @EnableWebSecurity

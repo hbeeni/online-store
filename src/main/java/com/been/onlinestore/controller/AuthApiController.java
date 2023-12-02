@@ -1,12 +1,8 @@
 package com.been.onlinestore.controller;
 
-import com.been.onlinestore.config.jwt.JwtProperties;
-import com.been.onlinestore.config.jwt.JwtTokenProvider;
-import com.been.onlinestore.controller.dto.ApiResponse;
-import com.been.onlinestore.controller.dto.UserRequest;
-import com.been.onlinestore.service.UserService;
+import java.util.Map;
 
-import lombok.RequiredArgsConstructor;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,9 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
+import com.been.onlinestore.config.jwt.JwtProperties;
+import com.been.onlinestore.config.jwt.JwtTokenProvider;
+import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.controller.dto.UserRequest;
+import com.been.onlinestore.service.UserService;
 
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController

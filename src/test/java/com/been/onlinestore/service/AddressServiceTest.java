@@ -1,11 +1,15 @@
 package com.been.onlinestore.service;
 
-import com.been.onlinestore.common.ErrorMessages;
-import com.been.onlinestore.domain.Address;
-import com.been.onlinestore.repository.AddressRepository;
-import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.AddressServiceRequest;
-import com.been.onlinestore.service.response.AddressResponse;
+import static com.been.onlinestore.util.AddressTestDataUtil.*;
+import static com.been.onlinestore.util.UserTestDataUtil.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,20 +18,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.persistence.EntityNotFoundException;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.been.onlinestore.util.AddressTestDataUtil.createAddress;
-import static com.been.onlinestore.util.AddressTestDataUtil.createAddressServiceRequest;
-import static com.been.onlinestore.util.UserTestDataUtil.createUser;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willDoNothing;
+import com.been.onlinestore.common.ErrorMessages;
+import com.been.onlinestore.domain.Address;
+import com.been.onlinestore.repository.AddressRepository;
+import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.AddressServiceRequest;
+import com.been.onlinestore.service.response.AddressResponse;
 
 @DisplayName("비즈니스 로직 - 배송지")
 @ExtendWith(MockitoExtension.class)

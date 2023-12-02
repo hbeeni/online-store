@@ -1,12 +1,7 @@
 package com.been.onlinestore.domain;
 
-import com.been.onlinestore.domain.constant.DeliveryStatus;
-
-import lombok.Getter;
-import lombok.ToString;
-
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.been.onlinestore.domain.constant.DeliveryStatus;
+
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
@@ -66,10 +66,12 @@ public class Delivery {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof Delivery that))
+		}
+		if (!(o instanceof Delivery that)) {
 			return false;
+		}
 		return this.getId() != null && Objects.equals(this.getId(), that.getId());
 	}
 

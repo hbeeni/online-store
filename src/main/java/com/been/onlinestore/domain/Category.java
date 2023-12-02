@@ -1,7 +1,8 @@
 package com.been.onlinestore.domain;
 
-import lombok.Getter;
-import lombok.ToString;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,9 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
@@ -52,10 +52,12 @@ public class Category extends BaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof Category that))
+		}
+		if (!(o instanceof Category that)) {
 			return false;
+		}
 		return this.getId() != null && Objects.equals(this.getId(), that.getId());
 	}
 

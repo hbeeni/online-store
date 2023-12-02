@@ -1,5 +1,22 @@
 package com.been.onlinestore.repository.querydsl.product;
 
+import static com.been.onlinestore.domain.QCategory.*;
+import static com.been.onlinestore.domain.QProduct.*;
+import static com.been.onlinestore.domain.QUser.*;
+import static org.springframework.util.StringUtils.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.data.support.PageableExecutionUtils;
+
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.file.ImageStore;
@@ -11,23 +28,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import org.springframework.data.support.PageableExecutionUtils;
-
-import javax.persistence.EntityManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.been.onlinestore.domain.QCategory.category;
-import static com.been.onlinestore.domain.QProduct.product;
-import static com.been.onlinestore.domain.QUser.user;
-import static org.springframework.util.StringUtils.hasText;
 
 public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport implements ProductRepositoryCustom {
 
@@ -138,12 +138,11 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 	private List<OrderSpecifier> getOrderSpecifiers(Sort sort) {
 		List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
 		sort.stream().forEach(order -> {
-					Order direction = order.isAscending() ? Order.ASC : Order.DESC;
-					String property = order.getProperty();
-					PathBuilder<Product> pathBuilder = new PathBuilder<>(Product.class, "product");
-					orderSpecifiers.add(new OrderSpecifier(direction, pathBuilder.get(property)));
-				}
-		);
+			Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+			String property = order.getProperty();
+			PathBuilder<Product> pathBuilder = new PathBuilder<>(Product.class, "product");
+			orderSpecifiers.add(new OrderSpecifier(direction, pathBuilder.get(property)));
+		});
 
 		return orderSpecifiers;
 	}

@@ -1,10 +1,13 @@
 package com.been.onlinestore.service;
 
-import com.been.onlinestore.domain.User;
-import com.been.onlinestore.domain.constant.RoleType;
-import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.UserServiceRequest;
-import com.been.onlinestore.service.response.UserResponse;
+import static com.been.onlinestore.util.UserTestDataUtil.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -17,17 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.persistence.EntityNotFoundException;
-
-import java.util.Optional;
-
-import static com.been.onlinestore.util.UserTestDataUtil.createAdmin;
-import static com.been.onlinestore.util.UserTestDataUtil.createUser;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import com.been.onlinestore.domain.User;
+import com.been.onlinestore.domain.constant.RoleType;
+import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.UserServiceRequest;
+import com.been.onlinestore.service.response.UserResponse;
 
 @DisplayName("비즈니스 로직 - 회원")
 @ExtendWith(MockitoExtension.class)

@@ -1,11 +1,6 @@
 package com.been.onlinestore.domain;
 
-import com.been.onlinestore.common.ErrorMessages;
-import com.been.onlinestore.domain.constant.DeliveryStatus;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,7 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import java.util.Objects;
+import com.been.onlinestore.common.ErrorMessages;
+import com.been.onlinestore.domain.constant.DeliveryStatus;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @ToString
@@ -92,10 +92,12 @@ public class OrderProduct {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof OrderProduct that))
+		}
+		if (!(o instanceof OrderProduct that)) {
 			return false;
+		}
 		return this.getId() != null && Objects.equals(this.getId(), that.getId());
 	}
 

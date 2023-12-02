@@ -1,5 +1,17 @@
 package com.been.onlinestore.config.jwt;
 
+import java.security.Key;
+import java.util.Date;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
+
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 
 import io.jsonwebtoken.Claims;
@@ -9,18 +21,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-
-import java.security.Key;
-import java.util.Date;
-import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor

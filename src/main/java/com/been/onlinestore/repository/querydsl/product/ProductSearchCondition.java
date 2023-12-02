@@ -1,8 +1,8 @@
 package com.been.onlinestore.repository.querydsl.product;
 
-import com.been.onlinestore.domain.constant.SaleStatus;
-
 import javax.validation.constraints.Positive;
+
+import com.been.onlinestore.domain.constant.SaleStatus;
 
 public record ProductSearchCondition(
 		@Positive
