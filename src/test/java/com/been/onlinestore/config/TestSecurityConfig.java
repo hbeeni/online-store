@@ -18,9 +18,9 @@ public class TestSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-				.csrf().disable()
-				.authorizeRequests(auth -> auth.anyRequest().permitAll())
-				.build();
+			.csrf().disable()
+			.authorizeRequests(auth -> auth.anyRequest().permitAll())
+			.build();
 	}
 
 	@Bean
@@ -38,14 +38,14 @@ public class TestSecurityConfig {
 
 	private PrincipalDetails createPrincipalDetails(Long id, String uid, RoleType roleType) {
 		return PrincipalDetails.of(
-				id,
-				uid,
-				"pw",
-				roleType,
-				uid,
-				uid + "@mail.com",
-				uid,
-				"01011112222"
+			id,
+			uid,
+			"pw",
+			roleType,
+			uid,
+			uid + "@mail.com",
+			uid,
+			"01011112222"
 		);
 	}
 }

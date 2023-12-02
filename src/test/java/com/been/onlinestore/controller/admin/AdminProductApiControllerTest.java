@@ -65,24 +65,24 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(
-						get("/api/admin/products")
-								.queryParam("page", String.valueOf(pageNumber))
-								.queryParam("size", String.valueOf(pageSize))
-								.queryParam("sort", sortName + "," + direction)
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data").isArray())
-				.andExpect(jsonPath("$.data[0].id").value(response.id()))
-				.andExpect(jsonPath("$.data[0].name").value(response.name()))
-				.andExpect(jsonPath("$.data[0].price").value(response.price()))
-				.andExpect(jsonPath("$.data[0].seller").exists())
-				.andExpect(jsonPath("$.data[0].createdAt").exists())
-				.andExpect(jsonPath("$.page.number").value(page.getNumber()))
-				.andExpect(jsonPath("$.page.size").value(page.getSize()))
-				.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
-				.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()));
+				get("/api/admin/products")
+					.queryParam("page", String.valueOf(pageNumber))
+					.queryParam("size", String.valueOf(pageSize))
+					.queryParam("sort", sortName + "," + direction)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].id").value(response.id()))
+			.andExpect(jsonPath("$.data[0].name").value(response.name()))
+			.andExpect(jsonPath("$.data[0].price").value(response.price()))
+			.andExpect(jsonPath("$.data[0].seller").exists())
+			.andExpect(jsonPath("$.data[0].createdAt").exists())
+			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
+			.andExpect(jsonPath("$.page.size").value(page.getSize()))
+			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
+			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()));
 		then(productService).should().findProductsForAdmin(cond, pageable);
 	}
 
@@ -99,38 +99,38 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 		ProductSearchCondition cond = ProductSearchCondition.of(null, searchName, null);
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.asc(sortName)));
 		AdminProductResponse response1 = AdminProductResponse.of(
-				1L,
-				"상의",
-				AdminProductResponse.Seller.of(1L, "sellerA"),
-				"꽃무늬 셔츠",
-				12000,
-				"이쁜 꽃무늬 셔츠입니다.",
-				1200,
-				142343,
-				SaleStatus.CLOSE,
-				3000,
-				null,
-				now().minusYears(1),
-				"sellerA",
-				now().minusMonths(2),
-				"sellerA"
+			1L,
+			"상의",
+			AdminProductResponse.Seller.of(1L, "sellerA"),
+			"꽃무늬 셔츠",
+			12000,
+			"이쁜 꽃무늬 셔츠입니다.",
+			1200,
+			142343,
+			SaleStatus.CLOSE,
+			3000,
+			null,
+			now().minusYears(1),
+			"sellerA",
+			now().minusMonths(2),
+			"sellerA"
 		);
 		AdminProductResponse response2 = AdminProductResponse.of(
-				2L,
-				"하의",
-				AdminProductResponse.Seller.of(2L, "sellerB"),
-				"꽃무늬 바지",
-				15000,
-				"이쁜 꽃무늬 바지입니다.",
-				930,
-				1002,
-				SaleStatus.SALE,
-				2500,
-				null,
-				now().minusMonths(6),
-				"sellerB",
-				now().minusMonths(1),
-				"sellerB"
+			2L,
+			"하의",
+			AdminProductResponse.Seller.of(2L, "sellerB"),
+			"꽃무늬 바지",
+			15000,
+			"이쁜 꽃무늬 바지입니다.",
+			930,
+			1002,
+			SaleStatus.SALE,
+			2500,
+			null,
+			now().minusMonths(6),
+			"sellerB",
+			now().minusMonths(1),
+			"sellerB"
 		);
 		List<AdminProductResponse> content = List.of(response1, response2);
 		Page<AdminProductResponse> page = new PageImpl<>(content, pageable, content.size());
@@ -139,75 +139,75 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(
-						get("/api/admin/products")
-								.queryParam("name", searchName)
-								.queryParam("page", String.valueOf(pageNumber))
-								.queryParam("size", String.valueOf(pageSize))
-								.queryParam("sort", sortName + "," + direction)
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data").isArray())
-				.andExpect(jsonPath("$.data[0].id").value(response1.id()))
-				.andExpect(jsonPath("$.data[0].name").value(response1.name()))
-				.andExpect(jsonPath("$.data[0].price").value(response1.price()))
-				.andExpect(jsonPath("$.data[0].seller").exists())
-				.andExpect(jsonPath("$.data[0].createdAt").exists())
-				.andExpect(jsonPath("$.page.number").value(page.getNumber()))
-				.andExpect(jsonPath("$.page.size").value(page.getSize()))
-				.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
-				.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
-				.andDo(document(
-						"admin/product/getProducts-searching",
-						adminApiDescription(TagDescription.PRODUCT, "상품 페이징 조회 + 검색"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						requestParameters(PAGE_REQUEST_PARAM)
-								.and(
-										parameterWithName("categoryId").description(
-												"검색할 상품의 " + CATEGORY_ID.getDescription()).optional(),
-										parameterWithName("name").description("검색할 " + PRODUCT_NAME.getDescription())
-												.optional(),
-										parameterWithName("saleStatus").description(
-												"검색할 " + PRODUCT_SALE_STATUS.getDescription()).optional()
-								),
-						responseFields(
-								RestDocsUtils.STATUS,
-								fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_ID.getDescription()),
-								fieldWithPath("data[].category").type(JsonFieldType.VARIES)
-										.description(CATEGORY_NAME.getDescription()),
-								fieldWithPath("data[].seller.id").type(JsonFieldType.NUMBER)
-										.description(SELLER_ID.getDescription()),
-								fieldWithPath("data[].seller.uid").type(JsonFieldType.STRING)
-										.description(SELLER_UID.getDescription()),
-								fieldWithPath("data[].name").type(JsonFieldType.STRING)
-										.description(PRODUCT_NAME.getDescription()),
-								fieldWithPath("data[].price").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_PRICE.getDescription()),
-								fieldWithPath("data[].description").type(JsonFieldType.VARIES)
-										.description(PRODUCT_DESCRIPTION.getDescription()),
-								fieldWithPath("data[].stockQuantity").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_STOCK_QUANTITY.getDescription()),
-								fieldWithPath("data[].salesVolume").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_SALES_VOLUME.getDescription()),
-								fieldWithPath("data[].saleStatus").type(JsonFieldType.STRING)
-										.description(PRODUCT_SALE_STATUS.getDescription()),
-								fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_DELIVERY_FEE.getDescription()),
-								fieldWithPath("data[].imageUrl").type(JsonFieldType.VARIES)
-										.description(PRODUCT_IMAGE_URL.getDescription()),
-								fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
-										.description(CREATED_AT.getDescription()),
-								fieldWithPath("data[].createdBy").type(JsonFieldType.STRING)
-										.description(CREATED_BY.getDescription()),
-								fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING)
-										.description(MODIFIED_AT.getDescription()),
-								fieldWithPath("data[].modifiedBy").type(JsonFieldType.STRING)
-										.description(MODIFIED_BY.getDescription())
-						).and(PAGE_INFO)
-				));
+				get("/api/admin/products")
+					.queryParam("name", searchName)
+					.queryParam("page", String.valueOf(pageNumber))
+					.queryParam("size", String.valueOf(pageSize))
+					.queryParam("sort", sortName + "," + direction)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].id").value(response1.id()))
+			.andExpect(jsonPath("$.data[0].name").value(response1.name()))
+			.andExpect(jsonPath("$.data[0].price").value(response1.price()))
+			.andExpect(jsonPath("$.data[0].seller").exists())
+			.andExpect(jsonPath("$.data[0].createdAt").exists())
+			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
+			.andExpect(jsonPath("$.page.size").value(page.getSize()))
+			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
+			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
+			.andDo(document(
+				"admin/product/getProducts-searching",
+				adminApiDescription(TagDescription.PRODUCT, "상품 페이징 조회 + 검색"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestParameters(PAGE_REQUEST_PARAM)
+					.and(
+						parameterWithName("categoryId").description(
+							"검색할 상품의 " + CATEGORY_ID.getDescription()).optional(),
+						parameterWithName("name").description("검색할 " + PRODUCT_NAME.getDescription())
+							.optional(),
+						parameterWithName("saleStatus").description(
+							"검색할 " + PRODUCT_SALE_STATUS.getDescription()).optional()
+					),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data[].category").type(JsonFieldType.VARIES)
+						.description(CATEGORY_NAME.getDescription()),
+					fieldWithPath("data[].seller.id").type(JsonFieldType.NUMBER)
+						.description(SELLER_ID.getDescription()),
+					fieldWithPath("data[].seller.uid").type(JsonFieldType.STRING)
+						.description(SELLER_UID.getDescription()),
+					fieldWithPath("data[].name").type(JsonFieldType.STRING)
+						.description(PRODUCT_NAME.getDescription()),
+					fieldWithPath("data[].price").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_PRICE.getDescription()),
+					fieldWithPath("data[].description").type(JsonFieldType.VARIES)
+						.description(PRODUCT_DESCRIPTION.getDescription()),
+					fieldWithPath("data[].stockQuantity").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_STOCK_QUANTITY.getDescription()),
+					fieldWithPath("data[].salesVolume").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_SALES_VOLUME.getDescription()),
+					fieldWithPath("data[].saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription()),
+					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_DELIVERY_FEE.getDescription()),
+					fieldWithPath("data[].imageUrl").type(JsonFieldType.VARIES)
+						.description(PRODUCT_IMAGE_URL.getDescription()),
+					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+						.description(CREATED_AT.getDescription()),
+					fieldWithPath("data[].createdBy").type(JsonFieldType.STRING)
+						.description(CREATED_BY.getDescription()),
+					fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING)
+						.description(MODIFIED_AT.getDescription()),
+					fieldWithPath("data[].modifiedBy").type(JsonFieldType.STRING)
+						.description(MODIFIED_BY.getDescription())
+				).and(PAGE_INFO)
+			));
 		then(productService).should().findProductsForAdmin(cond, pageable);
 	}
 
@@ -216,76 +216,76 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 	void test_getProduct() throws Exception {
 		//Given
 		AdminProductResponse response = AdminProductResponse.of(
-				1L,
-				"상의",
-				AdminProductResponse.Seller.of(1L, "sellerA"),
-				"꽃무늬 셔츠",
-				12000,
-				"이쁜 꽃무늬 셔츠입니다.",
-				1200,
-				142343,
-				SaleStatus.CLOSE,
-				3000,
-				null,
-				now().minusYears(1),
-				"sellerA",
-				now().minusMonths(2),
-				"sellerA"
+			1L,
+			"상의",
+			AdminProductResponse.Seller.of(1L, "sellerA"),
+			"꽃무늬 셔츠",
+			12000,
+			"이쁜 꽃무늬 셔츠입니다.",
+			1200,
+			142343,
+			SaleStatus.CLOSE,
+			3000,
+			null,
+			now().minusYears(1),
+			"sellerA",
+			now().minusMonths(2),
+			"sellerA"
 		);
 		given(productService.findProductForAdmin(response.id())).willReturn(response);
 
 		//When & Then
 		mvc.perform(get("/api/admin/products/{productId}", response.id()))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data.id").value(response.id()))
-				.andExpect(jsonPath("$.data.name").value(response.name()))
-				.andExpect(jsonPath("$.data.price").value(response.price()))
-				.andDo(document(
-						"admin/product/getProduct",
-						adminApiDescription(TagDescription.PRODUCT, "상품 상세 조회"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						pathParameters(
-								parameterWithName("productId").description(PRODUCT_ID.getDescription())
-						),
-						responseFields(
-								RestDocsUtils.STATUS,
-								fieldWithPath("data.id").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_ID.getDescription()),
-								fieldWithPath("data.category").type(JsonFieldType.VARIES)
-										.description(CATEGORY_NAME.getDescription()),
-								fieldWithPath("data.seller.id").type(JsonFieldType.NUMBER)
-										.description(SELLER_ID.getDescription()),
-								fieldWithPath("data.seller.uid").type(JsonFieldType.STRING)
-										.description(SELLER_UID.getDescription()),
-								fieldWithPath("data.name").type(JsonFieldType.STRING)
-										.description(PRODUCT_NAME.getDescription()),
-								fieldWithPath("data.price").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_PRICE.getDescription()),
-								fieldWithPath("data.description").type(JsonFieldType.VARIES)
-										.description(PRODUCT_DESCRIPTION.getDescription()),
-								fieldWithPath("data.stockQuantity").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_STOCK_QUANTITY.getDescription()),
-								fieldWithPath("data.salesVolume").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_SALES_VOLUME.getDescription()),
-								fieldWithPath("data.saleStatus").type(JsonFieldType.STRING)
-										.description(PRODUCT_SALE_STATUS.getDescription()),
-								fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_DELIVERY_FEE.getDescription()),
-								fieldWithPath("data.imageUrl").type(JsonFieldType.VARIES)
-										.description(PRODUCT_IMAGE_URL.getDescription()),
-								fieldWithPath("data.createdAt").type(JsonFieldType.STRING)
-										.description(CREATED_AT.getDescription()),
-								fieldWithPath("data.createdBy").type(JsonFieldType.STRING)
-										.description(CREATED_BY.getDescription()),
-								fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING)
-										.description(MODIFIED_AT.getDescription()),
-								fieldWithPath("data.modifiedBy").type(JsonFieldType.STRING)
-										.description(MODIFIED_BY.getDescription())
-						)
-				));
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(response.id()))
+			.andExpect(jsonPath("$.data.name").value(response.name()))
+			.andExpect(jsonPath("$.data.price").value(response.price()))
+			.andDo(document(
+				"admin/product/getProduct",
+				adminApiDescription(TagDescription.PRODUCT, "상품 상세 조회"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("productId").description(PRODUCT_ID.getDescription())
+				),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data.category").type(JsonFieldType.VARIES)
+						.description(CATEGORY_NAME.getDescription()),
+					fieldWithPath("data.seller.id").type(JsonFieldType.NUMBER)
+						.description(SELLER_ID.getDescription()),
+					fieldWithPath("data.seller.uid").type(JsonFieldType.STRING)
+						.description(SELLER_UID.getDescription()),
+					fieldWithPath("data.name").type(JsonFieldType.STRING)
+						.description(PRODUCT_NAME.getDescription()),
+					fieldWithPath("data.price").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_PRICE.getDescription()),
+					fieldWithPath("data.description").type(JsonFieldType.VARIES)
+						.description(PRODUCT_DESCRIPTION.getDescription()),
+					fieldWithPath("data.stockQuantity").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_STOCK_QUANTITY.getDescription()),
+					fieldWithPath("data.salesVolume").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_SALES_VOLUME.getDescription()),
+					fieldWithPath("data.saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription()),
+					fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_DELIVERY_FEE.getDescription()),
+					fieldWithPath("data.imageUrl").type(JsonFieldType.VARIES)
+						.description(PRODUCT_IMAGE_URL.getDescription()),
+					fieldWithPath("data.createdAt").type(JsonFieldType.STRING)
+						.description(CREATED_AT.getDescription()),
+					fieldWithPath("data.createdBy").type(JsonFieldType.STRING)
+						.description(CREATED_BY.getDescription()),
+					fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING)
+						.description(MODIFIED_AT.getDescription()),
+					fieldWithPath("data.modifiedBy").type(JsonFieldType.STRING)
+						.description(MODIFIED_BY.getDescription())
+				)
+			));
 		then(productService).should().findProductForAdmin(response.id());
 	}
 }

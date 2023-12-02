@@ -59,7 +59,7 @@ class AddressServiceTest {
 		long addressId = 1L;
 		long userId = 1L;
 		given(addressRepository.findByIdAndUser_Id(addressId, userId)).willReturn(
-				Optional.of(createAddress(addressId)));
+			Optional.of(createAddress(addressId)));
 
 		//When
 		AddressResponse result = sut.findAddress(addressId, userId);
@@ -79,7 +79,7 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findAddress(addressId, userId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
 	}
 
@@ -179,9 +179,9 @@ class AddressServiceTest {
 		//Then
 		assertThat(result).isEqualTo(addressId);
 		assertThat(address)
-				.hasFieldOrPropertyWithValue("detail", serviceRequest.detail())
-				.hasFieldOrPropertyWithValue("zipcode", serviceRequest.zipcode())
-				.hasFieldOrPropertyWithValue("defaultAddress", serviceRequest.defaultAddress());
+			.hasFieldOrPropertyWithValue("detail", serviceRequest.detail())
+			.hasFieldOrPropertyWithValue("zipcode", serviceRequest.zipcode())
+			.hasFieldOrPropertyWithValue("defaultAddress", serviceRequest.defaultAddress());
 		then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
 	}
 
@@ -198,7 +198,7 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateAddress(addressId, userId, serviceRequest))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
 	}
 
@@ -215,7 +215,7 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateAddress(addressId, requestUserId, serviceRequest))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(addressRepository).should().findByIdAndUser_Id(addressId, requestUserId);
 	}
 
@@ -257,7 +257,7 @@ class AddressServiceTest {
 		AddressServiceRequest serviceRequest = createAddressServiceRequest(true);
 
 		given(addressRepository.findByIdAndUser_Id(newDefaultAddressId, userId)).willReturn(
-				Optional.of(newDefaultAddress));
+			Optional.of(newDefaultAddress));
 		given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.of(existingDefaultAddress));
 
 		//When
@@ -305,8 +305,8 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.deleteAddress(addressId, userId))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessage(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS.getMessage());
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS.getMessage());
 		then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
 	}
 }

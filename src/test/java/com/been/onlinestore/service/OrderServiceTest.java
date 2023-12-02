@@ -86,7 +86,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findOrderByOrderer(orderId, ordererId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(orderRepository).should().findOrderByOrderer(orderId, ordererId);
 	}
 
@@ -99,7 +99,7 @@ class OrderServiceTest {
 		long productId = 1L;
 		Map<Long, Integer> productIdToQuantityMap = Map.of(productId, 10);
 		OrderServiceRequest serviceRequest = new OrderServiceRequest(productIdToQuantityMap, "address", "name",
-				"01011112222");
+			"01011112222");
 
 		given(productRepository.findAllOnSaleById(Set.of(productId))).willReturn(List.of(createProduct(productId)));
 		given(userRepository.getReferenceById(ordererId)).willReturn(createUser(ordererId));
@@ -141,7 +141,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.cancelOrder(orderId, ordererId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(orderRepository).should().findByIdAndOrdererId(orderId, ordererId);
 	}
 
@@ -188,7 +188,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findOrderBySeller(orderId, sellerId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(orderRepository).should().findOrderBySeller(orderId, sellerId);
 	}
 }

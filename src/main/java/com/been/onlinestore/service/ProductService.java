@@ -45,33 +45,33 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public Page<ProductResponse> findProductsInCategoryForUser(Long categoryId, Pageable pageable) {
 		return productRepository.findAllOnSaleByCategory(categoryId, pageable)
-				.map(product -> ProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
+			.map(product -> ProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
 	}
 
 	@Transactional(readOnly = true)
 	public Page<CategoryProductResponse> findProductsOnSaleForUser(String name, Pageable pageable) {
 		if (hasText(name)) {
 			return productRepository.findAllOnSaleByName(name, pageable)
-					.map(product -> CategoryProductResponse.from(product,
-							imageStore.getImageUrl(product.getImageName())));
+				.map(product -> CategoryProductResponse.from(product,
+					imageStore.getImageUrl(product.getImageName())));
 		} else {
 			return productRepository.findAllOnSale(pageable)
-					.map(product -> CategoryProductResponse.from(product,
-							imageStore.getImageUrl(product.getImageName())));
+				.map(product -> CategoryProductResponse.from(product,
+					imageStore.getImageUrl(product.getImageName())));
 		}
 	}
 
 	@Transactional(readOnly = true)
 	public CategoryProductResponse findProductOnSaleForUser(Long id) {
 		return productRepository.findOnSaleById(id)
-				.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())))
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+			.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())))
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
 	}
 
 	public List<CartResponse> findProductsInCart(Map<Long, Integer> productToQuantityMap) {
 		return productRepository.findAllOnSaleById(productToQuantityMap.keySet()).stream()
-				.map(product -> CartResponse.from(product, productToQuantityMap))
-				.toList();
+			.map(product -> CartResponse.from(product, productToQuantityMap))
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -81,20 +81,20 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public Page<AdminProductResponse> findProductsForSeller(Long sellerId, ProductSearchCondition cond,
-			Pageable pageable) {
+		Pageable pageable) {
 		return productRepository.searchProducts(sellerId, cond, pageable);
 	}
 
 	@Transactional(readOnly = true)
 	public AdminProductResponse findProductForAdmin(Long id) {
 		return productRepository.searchProduct(id, null)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
 	}
 
 	@Transactional(readOnly = true)
 	public AdminProductResponse findProductForSeller(Long productId, Long sellerId) {
 		return productRepository.searchProduct(productId, sellerId)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
 	}
 
 	public Long addProduct(Long sellerId, ProductServiceRequest.Create serviceRequest, String imageName) {
@@ -108,16 +108,16 @@ public class ProductService {
 
 	public Long updateProductInfo(Long productId, Long sellerId, ProductServiceRequest.Update serviceRequest) {
 		Product product = productRepository.findByIdAndSeller_Id(productId, sellerId)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
 		Category category = categoryRepository.getReferenceById(serviceRequest.categoryId());
 		product.updateInfo(category, serviceRequest.name(), serviceRequest.price(), serviceRequest.description(),
-				serviceRequest.stockQuantity(), serviceRequest.saleStatus(), serviceRequest.deliveryFee());
+			serviceRequest.stockQuantity(), serviceRequest.saleStatus(), serviceRequest.deliveryFee());
 		return product.getId();
 	}
 
 	public Long updateProductImage(Long productId, Long sellerId, String imageName) {
 		Product product = productRepository.findByIdAndSeller_Id(productId, sellerId)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
 		imageStore.deleteImage(product.getImageName());
 		product.updateImage(imageName);
 		return product.getId();

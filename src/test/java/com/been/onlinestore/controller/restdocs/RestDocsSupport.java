@@ -29,9 +29,9 @@ public abstract class RestDocsSupport {
 	@BeforeEach
 	void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
 		this.mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-				.apply(documentationConfiguration(restDocumentation))
-				.alwaysDo(print())
-				.addFilters(new CharacterEncodingFilter("UTF-8", true))
-				.build();
+			.apply(documentationConfiguration(restDocumentation))
+			.alwaysDo(print())
+			.addFilters(new CharacterEncodingFilter("UTF-8", true))
+			.build();
 	}
 }

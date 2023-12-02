@@ -11,39 +11,39 @@ import com.been.onlinestore.domain.constant.RoleType;
 import com.been.onlinestore.service.response.UserResponse;
 
 public record PrincipalDetails(
-		Long id,
-		String uid,
-		String password,
-		RoleType roleType,
-		String name,
-		String email,
-		String nickname,
-		String phone
+	Long id,
+	String uid,
+	String password,
+	RoleType roleType,
+	String name,
+	String email,
+	String nickname,
+	String phone
 ) implements UserDetails {
 
 	public static PrincipalDetails of(Long id, String uid, String password, RoleType roleType, String name,
-			String email, String nickname, String phone) {
+		String email, String nickname, String phone) {
 		return new PrincipalDetails(
-				id,
-				uid,
-				password,
-				roleType,
-				name,
-				email,
-				nickname,
-				phone);
+			id,
+			uid,
+			password,
+			roleType,
+			name,
+			email,
+			nickname,
+			phone);
 	}
 
 	public static PrincipalDetails from(UserResponse userResponse) {
 		return PrincipalDetails.of(
-				userResponse.id(),
-				userResponse.uid(),
-				userResponse.password(),
-				userResponse.roleType(),
-				userResponse.name(),
-				userResponse.email(),
-				userResponse.nickname(),
-				userResponse.phone()
+			userResponse.id(),
+			userResponse.uid(),
+			userResponse.password(),
+			userResponse.roleType(),
+			userResponse.name(),
+			userResponse.email(),
+			userResponse.nickname(),
+			userResponse.phone()
 		);
 	}
 

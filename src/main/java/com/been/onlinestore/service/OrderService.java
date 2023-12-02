@@ -39,27 +39,27 @@ public class OrderService {
 	@Transactional(readOnly = true)
 	public Page<OrderResponse> findOrdersByOrderer(Long ordererId, Pageable pageable) {
 		return orderRepository.findAllOrdersByOrderer(ordererId, pageable)
-				.map(OrderResponse::from);
+			.map(OrderResponse::from);
 	}
 
 	@Transactional(readOnly = true)
 	public OrderResponse findOrderByOrderer(Long orderId, Long ordererId) {
 		return orderRepository.findOrderByOrderer(orderId, ordererId)
-				.map(OrderResponse::from)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.map(OrderResponse::from)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 	}
 
 	@Transactional(readOnly = true)
 	public Page<OrderResponse> findOrdersBySeller(Long sellerId, Pageable pageable) {
 		return orderRepository.findAllOrdersBySeller(sellerId, pageable)
-				.map(OrderResponse::from);
+			.map(OrderResponse::from);
 	}
 
 	@Transactional(readOnly = true)
 	public OrderResponse findOrderBySeller(Long orderId, Long sellerId) {
 		return orderRepository.findOrderBySeller(orderId, sellerId)
-				.map(OrderResponse::from)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.map(OrderResponse::from)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 	}
 
 	public Long order(Long ordererId, OrderServiceRequest serviceRequest) {
@@ -75,11 +75,11 @@ public class OrderService {
 
 		User orderer = userRepository.getReferenceById(ordererId);
 		Order order = Order.of(
-				orderer,
-				DeliveryRequest.of(serviceRequest.deliveryAddress(), serviceRequest.receiverName(),
-						serviceRequest.receiverPhone()),
-				orderer.getPhone(),
-				OrderStatus.ORDER
+			orderer,
+			DeliveryRequest.of(serviceRequest.deliveryAddress(), serviceRequest.receiverName(),
+				serviceRequest.receiverPhone()),
+			orderer.getPhone(),
+			OrderStatus.ORDER
 		);
 		order.addOrderProducts(orderProducts);
 		return orderRepository.save(order).getId();
@@ -87,7 +87,7 @@ public class OrderService {
 
 	public Long cancelOrder(Long orderId, Long ordererId) {
 		Order order = orderRepository.findByIdAndOrdererId(orderId, ordererId)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 		if (order.getOrderStatus() == OrderStatus.ORDER) {
 			order.cancel();
 		}
@@ -95,22 +95,22 @@ public class OrderService {
 	}
 
 	private Map<Product, Integer> convertToProductToQuantityMap(Map<Long, Integer> productIdToQuantityMap,
-			List<Product> products) {
+		List<Product> products) {
 		return IntStream.range(0, products.size())
-				.boxed()
-				.collect(Collectors.toMap(
-						products::get,
-						i -> productIdToQuantityMap.get(products.get(i).getId()))
-				);
+			.boxed()
+			.collect(Collectors.toMap(
+				products::get,
+				i -> productIdToQuantityMap.get(products.get(i).getId()))
+			);
 	}
 
 	private List<OrderProduct> createOrderProducts(Map<Product, Integer> productToQuantityMap) {
 		return productToQuantityMap.entrySet().stream()
-				.map(entry -> OrderProduct.of(
-								entry.getKey(),
-								entry.getValue()
-						)
+			.map(entry -> OrderProduct.of(
+					entry.getKey(),
+					entry.getValue()
 				)
-				.toList();
+			)
+			.toList();
 	}
 }

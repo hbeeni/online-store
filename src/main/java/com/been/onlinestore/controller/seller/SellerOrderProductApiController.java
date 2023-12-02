@@ -25,28 +25,28 @@ public class SellerOrderProductApiController {
 
 	@PutMapping("/deliveries/prepare")
 	public ResponseEntity<ApiResponse<DeliveryStatusChangeResponse>> prepareProducts(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@RequestParam Set<Long> orderProductIds
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@RequestParam Set<Long> orderProductIds
 	) {
 		return ResponseEntity.ok(
-				ApiResponse.success(orderProductService.startPreparing(orderProductIds, principalDetails.id())));
+			ApiResponse.success(orderProductService.startPreparing(orderProductIds, principalDetails.id())));
 	}
 
 	@PutMapping("/deliveries/start")
 	public ResponseEntity<ApiResponse<DeliveryStatusChangeResponse>> startDelivery(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@RequestParam Set<Long> orderProductIds
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@RequestParam Set<Long> orderProductIds
 	) {
 		return ResponseEntity.ok(
-				ApiResponse.success(orderProductService.startDelivery(orderProductIds, principalDetails.id())));
+			ApiResponse.success(orderProductService.startDelivery(orderProductIds, principalDetails.id())));
 	}
 
 	@PutMapping("/deliveries/complete")
 	public ResponseEntity<ApiResponse<DeliveryStatusChangeResponse>> completeDelivery(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@RequestParam Set<Long> orderProductIds
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@RequestParam Set<Long> orderProductIds
 	) {
 		return ResponseEntity.ok(
-				ApiResponse.success(orderProductService.completeDelivery(orderProductIds, principalDetails.id())));
+			ApiResponse.success(orderProductService.completeDelivery(orderProductIds, principalDetails.id())));
 	}
 }

@@ -26,10 +26,10 @@ public class UserApiController {
 
 	@PutMapping("/info")
 	public ResponseEntity<ApiResponse<Map<String, Long>>> updateUserInfo(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@RequestBody @Validated UserRequest.Update request
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@RequestBody @Validated UserRequest.Update request
 	) {
 		return ResponseEntity.ok(ApiResponse.successId(
-				userService.updateInfo(principalDetails.id(), request.nickname(), request.phone())));
+			userService.updateInfo(principalDetails.id(), request.nickname(), request.phone())));
 	}
 }

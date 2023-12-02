@@ -10,21 +10,21 @@ import lombok.Builder;
 
 @Builder
 public record AddressRequest(
-		@NotBlank @Size(max = 50)
-		String detail,
+	@NotBlank @Size(max = 50)
+	String detail,
 
-		@NotBlank @Size(max = 20)
-		String zipcode,
+	@NotBlank @Size(max = 20)
+	String zipcode,
 
-		@NotNull
-		Boolean defaultAddress
+	@NotNull
+	Boolean defaultAddress
 ) {
 
 	public AddressServiceRequest toServiceRequest() {
 		return AddressServiceRequest.of(
-				detail,
-				zipcode,
-				defaultAddress
+			detail,
+			zipcode,
+			defaultAddress
 		);
 	}
 }

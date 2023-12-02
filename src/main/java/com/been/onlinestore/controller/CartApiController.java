@@ -52,13 +52,13 @@ public class CartApiController {
 	 */
 	private static Map<Long, Integer> cookieValueToMap(String cart) {
 		return Arrays.stream(cart.split(PRODUCT_PARTITION_REGEX))
-				.map(s -> s.split(PRODUCT_QUANTITY_PARTITION))
-				.collect(Collectors.toMap(
-								a -> Long.parseLong(a[0]),
-								a -> Integer.parseInt(a[1]),
-								Integer::sum
-						)
-				);
+			.map(s -> s.split(PRODUCT_QUANTITY_PARTITION))
+			.collect(Collectors.toMap(
+					a -> Long.parseLong(a[0]),
+					a -> Integer.parseInt(a[1]),
+					Integer::sum
+				)
+			);
 	}
 
 	/**
@@ -67,8 +67,8 @@ public class CartApiController {
 	 */
 	private static String mapToCookieValue(Map<Long, Integer> productToQuantityMap) {
 		return productToQuantityMap.entrySet().stream()
-				.map(entry -> entry.getKey() + PRODUCT_QUANTITY_PARTITION + entry.getValue())
-				.collect(Collectors.joining(PRODUCT_PARTITION));
+			.map(entry -> entry.getKey() + PRODUCT_QUANTITY_PARTITION + entry.getValue())
+			.collect(Collectors.joining(PRODUCT_PARTITION));
 	}
 
 	private static void addCartCookie(HttpServletResponse response, String cookieValue) {
@@ -80,7 +80,7 @@ public class CartApiController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<CartResponse>>> getProductsInCart(
-			@CookieValue(name = COOKIE_NAME, required = false) String cart) {
+		@CookieValue(name = COOKIE_NAME, required = false) String cart) {
 		log.info("cart = {}", cart);
 
 		if (StringUtils.hasText(cart)) {
@@ -93,9 +93,9 @@ public class CartApiController {
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<Void>> addProductToCart(
-			@CookieValue(name = COOKIE_NAME, required = false) String cart,
-			@RequestBody @Validated CartProductRequest.Create request,
-			HttpServletResponse response
+		@CookieValue(name = COOKIE_NAME, required = false) String cart,
+		@RequestBody @Validated CartProductRequest.Create request,
+		HttpServletResponse response
 	) {
 		log.info("cart = {}", cart);
 
@@ -115,10 +115,10 @@ public class CartApiController {
 
 	@PutMapping("/products/{cartProductId}")
 	public ResponseEntity<ApiResponse<Void>> updateProductInCart(
-			@CookieValue(name = COOKIE_NAME, required = false) String cart,
-			@PathVariable Long cartProductId,
-			@RequestBody @Validated CartProductRequest.Update request,
-			HttpServletResponse response
+		@CookieValue(name = COOKIE_NAME, required = false) String cart,
+		@PathVariable Long cartProductId,
+		@RequestBody @Validated CartProductRequest.Update request,
+		HttpServletResponse response
 	) {
 		log.info("before cart = {}", cart);
 
@@ -126,8 +126,8 @@ public class CartApiController {
 			Map<Long, Integer> idToQuantityMap = cookieValueToMap(cart);
 
 			Optional<Map.Entry<Long, Integer>> targetOptional = idToQuantityMap.entrySet().stream()
-					.filter(entry -> entry.getKey().equals(cartProductId))
-					.findAny();
+				.filter(entry -> entry.getKey().equals(cartProductId))
+				.findAny();
 
 			if (targetOptional.isPresent()) {
 				Map.Entry<Long, Integer> target = targetOptional.get();
@@ -154,18 +154,18 @@ public class CartApiController {
 
 	@DeleteMapping("/products")
 	public ResponseEntity<ApiResponse<Void>> deleteCartProducts(
-			@CookieValue(name = COOKIE_NAME, required = false) String cart,
-			@RequestParam Set<Long> ids,
-			HttpServletResponse response
+		@CookieValue(name = COOKIE_NAME, required = false) String cart,
+		@RequestParam Set<Long> ids,
+		HttpServletResponse response
 	) {
 		log.info("before cart = {}", cart);
 
 		if (StringUtils.hasText(cart)) {
 			Map<Long, Integer> idToQuantityMap = cookieValueToMap(cart);
 			String newCart = idToQuantityMap.entrySet().stream()
-					.filter(entry -> !ids.contains(entry.getKey()))
-					.map(entry -> entry.getKey() + PRODUCT_QUANTITY_PARTITION + entry.getValue())
-					.collect(Collectors.joining(PRODUCT_PARTITION));
+				.filter(entry -> !ids.contains(entry.getKey()))
+				.map(entry -> entry.getKey() + PRODUCT_QUANTITY_PARTITION + entry.getValue())
+				.collect(Collectors.joining(PRODUCT_PARTITION));
 
 			log.info("after cart = {}", newCart);
 			addCartCookie(response, newCart);

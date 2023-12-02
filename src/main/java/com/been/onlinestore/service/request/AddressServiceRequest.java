@@ -4,9 +4,9 @@ import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.domain.User;
 
 public record AddressServiceRequest(
-		String detail,
-		String zipcode,
-		Boolean defaultAddress
+	String detail,
+	String zipcode,
+	Boolean defaultAddress
 ) {
 
 	public static AddressServiceRequest of(String detail, String zipcode, Boolean defaultAddress) {
@@ -15,10 +15,10 @@ public record AddressServiceRequest(
 
 	public Address toEntity(User user, boolean setDefaultAddress) {
 		return Address.of(
-				user,
-				detail,
-				zipcode,
-				setDefaultAddress
+			user,
+			detail,
+			zipcode,
+			setDefaultAddress
 		);
 	}
 }

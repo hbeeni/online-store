@@ -20,11 +20,11 @@ public class JpaConfig {
 	@Bean
 	public AuditorAware<String> auditorAware() {
 		return () -> Optional.ofNullable(SecurityContextHolder.getContext())
-				.map(SecurityContext::getAuthentication)
-				.filter(Authentication::isAuthenticated)
-				.filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken))
-				.map(Authentication::getPrincipal)
-				.map(PrincipalDetails.class::cast)
-				.map(PrincipalDetails::getUsername);
+			.map(SecurityContext::getAuthentication)
+			.filter(Authentication::isAuthenticated)
+			.filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken))
+			.map(Authentication::getPrincipal)
+			.map(PrincipalDetails.class::cast)
+			.map(PrincipalDetails::getUsername);
 	}
 }

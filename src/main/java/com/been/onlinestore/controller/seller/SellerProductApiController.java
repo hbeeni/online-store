@@ -44,50 +44,50 @@ public class SellerProductApiController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<AdminProductResponse>>> getProducts(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@ModelAttribute @Validated ProductSearchCondition cond,
-			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@ModelAttribute @Validated ProductSearchCondition cond,
+		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		return ResponseEntity.ok(
-				ApiResponse.pagination(productService.findProductsForSeller(principalDetails.id(), cond, pageable)));
+			ApiResponse.pagination(productService.findProductsForSeller(principalDetails.id(), cond, pageable)));
 	}
 
 	@GetMapping("/{productId}")
 	public ResponseEntity<ApiResponse<AdminProductResponse>> getProduct(
-			@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long productId) {
+		@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long productId) {
 		return ResponseEntity.ok(
-				ApiResponse.success(productService.findProductForSeller(productId, principalDetails.id())));
+			ApiResponse.success(productService.findProductForSeller(productId, principalDetails.id())));
 	}
 
 	@PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<ApiResponse<Map<String, Long>>> addProduct(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@RequestPart @Validated ProductRequest.Create request,
-			@RequestPart MultipartFile image
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@RequestPart @Validated ProductRequest.Create request,
+		@RequestPart MultipartFile image
 	) throws IOException {
 		String savedImageName = imageStore.saveImage(image);
 		return ResponseEntity.ok(ApiResponse.successId(
-				productService.addProduct(principalDetails.id(), request.toServiceRequest(), savedImageName)));
+			productService.addProduct(principalDetails.id(), request.toServiceRequest(), savedImageName)));
 	}
 
 	@PutMapping("/{productId}")
 	public ResponseEntity<ApiResponse<Map<String, Long>>> updateProductInfo(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@PathVariable Long productId,
-			@RequestBody @Validated ProductRequest.Update request
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@PathVariable Long productId,
+		@RequestBody @Validated ProductRequest.Update request
 	) {
 		return ResponseEntity.ok(ApiResponse.successId(
-				productService.updateProductInfo(productId, principalDetails.id(), request.toServiceRequest())));
+			productService.updateProductInfo(productId, principalDetails.id(), request.toServiceRequest())));
 	}
 
 	@PutMapping("/{productId}/img")
 	public ResponseEntity<ApiResponse<Map<String, Long>>> updateProductImage(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@PathVariable Long productId,
-			@RequestPart MultipartFile image
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@PathVariable Long productId,
+		@RequestPart MultipartFile image
 	) throws IOException {
 		String savedImageName = imageStore.saveImage(image);
 		return ResponseEntity.ok(ApiResponse.successId(
-				productService.updateProductImage(productId, principalDetails.id(), savedImageName)));
+			productService.updateProductImage(productId, principalDetails.id(), savedImageName)));
 	}
 }

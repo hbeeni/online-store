@@ -11,34 +11,34 @@ public record CategoryRequest() {
 
 	@Builder
 	public record Create(
-			@NotBlank @Size(max = 20)
-			String name,
+		@NotBlank @Size(max = 20)
+		String name,
 
-			@Size(max = 100)
-			String description
+		@Size(max = 100)
+		String description
 	) {
 
 		public CategoryServiceRequest.Create toServiceRequest() {
 			return CategoryServiceRequest.Create.of(
-					name,
-					description
+				name,
+				description
 			);
 		}
 	}
 
 	@Builder
 	public record Update(
-			@NotBlank @Size(max = 20)
-			String name,
+		@NotBlank @Size(max = 20)
+		String name,
 
-			@Size(max = 100)
-			String description
+		@Size(max = 100)
+		String description
 	) {
 
 		public CategoryServiceRequest.Update toServiceRequest() {
 			return CategoryServiceRequest.Update.of(
-					name,
-					description
+				name,
+				description
 			);
 		}
 	}

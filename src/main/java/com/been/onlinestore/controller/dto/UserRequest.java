@@ -22,67 +22,67 @@ public record UserRequest() {
 
 	@Builder
 	public record SignUp(
-			@NotBlank @Size(max = 50)
-			@Pattern(regexp = UID_PATTERN_REGEX, message = UID_PATTERN_MESSAGE)
-			String uid,
+		@NotBlank @Size(max = 50)
+		@Pattern(regexp = UID_PATTERN_REGEX, message = UID_PATTERN_MESSAGE)
+		String uid,
 
-			@NotBlank @Size(max = 255)
-			String password,
+		@NotBlank @Size(max = 255)
+		String password,
 
-			@NotBlank @Size(max = 20)
-			String name,
+		@NotBlank @Size(max = 20)
+		String name,
 
-			@NotBlank @Size(max = 100)
-			@Pattern(regexp = EMAIL_PATTERN_REGEX, message = EMAIL_PATTERN_MESSAGE)
-			String email,
+		@NotBlank @Size(max = 100)
+		@Pattern(regexp = EMAIL_PATTERN_REGEX, message = EMAIL_PATTERN_MESSAGE)
+		String email,
 
-			@Size(max = 20)
-			String nickname,
+		@Size(max = 20)
+		String nickname,
 
-			@NotBlank @Size(max = 20)
-			@Pattern(regexp = PHONE_PATTERN_REGEX, message = PHONE_PATTERN_MESSAGE)
-			String phone,
+		@NotBlank @Size(max = 20)
+		@Pattern(regexp = PHONE_PATTERN_REGEX, message = PHONE_PATTERN_MESSAGE)
+		String phone,
 
-			RoleType roleType
+		RoleType roleType
 	) {
 
 		public static SignUp of(String uid, String password, String name, String email, String nickname, String phone,
-				RoleType roleType) {
+			RoleType roleType) {
 			return new SignUp(uid, password, name, email, nickname, phone, roleType);
 		}
 
 		public UserServiceRequest.SignUp toServiceRequest() {
 			return UserServiceRequest.SignUp.of(
-					uid,
-					password,
-					name,
-					email,
-					nickname,
-					phone,
-					roleType
+				uid,
+				password,
+				name,
+				email,
+				nickname,
+				phone,
+				roleType
 			);
 		}
 	}
 
 	@Builder
 	public record Login(
-			@NotBlank @Size(max = 50)
-			@Pattern(regexp = UID_PATTERN_REGEX, message = UID_PATTERN_MESSAGE)
-			String uid,
+		@NotBlank @Size(max = 50)
+		@Pattern(regexp = UID_PATTERN_REGEX, message = UID_PATTERN_MESSAGE)
+		String uid,
 
-			@NotBlank @Size(max = 255)
-			String password
+		@NotBlank @Size(max = 255)
+		String password
 	) {
 	}
 
 	@Builder
 	public record Update(
-			@Size(max = 20)
-			String nickname,
+		@Size(max = 20)
+		String nickname,
 
-			@NotBlank @Size(max = 20)
-			@Pattern(regexp = PHONE_PATTERN_REGEX, message = PHONE_PATTERN_MESSAGE)
-			String phone
+		@NotBlank @Size(max = 20)
+		@Pattern(regexp = PHONE_PATTERN_REGEX, message = PHONE_PATTERN_MESSAGE)
+		String phone
 	) {
 	}
 }

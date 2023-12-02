@@ -41,10 +41,10 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 		result.forEach(o -> o.setOrderProducts(orderProductMap.get(o.getId())));
 
 		JPAQuery<Long> countQuery = queryFactory.select(order.count())
-				.from(order)
-				.join(order.orderer, user).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.where(user.id.eq(ordererId));
+			.from(order)
+			.join(order.orderer, user).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.where(user.id.eq(ordererId));
 
 		return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
 	}
@@ -52,15 +52,15 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 	@Override
 	public Optional<Order> findOrderByOrderer(Long orderId, Long ordererId) {
 		Order result = queryFactory
-				.selectFrom(order)
-				.join(order.orderer, user).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.join(order.orderProducts, orderProduct).fetchJoin()
-				.join(orderProduct.product, product)
-				.join(orderProduct.delivery, delivery).fetchJoin()
-				.where(order.id.eq(orderId),
-						order.orderer.id.eq(ordererId))
-				.fetchOne();
+			.selectFrom(order)
+			.join(order.orderer, user).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.orderProducts, orderProduct).fetchJoin()
+			.join(orderProduct.product, product)
+			.join(orderProduct.delivery, delivery).fetchJoin()
+			.where(order.id.eq(orderId),
+				order.orderer.id.eq(ordererId))
+			.fetchOne();
 		return Optional.ofNullable(result);
 	}
 
@@ -72,14 +72,14 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 		result.forEach(o -> o.setOrderProducts(orderProductMap.get(o.getId())));
 
 		JPAQuery<Long> countQuery = queryFactory
-				.selectDistinct(order.count())
-				.from(order)
-				.join(order.orderer, user).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.join(order.orderProducts, orderProduct)
-				.join(orderProduct.product, product)
-				.where(product.seller.id.eq(sellerId));
+			.selectDistinct(order.count())
+			.from(order)
+			.join(order.orderer, user).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.orderProducts, orderProduct)
+			.join(orderProduct.product, product)
+			.where(product.seller.id.eq(sellerId));
 
 		return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
 	}
@@ -87,67 +87,67 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 	@Override
 	public Optional<Order> findOrderBySeller(Long orderId, Long sellerId) {
 		Order result = queryFactory
-				.selectFrom(order)
-				.join(order.orderer, user).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.join(order.orderProducts, orderProduct).fetchJoin()
-				.join(orderProduct.product, product).fetchJoin()
-				.join(orderProduct.delivery, delivery).fetchJoin()
-				.where(order.id.eq(orderId),
-						product.seller.id.eq(sellerId))
-				.fetchOne();
+			.selectFrom(order)
+			.join(order.orderer, user).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.orderProducts, orderProduct).fetchJoin()
+			.join(orderProduct.product, product).fetchJoin()
+			.join(orderProduct.delivery, delivery).fetchJoin()
+			.where(order.id.eq(orderId),
+				product.seller.id.eq(sellerId))
+			.fetchOne();
 		return Optional.ofNullable(result);
 	}
 
 	private List<Long> toOrderIds(List<Order> orders) {
 		return orders.stream()
-				.map(Order::getId)
-				.toList();
+			.map(Order::getId)
+			.toList();
 	}
 
 	private List<Order> findOrdersByOrderer(Long ordererId) {
 		return queryFactory
-				.selectFrom(order)
-				.join(order.orderer, user).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.where(user.id.eq(ordererId))
-				.fetch();
+			.selectFrom(order)
+			.join(order.orderer, user).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.where(user.id.eq(ordererId))
+			.fetch();
 	}
 
 	private List<Order> findOrdersBySeller(Long sellerId) {
 		return queryFactory
-				.selectDistinct(order)
-				.from(order)
-				.join(order.orderer, user).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-				.join(order.orderProducts, orderProduct)
-				.join(orderProduct.product, product)
-				.where(product.seller.id.eq(sellerId))
-				.fetch();
+			.selectDistinct(order)
+			.from(order)
+			.join(order.orderer, user).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.orderProducts, orderProduct)
+			.join(orderProduct.product, product)
+			.where(product.seller.id.eq(sellerId))
+			.fetch();
 	}
 
 	private Map<Long, List<OrderProduct>> findOrderProductMapByOrderIds(List<Long> orderIds) {
 		List<OrderProduct> orderProducts = queryFactory
-				.selectFrom(orderProduct)
-				.join(orderProduct.product, product).fetchJoin()
-				.join(orderProduct.delivery, delivery).fetchJoin()
-				.where(orderProduct.order.id.in(orderIds))
-				.fetch();
+			.selectFrom(orderProduct)
+			.join(orderProduct.product, product).fetchJoin()
+			.join(orderProduct.delivery, delivery).fetchJoin()
+			.where(orderProduct.order.id.in(orderIds))
+			.fetch();
 
 		return orderProducts.stream()
-				.collect(Collectors.groupingBy(orderProduct -> orderProduct.getOrder().getId()));
+			.collect(Collectors.groupingBy(orderProduct -> orderProduct.getOrder().getId()));
 	}
 
 	private Map<Long, List<OrderProduct>> findOrderProductMapBySellerId(Long sellerId) {
 		List<OrderProduct> orderProducts = queryFactory
-				.selectFrom(orderProduct)
-				.join(orderProduct.product, product).fetchJoin()
-				.join(orderProduct.delivery, delivery).fetchJoin()
-				.where(product.seller.id.eq(sellerId))
-				.fetch();
+			.selectFrom(orderProduct)
+			.join(orderProduct.product, product).fetchJoin()
+			.join(orderProduct.delivery, delivery).fetchJoin()
+			.where(product.seller.id.eq(sellerId))
+			.fetch();
 
 		return orderProducts.stream()
-				.collect(Collectors.groupingBy(orderProduct1 -> orderProduct1.getOrder().getId()));
+			.collect(Collectors.groupingBy(orderProduct1 -> orderProduct1.getOrder().getId()));
 	}
 }

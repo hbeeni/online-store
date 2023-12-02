@@ -54,28 +54,28 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.asc(sortName)));
 		UserResponse userResponse = UserResponse.of(
-				1L,
-				"user",
-				"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-				"user",
-				"user@mail.com",
-				"test user",
-				"01012345678",
-				RoleType.USER,
-				LocalDateTime.now().minusDays(3),
-				now()
+			1L,
+			"user",
+			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
+			"user",
+			"user@mail.com",
+			"test user",
+			"01012345678",
+			RoleType.USER,
+			LocalDateTime.now().minusDays(3),
+			now()
 		);
 		UserResponse sellerResponse = UserResponse.of(
-				2L,
-				"seller",
-				"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-				"seller",
-				"seller@mail.com",
-				"test user",
-				"01012123434",
-				RoleType.SELLER,
-				now().minusDays(30),
-				now().minusDays(22)
+			2L,
+			"seller",
+			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
+			"seller",
+			"seller@mail.com",
+			"test user",
+			"01012123434",
+			RoleType.SELLER,
+			now().minusDays(30),
+			now().minusDays(22)
 		);
 		List<UserResponse> content = List.of(sellerResponse, userResponse);
 		Page<UserResponse> page = new PageImpl<>(content, pageable, content.size());
@@ -84,51 +84,51 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(
-						get("/api/admin/users")
-								.queryParam("page", String.valueOf(pageNumber))
-								.queryParam("size", String.valueOf(pageSize))
-								.queryParam("sort", sortName + "," + direction)
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data").isArray())
-				.andExpect(jsonPath("$.data[0].id").value(sellerResponse.id()))
-				.andExpect(jsonPath("$.data[0].uid").value(sellerResponse.uid()))
-				.andExpect(jsonPath("$.data[0].name").value(sellerResponse.name()))
-				.andExpect(jsonPath("$.data[0].password").doesNotExist())
-				.andExpect(jsonPath("$.page.number").value(page.getNumber()))
-				.andExpect(jsonPath("$.page.size").value(page.getSize()))
-				.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
-				.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
-				.andDo(document(
-						"admin/user/getUsers",
-						adminApiDescription(TagDescription.USER, "회원 페이징 조회"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						requestParameters(PAGE_REQUEST_PARAM),
-						responseFields(
-								STATUS,
-								fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
-										.description(USER_ID.getDescription()),
-								fieldWithPath("data[].uid").type(JsonFieldType.STRING)
-										.description(USER_UID.getDescription()),
-								fieldWithPath("data[].name").type(JsonFieldType.STRING)
-										.description(USER_NAME.getDescription()),
-								fieldWithPath("data[].email").type(JsonFieldType.STRING)
-										.description(USER_EMAIL.getDescription()),
-								fieldWithPath("data[].nickname").type(JsonFieldType.STRING)
-										.description(USER_NICKNAME.getDescription()),
-								fieldWithPath("data[].phone").type(JsonFieldType.STRING)
-										.description(USER_PHONE.getDescription()),
-								fieldWithPath("data[].roleType").type(JsonFieldType.STRING)
-										.description(USER_ROLE_TYPE.getDescription()),
-								fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
-										.description(USER_CREATED_AT.getDescription()),
-								fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING)
-										.description(USER_MODIFIED_AT.getDescription())
-						).and(PAGE_INFO)
-				));
+				get("/api/admin/users")
+					.queryParam("page", String.valueOf(pageNumber))
+					.queryParam("size", String.valueOf(pageSize))
+					.queryParam("sort", sortName + "," + direction)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].id").value(sellerResponse.id()))
+			.andExpect(jsonPath("$.data[0].uid").value(sellerResponse.uid()))
+			.andExpect(jsonPath("$.data[0].name").value(sellerResponse.name()))
+			.andExpect(jsonPath("$.data[0].password").doesNotExist())
+			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
+			.andExpect(jsonPath("$.page.size").value(page.getSize()))
+			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
+			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
+			.andDo(document(
+				"admin/user/getUsers",
+				adminApiDescription(TagDescription.USER, "회원 페이징 조회"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestParameters(PAGE_REQUEST_PARAM),
+				responseFields(
+					STATUS,
+					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+						.description(USER_ID.getDescription()),
+					fieldWithPath("data[].uid").type(JsonFieldType.STRING)
+						.description(USER_UID.getDescription()),
+					fieldWithPath("data[].name").type(JsonFieldType.STRING)
+						.description(USER_NAME.getDescription()),
+					fieldWithPath("data[].email").type(JsonFieldType.STRING)
+						.description(USER_EMAIL.getDescription()),
+					fieldWithPath("data[].nickname").type(JsonFieldType.STRING)
+						.description(USER_NICKNAME.getDescription()),
+					fieldWithPath("data[].phone").type(JsonFieldType.STRING)
+						.description(USER_PHONE.getDescription()),
+					fieldWithPath("data[].roleType").type(JsonFieldType.STRING)
+						.description(USER_ROLE_TYPE.getDescription()),
+					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+						.description(USER_CREATED_AT.getDescription()),
+					fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING)
+						.description(USER_MODIFIED_AT.getDescription())
+				).and(PAGE_INFO)
+			));
 		then(userService).should().findUsers(pageable);
 	}
 
@@ -139,59 +139,59 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 		long id = 1L;
 		String uid = "testId";
 		UserResponse response = UserResponse.of(
-				id,
-				uid,
-				"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-				"user",
-				uid + "@mail.com",
-				"test user",
-				"01012345678",
-				RoleType.USER,
-				LocalDateTime.now().minusDays(3),
-				now()
+			id,
+			uid,
+			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
+			"user",
+			uid + "@mail.com",
+			"test user",
+			"01012345678",
+			RoleType.USER,
+			LocalDateTime.now().minusDays(3),
+			now()
 		);
 
 		given(userService.findUser(id)).willReturn(response);
 
 		//When & Then
 		mvc.perform(get("/api/admin/users/{userId}", id))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data.id").value(response.id()))
-				.andExpect(jsonPath("$.data.uid").value(response.uid()))
-				.andExpect(jsonPath("$.data.name").value(response.name()))
-				.andExpect(jsonPath("$.data[0].password").doesNotExist())
-				.andDo(document(
-						"admin/user/getUser",
-						adminApiDescription(TagDescription.USER, "회원 상세 조회"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						pathParameters(
-								parameterWithName("userId").description(USER_ID.getDescription())
-						),
-						responseFields(
-								STATUS,
-								fieldWithPath("data.id").type(JsonFieldType.NUMBER)
-										.description(USER_ID.getDescription()),
-								fieldWithPath("data.uid").type(JsonFieldType.STRING)
-										.description(USER_UID.getDescription()),
-								fieldWithPath("data.name").type(JsonFieldType.STRING)
-										.description(USER_NAME.getDescription()),
-								fieldWithPath("data.email").type(JsonFieldType.STRING)
-										.description(USER_EMAIL.getDescription()),
-								fieldWithPath("data.nickname").type(JsonFieldType.STRING)
-										.description(USER_NICKNAME.getDescription()),
-								fieldWithPath("data.phone").type(JsonFieldType.STRING)
-										.description(USER_PHONE.getDescription()),
-								fieldWithPath("data.roleType").type(JsonFieldType.STRING)
-										.description(USER_ROLE_TYPE.getDescription()),
-								fieldWithPath("data.createdAt").type(JsonFieldType.STRING)
-										.description(USER_CREATED_AT.getDescription()),
-								fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING)
-										.description(USER_MODIFIED_AT.getDescription())
-						)
-				));
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(response.id()))
+			.andExpect(jsonPath("$.data.uid").value(response.uid()))
+			.andExpect(jsonPath("$.data.name").value(response.name()))
+			.andExpect(jsonPath("$.data[0].password").doesNotExist())
+			.andDo(document(
+				"admin/user/getUser",
+				adminApiDescription(TagDescription.USER, "회원 상세 조회"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("userId").description(USER_ID.getDescription())
+				),
+				responseFields(
+					STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+						.description(USER_ID.getDescription()),
+					fieldWithPath("data.uid").type(JsonFieldType.STRING)
+						.description(USER_UID.getDescription()),
+					fieldWithPath("data.name").type(JsonFieldType.STRING)
+						.description(USER_NAME.getDescription()),
+					fieldWithPath("data.email").type(JsonFieldType.STRING)
+						.description(USER_EMAIL.getDescription()),
+					fieldWithPath("data.nickname").type(JsonFieldType.STRING)
+						.description(USER_NICKNAME.getDescription()),
+					fieldWithPath("data.phone").type(JsonFieldType.STRING)
+						.description(USER_PHONE.getDescription()),
+					fieldWithPath("data.roleType").type(JsonFieldType.STRING)
+						.description(USER_ROLE_TYPE.getDescription()),
+					fieldWithPath("data.createdAt").type(JsonFieldType.STRING)
+						.description(USER_CREATED_AT.getDescription()),
+					fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING)
+						.description(USER_MODIFIED_AT.getDescription())
+				)
+			));
 		then(userService).should().findUser(id);
 	}
 
@@ -204,9 +204,9 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(delete("/api/admin/users/" + id))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data.id").value(id));
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(id));
 	}
 }

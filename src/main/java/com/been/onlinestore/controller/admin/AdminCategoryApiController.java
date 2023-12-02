@@ -40,17 +40,17 @@ public class AdminCategoryApiController {
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<Map<String, Long>>> addCategory(
-			@RequestBody @Validated CategoryRequest.Create request) {
+		@RequestBody @Validated CategoryRequest.Create request) {
 		return ResponseEntity.ok(ApiResponse.successId(categoryService.addCategory(request.toServiceRequest())));
 	}
 
 	@PutMapping("/{categoryId}")
 	public ResponseEntity<ApiResponse<Map<String, Long>>> updateCategory(
-			@PathVariable Long categoryId,
-			@RequestBody @Validated CategoryRequest.Update request
+		@PathVariable Long categoryId,
+		@RequestBody @Validated CategoryRequest.Update request
 	) {
 		return ResponseEntity.ok(
-				ApiResponse.successId(categoryService.updateCategory(categoryId, request.toServiceRequest())));
+			ApiResponse.successId(categoryService.updateCategory(categoryId, request.toServiceRequest())));
 	}
 
 	@DeleteMapping("/{categoryId}")

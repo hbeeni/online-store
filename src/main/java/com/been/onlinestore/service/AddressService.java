@@ -29,15 +29,15 @@ public class AddressService {
 	@Transactional(readOnly = true)
 	public List<AddressResponse> findAddresses(Long userId) {
 		return addressRepository.findAllByUser_IdOrderByDefaultAddressDesc(userId).stream()
-				.map(AddressResponse::from)
-				.toList();
+			.map(AddressResponse::from)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
 	public AddressResponse findAddress(Long addressId, Long userId) {
 		return addressRepository.findByIdAndUser_Id(addressId, userId)
-				.map(AddressResponse::from)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+			.map(AddressResponse::from)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 	}
 
 	public Long addAddress(Long userId, AddressServiceRequest serviceRequest) {
@@ -58,11 +58,11 @@ public class AddressService {
 
 	public Long updateAddress(Long addressId, Long userId, AddressServiceRequest serviceRequest) {
 		Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 
 		if (serviceRequest.defaultAddress()) {
 			addressRepository.findDefaultAddressByUserId(userId)
-					.ifPresent(originalDefaultAddress -> originalDefaultAddress.updateDefaultAddress(false));
+				.ifPresent(originalDefaultAddress -> originalDefaultAddress.updateDefaultAddress(false));
 		}
 
 		address.updateInfo(serviceRequest.detail(), serviceRequest.zipcode(), serviceRequest.defaultAddress());
@@ -71,7 +71,7 @@ public class AddressService {
 
 	public Long deleteAddress(Long addressId, Long userId) {
 		Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 
 		if (address.getDefaultAddress()) {
 			throw new IllegalArgumentException(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS.getMessage());

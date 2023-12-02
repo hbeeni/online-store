@@ -82,8 +82,8 @@ public class ApiResponse<T> {
 	 */
 	public static <T> ApiResponse<List<T>> pagination(Page<T> page) {
 		return new ApiResponse<>(
-				page.getContent(),
-				PageInfo.of(page.getNumber(), page.getSize(), page.getTotalPages(), page.getTotalElements())
+			page.getContent(),
+			PageInfo.of(page.getNumber(), page.getSize(), page.getTotalPages(), page.getTotalElements())
 		);
 	}
 

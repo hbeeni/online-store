@@ -121,7 +121,7 @@ class ProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findProductOnSaleForUser(id))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(productRepository).should().findOnSaleById(id);
 	}
 
@@ -180,7 +180,7 @@ class ProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findProductForAdmin(id))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(productRepository).should().searchProduct(id, null);
 	}
 
@@ -207,7 +207,7 @@ class ProductServiceTest {
 		long productId = 1L;
 		long sellerId = 1L;
 		given(productRepository.searchProduct(productId, sellerId)).willReturn(
-				Optional.of(createAdminProductResponse(productId)));
+			Optional.of(createAdminProductResponse(productId)));
 
 		//When
 		AdminProductResponse result = sut.findProductForSeller(productId, sellerId);
@@ -227,7 +227,7 @@ class ProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findProductForSeller(productId, sellerId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(productRepository).should().searchProduct(productId, sellerId);
 	}
 
@@ -239,7 +239,7 @@ class ProductServiceTest {
 		long productId = 1L;
 		long sellerId = 1L;
 		ProductServiceRequest.Create serviceRequest =
-				ProductServiceRequest.Create.of(categoryId, "product", 10000, "des", 100, null, 3000);
+			ProductServiceRequest.Create.of(categoryId, "product", 10000, "des", 100, null, 3000);
 
 		given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
 		given(userRepository.getReferenceById(sellerId)).willReturn(createUser("user"));
@@ -263,10 +263,10 @@ class ProductServiceTest {
 		long sellerId = 1L;
 		long categoryId = 1L;
 		ProductServiceRequest.Update serviceRequest =
-				ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
+			ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
 
 		given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(
-				Optional.of(createProduct(productId)));
+			Optional.of(createProduct(productId)));
 		given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
 
 		//When
@@ -286,13 +286,13 @@ class ProductServiceTest {
 		long sellerId = 1L;
 		long productId = 1L;
 		ProductServiceRequest.Update serviceRequest =
-				ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
+			ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
 
 		given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.empty());
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateProductInfo(productId, categoryId, serviceRequest))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
 		then(categoryRepository).shouldHaveNoInteractions();
 	}
@@ -306,7 +306,7 @@ class ProductServiceTest {
 		long categoryId = 1L;
 
 		given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(
-				Optional.of(createProduct(productId)));
+			Optional.of(createProduct(productId)));
 		willDoNothing().given(imageStore).deleteImage(anyString());
 
 		//When

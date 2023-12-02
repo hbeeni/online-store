@@ -68,7 +68,7 @@ public class Order extends BaseTimeEntity {
 	}
 
 	public static Order of(User orderer, DeliveryRequest deliveryRequest, String ordererPhone,
-			OrderStatus orderStatus) {
+		OrderStatus orderStatus) {
 		return new Order(orderer, deliveryRequest, ordererPhone, orderStatus);
 	}
 
@@ -79,8 +79,8 @@ public class Order extends BaseTimeEntity {
 
 	public int getTotalPrice() {
 		return orderProducts.stream()
-				.mapToInt(OrderProduct::getTotalPrice)
-				.sum();
+			.mapToInt(OrderProduct::getTotalPrice)
+			.sum();
 	}
 
 	public void cancel() {

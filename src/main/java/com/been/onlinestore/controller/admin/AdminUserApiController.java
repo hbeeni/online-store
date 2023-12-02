@@ -26,7 +26,7 @@ public class AdminUserApiController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<UserResponse>>> getUsers(
-			@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+		@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
 		return ResponseEntity.ok(ApiResponse.pagination(userService.findUsers(pageable)));
 	}
 

@@ -24,14 +24,14 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 	Page<Product> findAllOnSaleByCategory(@Param("categoryId") Long categoryId, Pageable pageable);
 
 	@Query(value = "select p from Product p join fetch p.category where p.saleStatus = 'SALE'",
-			countQuery = "select count(p) from Product p where p.saleStatus = 'SALE'")
+		countQuery = "select count(p) from Product p where p.saleStatus = 'SALE'")
 	Page<Product> findAllOnSale(Pageable pageable);
 
 	@Query(value = "select p from Product p "
-			+ "join fetch p.category "
-			+ "where p.saleStatus = 'SALE' and p.name like concat('%', :name, '%')",
-			countQuery = "select count(p) from Product p "
-					+ "where p.saleStatus = 'SALE' and p.name like concat('%', :name, '%')")
+		+ "join fetch p.category "
+		+ "where p.saleStatus = 'SALE' and p.name like concat('%', :name, '%')",
+		countQuery = "select count(p) from Product p "
+			+ "where p.saleStatus = 'SALE' and p.name like concat('%', :name, '%')")
 	Page<Product> findAllOnSaleByName(@Param("name") String name, Pageable pageable);
 
 	@Query("select p from Product p where p.saleStatus = 'SALE' and p.id in :ids")

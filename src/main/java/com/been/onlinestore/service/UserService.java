@@ -41,20 +41,20 @@ public class UserService {
 
 	public Long updateInfo(Long id, String nickname, String phone) {
 		User user = userRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
 		user.updateInfo(nickname, phone);
 		return user.getId();
 	}
 
 	public Page<UserResponse> findUsers(Pageable pageable) {
 		return userRepository.findAll(pageable)
-				.map(UserResponse::from);
+			.map(UserResponse::from);
 	}
 
 	public UserResponse findUser(Long id) {
 		return userRepository.findById(id)
-				.map(UserResponse::from)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
+			.map(UserResponse::from)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
 	}
 
 	public Long deleteUser(Long id) {

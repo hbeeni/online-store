@@ -39,40 +39,40 @@ class UserApiControllerTest extends RestDocsSupport {
 		//Given
 		Long id = TestSecurityConfig.USER_ID;
 		UserRequest.Update request = UserRequest.Update.builder()
-				.nickname("nickname")
-				.phone("01012345678")
-				.build();
+			.nickname("nickname")
+			.phone("01012345678")
+			.build();
 		given(userService.updateInfo(id, request.nickname(), request.phone())).willReturn(id);
 
 		//When & Then
 		mvc.perform(
-						put("/api/users/info")
-								.contentType(MediaType.APPLICATION_JSON)
-								.accept(MediaType.APPLICATION_JSON)
-								.characterEncoding("UTF-8")
-								.content(mapper.writeValueAsString(request))
+				put("/api/users/info")
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.characterEncoding("UTF-8")
+					.content(mapper.writeValueAsString(request))
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(id))
+			.andDo(document(
+				"user/user/updateUser",
+				userApiDescription(TagDescription.USER, "회원 정보 수정"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("nickname").type(JsonFieldType.STRING)
+						.description(USER_NICKNAME.getDescription()),
+					fieldWithPath("phone").type(JsonFieldType.STRING)
+						.description(USER_PHONE.getDescription())
+				),
+				responseFields(
+					STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+						.description(UPDATE.getDescription() + USER_ID.getDescription())
 				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data.id").value(id))
-				.andDo(document(
-						"user/user/updateUser",
-						userApiDescription(TagDescription.USER, "회원 정보 수정"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						requestFields(
-								fieldWithPath("nickname").type(JsonFieldType.STRING)
-										.description(USER_NICKNAME.getDescription()),
-								fieldWithPath("phone").type(JsonFieldType.STRING)
-										.description(USER_PHONE.getDescription())
-						),
-						responseFields(
-								STATUS,
-								fieldWithPath("data.id").type(JsonFieldType.NUMBER)
-										.description(UPDATE.getDescription() + USER_ID.getDescription())
-						)
-				));
+			));
 		then(userService).should().updateInfo(id, request.nickname(), request.phone());
 	}
 }

@@ -14,10 +14,10 @@ public class OrderTestDataUtil {
 
 	public static Order createOrder(Long id) {
 		Order order = Order.of(
-				createUser(),
-				DeliveryRequest.of("delivery address", "receiver name", "01012341234"),
-				"01012341234",
-				OrderStatus.ORDER
+			createUser(),
+			DeliveryRequest.of("delivery address", "receiver name", "01012341234"),
+			"01012341234",
+			OrderStatus.ORDER
 		);
 		ReflectionTestUtils.setField(order, "id", id);
 		return order;
@@ -25,8 +25,8 @@ public class OrderTestDataUtil {
 
 	public static OrderProduct createOrderProduct(Long id) {
 		OrderProduct orderProduct = OrderProduct.of(
-				createProduct(1L),
-				10
+			createProduct(1L),
+			10
 		);
 		ReflectionTestUtils.setField(orderProduct, "id", id);
 		return orderProduct;

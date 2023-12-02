@@ -49,26 +49,26 @@ public class JwtTokenProvider {
 		Date validity = new Date(now + properties.expirationTime());
 
 		return Jwts.builder()
-				.setSubject(authentication.getName())
-				.claim(UID_KEY, uid)
-				.claim(ROLE_KEY, role)
-				.signWith(key, SignatureAlgorithm.HS512)
-				.setExpiration(validity)
-				.compact();
+			.setSubject(authentication.getName())
+			.claim(UID_KEY, uid)
+			.claim(ROLE_KEY, role)
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(validity)
+			.compact();
 	}
 
 	public Authentication getAuthentication(String token) {
 		Claims claims = Jwts
-				.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
+			.parserBuilder()
+			.setSigningKey(key)
+			.build()
+			.parseClaimsJws(token)
+			.getBody();
 
 		return new UsernamePasswordAuthenticationToken(
-				userDetailsService.loadUserByUsername(claims.get(UID_KEY).toString()),
-				token,
-				Set.of(new SimpleGrantedAuthority(claims.get(ROLE_KEY).toString()))
+			userDetailsService.loadUserByUsername(claims.get(UID_KEY).toString()),
+			token,
+			Set.of(new SimpleGrantedAuthority(claims.get(ROLE_KEY).toString()))
 		);
 	}
 

@@ -63,28 +63,28 @@ class ProductApiControllerTest extends RestDocsSupport {
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
 		Page<CategoryProductResponse> page = new PageImpl<>(
-				List.of(createCategoryProductResponse(productId, productName, "category")), pageable, 1);
+			List.of(createCategoryProductResponse(productId, productName, "category")), pageable, 1);
 
 		given(productService.findProductsOnSaleForUser(null, pageable)).willReturn(page);
 
 		//When & Then
 		mvc.perform(
-						get("/api/products")
-								.queryParam("page", String.valueOf(pageNumber))
-								.queryParam("size", String.valueOf(pageSize))
-								.queryParam("sort", sortName + ",desc")
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data").isArray())
-				.andExpect(jsonPath("$.data[0].id").value(productId))
-				.andExpect(jsonPath("$.data[0].name").value(productName))
-				.andExpect(jsonPath("$.data[0].price").value(productPrice))
-				.andExpect(jsonPath("$.page.number").value(page.getNumber()))
-				.andExpect(jsonPath("$.page.size").value(page.getSize()))
-				.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
-				.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()));
+				get("/api/products")
+					.queryParam("page", String.valueOf(pageNumber))
+					.queryParam("size", String.valueOf(pageSize))
+					.queryParam("sort", sortName + ",desc")
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].id").value(productId))
+			.andExpect(jsonPath("$.data[0].name").value(productName))
+			.andExpect(jsonPath("$.data[0].price").value(productPrice))
+			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
+			.andExpect(jsonPath("$.page.size").value(page.getSize()))
+			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
+			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()));
 		then(productService).should().findProductsOnSaleForUser(null, pageable);
 	}
 
@@ -98,13 +98,13 @@ class ProductApiControllerTest extends RestDocsSupport {
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
 		CategoryProductResponse response = CategoryProductResponse.of(
-				1L,
-				"상의",
-				"꽃무늬 셔츠",
-				12000,
-				"이쁜 꽃무늬 셔츠입니다.",
-				3000,
-				imagePath + UUID.randomUUID() + ".png"
+			1L,
+			"상의",
+			"꽃무늬 셔츠",
+			12000,
+			"이쁜 꽃무늬 셔츠입니다.",
+			3000,
+			imagePath + UUID.randomUUID() + ".png"
 		);
 		Page<CategoryProductResponse> page = new PageImpl<>(List.of(response), pageable, 1);
 
@@ -112,48 +112,48 @@ class ProductApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(
-						get("/api/products")
-								.queryParam("page", String.valueOf(pageNumber))
-								.queryParam("size", String.valueOf(pageSize))
-								.queryParam("sort", sortName + ",desc")
-								.queryParam("searchName", response.name())
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data").isArray())
-				.andExpect(jsonPath("$.data[0].id").value(response.id()))
-				.andExpect(jsonPath("$.data[0].name").value(response.name()))
-				.andExpect(jsonPath("$.data[0].price").value(response.price()))
-				.andExpect(jsonPath("$.page.number").value(page.getNumber()))
-				.andExpect(jsonPath("$.page.size").value(page.getSize()))
-				.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
-				.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
-				.andDo(document(
-						"home/product/getProducts-searchingProductName",
-						homeApiDescription(TagDescription.PRODUCT, "상품 페이징 조회 + 상품명 검색"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						requestParameters(PAGE_REQUEST_PARAM)
-								.and(parameterWithName("searchName").description("검색할 상품명").optional()),
-						responseFields(
-								RestDocsUtils.STATUS,
-								fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_ID.getDescription()),
-								fieldWithPath("data[].category").type(JsonFieldType.VARIES)
-										.description(CATEGORY_NAME.getDescription()),
-								fieldWithPath("data[].name").type(JsonFieldType.STRING)
-										.description(PRODUCT_NAME.getDescription()),
-								fieldWithPath("data[].price").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_PRICE.getDescription()),
-								fieldWithPath("data[].description").type(JsonFieldType.VARIES)
-										.description(PRODUCT_DESCRIPTION.getDescription()),
-								fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_DELIVERY_FEE.getDescription()),
-								fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
-										.description(PRODUCT_IMAGE_URL.getDescription())
-						).and(PAGE_INFO)
-				));
+				get("/api/products")
+					.queryParam("page", String.valueOf(pageNumber))
+					.queryParam("size", String.valueOf(pageSize))
+					.queryParam("sort", sortName + ",desc")
+					.queryParam("searchName", response.name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].id").value(response.id()))
+			.andExpect(jsonPath("$.data[0].name").value(response.name()))
+			.andExpect(jsonPath("$.data[0].price").value(response.price()))
+			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
+			.andExpect(jsonPath("$.page.size").value(page.getSize()))
+			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
+			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
+			.andDo(document(
+				"home/product/getProducts-searchingProductName",
+				homeApiDescription(TagDescription.PRODUCT, "상품 페이징 조회 + 상품명 검색"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestParameters(PAGE_REQUEST_PARAM)
+					.and(parameterWithName("searchName").description("검색할 상품명").optional()),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data[].category").type(JsonFieldType.VARIES)
+						.description(CATEGORY_NAME.getDescription()),
+					fieldWithPath("data[].name").type(JsonFieldType.STRING)
+						.description(PRODUCT_NAME.getDescription()),
+					fieldWithPath("data[].price").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_PRICE.getDescription()),
+					fieldWithPath("data[].description").type(JsonFieldType.VARIES)
+						.description(PRODUCT_DESCRIPTION.getDescription()),
+					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_DELIVERY_FEE.getDescription()),
+					fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
+						.description(PRODUCT_IMAGE_URL.getDescription())
+				).and(PAGE_INFO)
+			));
 		then(productService).should().findProductsOnSaleForUser(response.name(), pageable);
 	}
 
@@ -162,50 +162,50 @@ class ProductApiControllerTest extends RestDocsSupport {
 	void test_getProduct() throws Exception {
 		//Given
 		CategoryProductResponse response = CategoryProductResponse.of(
-				1L,
-				"상의",
-				"꽃무늬 셔츠",
-				12000,
-				"이쁜 꽃무늬 셔츠입니다.",
-				3000,
-				imagePath + UUID.randomUUID() + ".png"
+			1L,
+			"상의",
+			"꽃무늬 셔츠",
+			12000,
+			"이쁜 꽃무늬 셔츠입니다.",
+			3000,
+			imagePath + UUID.randomUUID() + ".png"
 		);
 		given(productService.findProductOnSaleForUser(response.id())).willReturn(response);
 
 		//When & Then
 		mvc.perform(get("/api/products/{productId}", response.id()))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data.id").value(response.id()))
-				.andExpect(jsonPath("$.data.name").value(response.name()))
-				.andExpect(jsonPath("$.data.price").value(response.price()))
-				.andDo(document(
-						"home/product/getProduct",
-						homeApiDescription(TagDescription.PRODUCT, "상품 상세 조회"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						pathParameters(
-								parameterWithName("productId").description(PRODUCT_ID.getDescription())
-						),
-						responseFields(
-								RestDocsUtils.STATUS,
-								fieldWithPath("data.id").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_ID.getDescription()),
-								fieldWithPath("data.category").type(JsonFieldType.VARIES)
-										.description(CATEGORY_NAME.getDescription()),
-								fieldWithPath("data.name").type(JsonFieldType.STRING)
-										.description(PRODUCT_NAME.getDescription()),
-								fieldWithPath("data.price").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_PRICE.getDescription()),
-								fieldWithPath("data.description").type(JsonFieldType.VARIES)
-										.description(PRODUCT_DESCRIPTION.getDescription()),
-								fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_DELIVERY_FEE.getDescription()),
-								fieldWithPath("data.imageUrl").type(JsonFieldType.STRING)
-										.description(PRODUCT_IMAGE_URL.getDescription())
-						)
-				));
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(response.id()))
+			.andExpect(jsonPath("$.data.name").value(response.name()))
+			.andExpect(jsonPath("$.data.price").value(response.price()))
+			.andDo(document(
+				"home/product/getProduct",
+				homeApiDescription(TagDescription.PRODUCT, "상품 상세 조회"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("productId").description(PRODUCT_ID.getDescription())
+				),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data.category").type(JsonFieldType.VARIES)
+						.description(CATEGORY_NAME.getDescription()),
+					fieldWithPath("data.name").type(JsonFieldType.STRING)
+						.description(PRODUCT_NAME.getDescription()),
+					fieldWithPath("data.price").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_PRICE.getDescription()),
+					fieldWithPath("data.description").type(JsonFieldType.VARIES)
+						.description(PRODUCT_DESCRIPTION.getDescription()),
+					fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_DELIVERY_FEE.getDescription()),
+					fieldWithPath("data.imageUrl").type(JsonFieldType.STRING)
+						.description(PRODUCT_IMAGE_URL.getDescription())
+				)
+			));
 		then(productService).should().findProductOnSaleForUser(response.id());
 	}
 
@@ -220,22 +220,22 @@ class ProductApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(
-						get("/api/products/img/{imageName}", imageName)
-								.accept(MediaType.IMAGE_PNG_VALUE)
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_PNG_VALUE))
-				.andExpect(content().bytes(image))
-				.andDo(document(
-						"home/product/getProductImage",
-						homeApiDescription(TagDescription.PRODUCT, "상품 이미지 조회"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						pathParameters(
-								parameterWithName("imageName").description("상품 이미지 파일명")
-						),
-						responseBody()
-				));
+				get("/api/products/img/{imageName}", imageName)
+					.accept(MediaType.IMAGE_PNG_VALUE)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_PNG_VALUE))
+			.andExpect(content().bytes(image))
+			.andDo(document(
+				"home/product/getProductImage",
+				homeApiDescription(TagDescription.PRODUCT, "상품 이미지 조회"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("imageName").description("상품 이미지 파일명")
+				),
+				responseBody()
+			));
 		then(imageStore).should().getProductImage(imageName);
 	}
 }

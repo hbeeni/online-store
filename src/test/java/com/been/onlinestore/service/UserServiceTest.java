@@ -42,13 +42,13 @@ class UserServiceTest {
 		//Given
 		User user = createUser();
 		UserServiceRequest.SignUp serviceRequest = UserServiceRequest.SignUp.of(
-				user.getUid(),
-				user.getPassword(),
-				user.getName(),
-				user.getEmail(),
-				user.getNickname(),
-				user.getPhone(),
-				user.getRoleType()
+			user.getUid(),
+			user.getPassword(),
+			user.getName(),
+			user.getEmail(),
+			user.getNickname(),
+			user.getPhone(),
+			user.getRoleType()
 		);
 		given(userRepository.save(any())).willReturn(user);
 
@@ -66,13 +66,13 @@ class UserServiceTest {
 		//Given
 		User admin = createAdmin();
 		UserServiceRequest.SignUp serviceRequest = UserServiceRequest.SignUp.of(
-				admin.getUid(),
-				admin.getPassword(),
-				admin.getName(),
-				admin.getEmail(),
-				admin.getNickname(),
-				admin.getPhone(),
-				admin.getRoleType()
+			admin.getUid(),
+			admin.getPassword(),
+			admin.getName(),
+			admin.getEmail(),
+			admin.getNickname(),
+			admin.getPhone(),
+			admin.getRoleType()
 		);
 		given(userRepository.save(any())).willReturn(admin);
 
@@ -168,7 +168,7 @@ class UserServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findUser(id))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(userRepository).should().findById(id);
 	}
 
