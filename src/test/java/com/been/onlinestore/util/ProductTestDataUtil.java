@@ -1,15 +1,15 @@
 package com.been.onlinestore.util;
 
+import static com.been.onlinestore.util.CategoryTestDataUtil.*;
+import static com.been.onlinestore.util.UserTestDataUtil.*;
+import static java.time.LocalDateTime.*;
+
+import org.springframework.test.util.ReflectionTestUtils;
+
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.service.response.CategoryProductResponse;
-
-import org.springframework.test.util.ReflectionTestUtils;
-
-import static com.been.onlinestore.util.CategoryTestDataUtil.createCategory;
-import static com.been.onlinestore.util.UserTestDataUtil.createUser;
-import static java.time.LocalDateTime.now;
 
 public class ProductTestDataUtil {
 

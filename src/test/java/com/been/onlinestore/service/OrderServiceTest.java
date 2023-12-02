@@ -1,10 +1,18 @@
 package com.been.onlinestore.service;
 
-import com.been.onlinestore.repository.OrderRepository;
-import com.been.onlinestore.repository.ProductRepository;
-import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.OrderServiceRequest;
-import com.been.onlinestore.service.response.OrderResponse;
+import static com.been.onlinestore.util.OrderTestDataUtil.*;
+import static com.been.onlinestore.util.ProductTestDataUtil.*;
+import static com.been.onlinestore.util.UserTestDataUtil.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,21 +24,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.persistence.EntityNotFoundException;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import static com.been.onlinestore.util.OrderTestDataUtil.createOrder;
-import static com.been.onlinestore.util.ProductTestDataUtil.createProduct;
-import static com.been.onlinestore.util.UserTestDataUtil.createUser;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import com.been.onlinestore.repository.OrderRepository;
+import com.been.onlinestore.repository.ProductRepository;
+import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.request.OrderServiceRequest;
+import com.been.onlinestore.service.response.OrderResponse;
 
 @DisplayName("비즈니스 로직 - 주문")
 @ExtendWith(MockitoExtension.class)

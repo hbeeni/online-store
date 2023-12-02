@@ -1,12 +1,6 @@
 package com.been.onlinestore.controller;
 
-import com.been.onlinestore.controller.dto.ApiResponse;
-import com.been.onlinestore.service.CategoryService;
-import com.been.onlinestore.service.ProductService;
-import com.been.onlinestore.service.response.CategoryResponse;
-import com.been.onlinestore.service.response.ProductResponse;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,7 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.service.CategoryService;
+import com.been.onlinestore.service.ProductService;
+import com.been.onlinestore.service.response.CategoryResponse;
+import com.been.onlinestore.service.response.ProductResponse;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")

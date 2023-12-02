@@ -1,8 +1,8 @@
 package com.been.onlinestore.service.response;
 
-import com.been.onlinestore.domain.Product;
-
 import java.util.Map;
+
+import com.been.onlinestore.domain.Product;
 
 public record CartResponse(
 		Long productId,

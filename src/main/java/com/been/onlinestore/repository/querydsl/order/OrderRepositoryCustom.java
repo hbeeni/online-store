@@ -1,11 +1,11 @@
 package com.been.onlinestore.repository.querydsl.order;
 
-import com.been.onlinestore.domain.Order;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
+import com.been.onlinestore.domain.Order;
 
 public interface OrderRepositoryCustom {
 

@@ -1,5 +1,13 @@
 package com.been.onlinestore.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.domain.User;
@@ -9,14 +17,6 @@ import com.been.onlinestore.service.request.AddressServiceRequest;
 import com.been.onlinestore.service.response.AddressResponse;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional

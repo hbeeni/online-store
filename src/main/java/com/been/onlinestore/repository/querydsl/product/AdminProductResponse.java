@@ -1,10 +1,10 @@
 package com.been.onlinestore.repository.querydsl.product;
 
+import java.time.LocalDateTime;
+
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.SaleStatus;
-
-import java.time.LocalDateTime;
 
 public record AdminProductResponse(
 		Long id,

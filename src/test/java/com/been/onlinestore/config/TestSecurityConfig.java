@@ -1,13 +1,13 @@
 package com.been.onlinestore.config;
 
-import com.been.onlinestore.controller.dto.security.PrincipalDetails;
-import com.been.onlinestore.domain.constant.RoleType;
-
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.been.onlinestore.controller.dto.security.PrincipalDetails;
+import com.been.onlinestore.domain.constant.RoleType;
 
 @TestConfiguration
 public class TestSecurityConfig {

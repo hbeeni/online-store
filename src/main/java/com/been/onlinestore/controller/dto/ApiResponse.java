@@ -1,15 +1,15 @@
 package com.been.onlinestore.controller.dto;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import org.springframework.data.domain.Page;
-
-import java.util.List;
-import java.util.Map;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -1,13 +1,13 @@
 package com.been.onlinestore.domain;
 
-import com.been.onlinestore.domain.constant.DeliveryStatus;
+import static org.assertj.core.api.Assertions.*;
+
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.been.onlinestore.domain.constant.DeliveryStatus;
 
 class DeliveryTest {
 

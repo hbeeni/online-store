@@ -1,5 +1,17 @@
 package com.been.onlinestore.service;
 
+import static org.springframework.util.StringUtils.*;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.domain.Product;
@@ -18,18 +30,6 @@ import com.been.onlinestore.service.response.ProductResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.springframework.util.StringUtils.hasText;
 
 @Slf4j
 @RequiredArgsConstructor

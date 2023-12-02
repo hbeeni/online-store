@@ -1,14 +1,14 @@
 package com.been.onlinestore.service.response;
 
-import com.been.onlinestore.domain.DeliveryRequest;
-import com.been.onlinestore.domain.User;
-import com.been.onlinestore.domain.constant.OrderStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import static com.been.onlinestore.service.response.JsonFormatConst.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.been.onlinestore.service.response.JsonFormatConst.DATE_TIME_PATTERN;
+import com.been.onlinestore.domain.DeliveryRequest;
+import com.been.onlinestore.domain.User;
+import com.been.onlinestore.domain.constant.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record OrderResponse(
 		Long id,

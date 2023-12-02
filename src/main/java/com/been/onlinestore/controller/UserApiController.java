@@ -1,11 +1,6 @@
 package com.been.onlinestore.controller;
 
-import com.been.onlinestore.controller.dto.ApiResponse;
-import com.been.onlinestore.controller.dto.UserRequest;
-import com.been.onlinestore.controller.dto.security.PrincipalDetails;
-import com.been.onlinestore.service.UserService;
-
-import lombok.RequiredArgsConstructor;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.controller.dto.UserRequest;
+import com.been.onlinestore.controller.dto.security.PrincipalDetails;
+import com.been.onlinestore.service.UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/users")

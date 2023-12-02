@@ -1,14 +1,14 @@
 package com.been.onlinestore.controller.dto.security;
 
-import com.been.onlinestore.domain.constant.RoleType;
-import com.been.onlinestore.service.response.UserResponse;
+import java.util.Collection;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Set;
+import com.been.onlinestore.domain.constant.RoleType;
+import com.been.onlinestore.service.response.UserResponse;
 
 public record PrincipalDetails(
 		Long id,

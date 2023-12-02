@@ -1,12 +1,6 @@
 package com.been.onlinestore.domain;
 
-import com.been.onlinestore.common.ErrorMessages;
-import com.been.onlinestore.domain.constant.SaleStatus;
-
-import lombok.Getter;
-import lombok.ToString;
-
-import org.hibernate.annotations.ColumnDefault;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +12,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import java.util.Objects;
+import org.hibernate.annotations.ColumnDefault;
+
+import com.been.onlinestore.common.ErrorMessages;
+import com.been.onlinestore.domain.constant.SaleStatus;
+
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
@@ -114,10 +114,12 @@ public class Product extends BaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof Product that))
+		}
+		if (!(o instanceof Product that)) {
 			return false;
+		}
 		return this.getId() != null && Objects.equals(this.getId(), that.getId());
 	}
 

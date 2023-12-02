@@ -1,11 +1,11 @@
 package com.been.onlinestore.controller.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import com.been.onlinestore.service.request.CategoryServiceRequest;
 
 import lombok.Builder;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 public record CategoryRequest() {
 
