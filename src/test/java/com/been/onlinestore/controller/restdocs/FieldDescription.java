@@ -42,6 +42,7 @@ public enum FieldDescription {
 	ORDER_TOTAL_PRICE("주문 총합"),
 	ORDER_STATUS("주문 상태 (ORDER, CANCEL)"),
 
+	ORDERER_ID("주문자 시퀀스"),
 	ORDERER_UID("주문자 아이디"),
 	ORDERER_PHONE("주문자 휴대폰 번호"),
 

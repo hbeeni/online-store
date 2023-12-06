@@ -36,7 +36,7 @@ public class SellerOrderApiController {
 		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		return ResponseEntity.ok(
-			ApiResponse.pagination(orderService.findOrdersBySeller(principalDetails.id(), pageable)));
+			ApiResponse.pagination(orderService.findOrdersBySeller(principalDetails.id(), cond, pageable)));
 	}
 
 	@GetMapping("/{orderId}")

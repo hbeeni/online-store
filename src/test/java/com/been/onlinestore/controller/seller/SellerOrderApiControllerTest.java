@@ -33,6 +33,7 @@ import com.been.onlinestore.controller.restdocs.RestDocsUtils;
 import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
+import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
 import com.been.onlinestore.service.OrderService;
 import com.been.onlinestore.service.response.OrderProductResponse;
 import com.been.onlinestore.service.response.OrderResponse;
@@ -46,11 +47,13 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 	private OrderService orderService;
 
 	@WithUserDetails("seller")
-	@DisplayName("[API][GET] 주문 리스트 조회 + 페이징")
+	@DisplayName("[API][GET] 주문 리스트 조회 + 검색 + 페이징")
 	@Test
 	void test_getOrderList_withPagination() throws Exception {
 		//Given
 		long sellerId = TestSecurityConfig.SELLER_ID;
+		Long searchProductId = 1L;
+		OrderSearchCondition cond = OrderSearchCondition.of(null, searchProductId, null, null);
 
 		String sortName = "createdAt";
 		String direction = "desc";
@@ -59,7 +62,7 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
 		OrderProductResponse orderProductResponse1 = OrderProductResponse.of(
-			2L,
+			4L,
 			"체크 셔츠",
 			23000,
 			3,
@@ -70,12 +73,12 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 		);
 		OrderProductResponse orderProductResponse2 = OrderProductResponse.of(
 			1L,
-			"꽃무늬 셔츠",
-			12000,
-			2,
-			24000,
+			"체크 셔츠",
+			23000,
+			5,
+			115000,
 			DeliveryStatus.ACCEPT,
-			3000,
+			0,
 			null
 		);
 		OrderResponse response1 = OrderResponse.of(
@@ -83,7 +86,7 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 			OrderResponse.OrdererResponse.of("user1", "01012345678"),
 			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user1", "01012345678"),
 			List.of(orderProductResponse1),
-			69000,
+			85500,
 			OrderStatus.ORDER,
 			now().minusDays(1),
 			now().minusDays(1)
@@ -101,11 +104,14 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 		List<OrderResponse> content = List.of(response2, response1);
 		Page<OrderResponse> page = new PageImpl<>(content, pageable, content.size());
 
-		given(orderService.findOrdersBySeller(sellerId, pageable)).willReturn(page);
+		given(orderService.findOrdersBySeller(sellerId, cond, pageable)).willReturn(page);
 
 		//When & Then
+		String prefix = "검색할 ";
+
 		mvc.perform(
 				get("/api/seller/orders")
+					.queryParam("productId", String.valueOf(searchProductId))
 					.queryParam("page", String.valueOf(pageNumber))
 					.queryParam("size", String.valueOf(pageSize))
 					.queryParam("sort", sortName + "," + direction)
@@ -124,11 +130,21 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
-				"seller/order/getOrders",
-				sellerApiDescription(TagDescription.ORDER, "주문 페이징 조회"),
+				"seller/order/getOrders-searching",
+				sellerApiDescription(TagDescription.ORDER, "주문 페이징 조회 + 검색"),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
-				requestParameters(PAGE_REQUEST_PARAM),
+				requestParameters(PAGE_REQUEST_PARAM)
+					.and(
+						parameterWithName("ordererId")
+							.description(prefix + ORDERER_ID.getDescription()).optional(),
+						parameterWithName("productId")
+							.description(prefix + PRODUCT_ID.getDescription()).optional(),
+						parameterWithName("deliveryStatus")
+							.description(prefix + ORDER_PRODUCT_DELIVERY_STATUS.getDescription()).optional(),
+						parameterWithName("orderStatus")
+							.description(prefix + ORDER_STATUS.getDescription()).optional()
+					),
 				responseFields(
 					RestDocsUtils.STATUS,
 					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
@@ -169,7 +185,7 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 						.description(MODIFIED_AT.getDescription())
 				).and(PAGE_INFO)
 			));
-		then(orderService).should().findOrdersBySeller(sellerId, pageable);
+		then(orderService).should().findOrdersBySeller(sellerId, cond, pageable);
 	}
 
 	@WithUserDetails("seller")

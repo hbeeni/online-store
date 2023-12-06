@@ -22,6 +22,7 @@ import com.been.onlinestore.domain.constant.OrderStatus;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
 import com.been.onlinestore.service.request.OrderServiceRequest;
 import com.been.onlinestore.service.response.OrderResponse;
 
@@ -50,8 +51,8 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<OrderResponse> findOrdersBySeller(Long sellerId, Pageable pageable) {
-		return orderRepository.findAllOrdersBySeller(sellerId, pageable)
+	public Page<OrderResponse> findOrdersBySeller(Long sellerId, OrderSearchCondition cond, Pageable pageable) {
+		return orderRepository.searchOrdersBySeller(sellerId, cond, pageable)
 			.map(OrderResponse::from);
 	}
 
