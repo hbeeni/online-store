@@ -39,7 +39,7 @@ public class ApiErrorResponse<T> {
 	public static ApiErrorResponse<Map<String, String>> fail(BindingResult bindingResult) {
 		Map<String, String> errorMap = new HashMap<>();
 		bindingResult.getFieldErrors()
-				.forEach(b -> errorMap.put(b.getField(), b.getDefaultMessage()));
+			.forEach(b -> errorMap.put(b.getField(), b.getDefaultMessage()));
 		return new ApiErrorResponse<>(STATUS_FAIL, errorMap, "field errors");
 	}
 

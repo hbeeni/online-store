@@ -25,36 +25,36 @@ public record ProductRequest() {
 	 */
 	@Builder
 	public record Create(
-			@NotNull @Positive
-			Long categoryId,
+		@NotNull @Positive
+		Long categoryId,
 
-			@NotBlank @Size(max = 100)
-			String name,
+		@NotBlank @Size(max = 100)
+		String name,
 
-			@NotNull @PositiveOrZero
-			Integer price,
+		@NotNull @PositiveOrZero
+		Integer price,
 
-			@Size(max = 255)
-			String description,
+		@Size(max = 255)
+		String description,
 
-			@NotNull @PositiveOrZero
-			Integer stockQuantity,
+		@NotNull @PositiveOrZero
+		Integer stockQuantity,
 
-			SaleStatus saleStatus,
+		SaleStatus saleStatus,
 
-			@NotNull @PositiveOrZero
-			Integer deliveryFee
+		@NotNull @PositiveOrZero
+		Integer deliveryFee
 	) {
 
 		public ProductServiceRequest.Create toServiceRequest() {
 			return ProductServiceRequest.Create.of(
-					categoryId,
-					name,
-					price,
-					description,
-					stockQuantity,
-					saleStatus,
-					deliveryFee
+				categoryId,
+				name,
+				price,
+				description,
+				stockQuantity,
+				saleStatus,
+				deliveryFee
 			);
 		}
 	}
@@ -71,37 +71,37 @@ public record ProductRequest() {
 	 */
 	@Builder
 	public record Update(
-			@NotNull @Positive
-			Long categoryId,
+		@NotNull @Positive
+		Long categoryId,
 
-			@NotBlank @Size(max = 100)
-			String name,
+		@NotBlank @Size(max = 100)
+		String name,
 
-			@NotNull @PositiveOrZero
-			Integer price,
+		@NotNull @PositiveOrZero
+		Integer price,
 
-			@Size(max = 255)
-			String description,
+		@Size(max = 255)
+		String description,
 
-			@NotNull @PositiveOrZero
-			Integer stockQuantity,
+		@NotNull @PositiveOrZero
+		Integer stockQuantity,
 
-			@NotNull
-			SaleStatus saleStatus,
+		@NotNull
+		SaleStatus saleStatus,
 
-			@NotNull @PositiveOrZero
-			Integer deliveryFee
+		@NotNull @PositiveOrZero
+		Integer deliveryFee
 	) {
 
 		public ProductServiceRequest.Update toServiceRequest() {
 			return ProductServiceRequest.Update.of(
-					categoryId,
-					name,
-					price,
-					description,
-					stockQuantity,
-					saleStatus,
-					deliveryFee
+				categoryId,
+				name,
+				price,
+				description,
+				stockQuantity,
+				saleStatus,
+				deliveryFee
 			);
 		}
 	}

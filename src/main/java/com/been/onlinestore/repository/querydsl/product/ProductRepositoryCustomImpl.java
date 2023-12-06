@@ -43,30 +43,30 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 	@Override
 	public Page<AdminProductResponse> searchProducts(Long sellerId, ProductSearchCondition cond, Pageable pageable) {
 		List<AdminProductResponse> content = queryFactory
-				.select(getAdminProductResponseProjection())
-				.from(product)
-				.leftJoin(product.category, category)
-				.join(product.seller, user)
-				.where(sellerIdEq(sellerId),
-						categoryIdEq(cond.categoryId()),
-						productNameContains(cond.name()),
-						saleStatusEq(cond.saleStatus())
-				)
-				.orderBy(getOrderSpecifiers(pageable))
-				.offset(pageable.getOffset())
-				.limit(pageable.getPageSize())
-				.fetch();
+			.select(getAdminProductResponseProjection())
+			.from(product)
+			.leftJoin(product.category, category)
+			.join(product.seller, user)
+			.where(sellerIdEq(sellerId),
+				categoryIdEq(cond.categoryId()),
+				productNameContains(cond.name()),
+				saleStatusEq(cond.saleStatus())
+			)
+			.orderBy(getOrderSpecifiers(pageable))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
 
 		JPAQuery<Long> countQuery = queryFactory
-				.select(product.count())
-				.from(product)
-				.leftJoin(product.category, category)
-				.join(product.seller, user)
-				.where(sellerIdEq(sellerId),
-						categoryIdEq(cond.categoryId()),
-						productNameContains(cond.name()),
-						saleStatusEq(cond.saleStatus())
-				);
+			.select(product.count())
+			.from(product)
+			.leftJoin(product.category, category)
+			.join(product.seller, user)
+			.where(sellerIdEq(sellerId),
+				categoryIdEq(cond.categoryId()),
+				productNameContains(cond.name()),
+				saleStatusEq(cond.saleStatus())
+			);
 
 		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
 	}
@@ -74,37 +74,37 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 	@Override
 	public Optional<AdminProductResponse> searchProduct(Long productId, Long sellerId) {
 		AdminProductResponse adminProductResponse = queryFactory
-				.select(getAdminProductResponseProjection())
-				.from(product)
-				.leftJoin(product.category, category)
-				.join(product.seller, user)
-				.where(productIdEq(productId),
-						sellerIdEq(sellerId)
-				)
-				.fetchOne();
+			.select(getAdminProductResponseProjection())
+			.from(product)
+			.leftJoin(product.category, category)
+			.join(product.seller, user)
+			.where(productIdEq(productId),
+				sellerIdEq(sellerId)
+			)
+			.fetchOne();
 		return Optional.ofNullable(adminProductResponse);
 	}
 
 	private ConstructorExpression<AdminProductResponse> getAdminProductResponseProjection() {
 		return Projections.constructor(AdminProductResponse.class,
-				product.id,
-				category.name,
-				Projections.constructor(AdminProductResponse.Seller.class,
-						user.id,
-						user.uid
-				),
-				product.name,
-				product.price,
-				product.description,
-				product.stockQuantity,
-				product.salesVolume,
-				product.saleStatus,
-				product.deliveryFee,
-				product.imageName.prepend(imageStore.getImagePath()),
-				product.createdAt,
-				product.createdBy,
-				product.modifiedAt,
-				product.modifiedBy
+			product.id,
+			category.name,
+			Projections.constructor(AdminProductResponse.Seller.class,
+				user.id,
+				user.uid
+			),
+			product.name,
+			product.price,
+			product.description,
+			product.stockQuantity,
+			product.salesVolume,
+			product.saleStatus,
+			product.deliveryFee,
+			product.imageName.prepend(imageStore.getImagePath()),
+			product.createdAt,
+			product.createdBy,
+			product.modifiedAt,
+			product.modifiedBy
 		);
 	}
 

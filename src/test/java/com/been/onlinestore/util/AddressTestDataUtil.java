@@ -19,10 +19,10 @@ public class AddressTestDataUtil {
 
 	public static Address createAddress(Long id, boolean defaultAddress) {
 		Address address = Address.of(
-				createUser("user"),
-				"detail",
-				"zipcode",
-				defaultAddress
+			createUser("user"),
+			"detail",
+			"zipcode",
+			defaultAddress
 		);
 		ReflectionTestUtils.setField(address, "id", id);
 		return address;
@@ -33,7 +33,7 @@ public class AddressTestDataUtil {
 	}
 
 	public static AddressServiceRequest createAddressServiceRequest(String detail, String zipcode,
-			boolean defaultAddress) {
+		boolean defaultAddress) {
 		return AddressServiceRequest.of(detail, zipcode, defaultAddress);
 	}
 }

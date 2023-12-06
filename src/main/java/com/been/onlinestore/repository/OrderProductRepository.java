@@ -14,33 +14,33 @@ import com.been.onlinestore.domain.OrderProduct;
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
 
 	@Query("select op from OrderProduct op "
-			+ "join fetch op.delivery d "
-			+ "join fetch op.product p "
-			+ "where op.id in :orderProductIds and p.seller.id = :sellerId")
+		+ "join fetch op.delivery d "
+		+ "join fetch op.product p "
+		+ "where op.id in :orderProductIds and p.seller.id = :sellerId")
 	List<OrderProduct> findAllByIdAndSellerId(@Param("orderProductIds") Set<Long> orderProductIds,
-			@Param("sellerId") Long sellerId);
+		@Param("sellerId") Long sellerId);
 
 	@Modifying
 	@Query(nativeQuery = true,
-			value = "update order_product op "
-					+ "join delivery d on d.id = op.delivery_id "
-					+ "set d.delivery_status = 'PREPARING' "
-					+ "where op.id in :orderProductIds")
+		value = "update order_product op "
+			+ "join delivery d on d.id = op.delivery_id "
+			+ "set d.delivery_status = 'PREPARING' "
+			+ "where op.id in :orderProductIds")
 	int bulkStartPreparing(@Param("orderProductIds") Collection<Long> orderProductIds);
 
 	@Modifying
 	@Query(nativeQuery = true,
-			value = "update order_product op "
-					+ "join delivery d on d.id = op.delivery_id "
-					+ "set d.delivery_status = 'DELIVERING' "
-					+ "where op.id in :orderProductIds")
+		value = "update order_product op "
+			+ "join delivery d on d.id = op.delivery_id "
+			+ "set d.delivery_status = 'DELIVERING' "
+			+ "where op.id in :orderProductIds")
 	int bulkStartDelivery(@Param("orderProductIds") Collection<Long> orderProductIds);
 
 	@Modifying
 	@Query(nativeQuery = true,
-			value = "update order_product op "
-					+ "join delivery d on d.id = op.delivery_id "
-					+ "set d.delivery_status = 'FINAL_DELIVERY', d.delivered_at = now() "
-					+ "where op.id in :orderProductIds")
+		value = "update order_product op "
+			+ "join delivery d on d.id = op.delivery_id "
+			+ "set d.delivery_status = 'FINAL_DELIVERY', d.delivered_at = now() "
+			+ "where op.id in :orderProductIds")
 	int bulkCompleteDelivery(@Param("orderProductIds") Collection<Long> orderProductIds);
 }

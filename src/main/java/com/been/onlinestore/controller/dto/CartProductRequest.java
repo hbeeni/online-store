@@ -10,18 +10,18 @@ public record CartProductRequest() {
 
 	@Builder
 	public record Create(
-			@NotNull @Positive
-			Long productId,
+		@NotNull @Positive
+		Long productId,
 
-			@NotNull @PositiveOrZero
-			Integer productQuantity
+		@NotNull @PositiveOrZero
+		Integer productQuantity
 	) {
 	}
 
 	@Builder
 	public record Update(
-			@NotNull @PositiveOrZero
-			Integer productQuantity
+		@NotNull @PositiveOrZero
+		Integer productQuantity
 	) {
 	}
 }

@@ -13,13 +13,13 @@ public class UserTestDataUtil {
 
 	public static User createUser(String uid) {
 		User user = User.of(
-				uid,
-				"testpassword",
-				"test user",
-				"e@mail.com",
-				"test user",
-				"01012341234",
-				RoleType.USER
+			uid,
+			"testpassword",
+			"test user",
+			"e@mail.com",
+			"test user",
+			"01012341234",
+			RoleType.USER
 		);
 		ReflectionTestUtils.setField(user, "id", 1L);
 		return user;
@@ -27,13 +27,13 @@ public class UserTestDataUtil {
 
 	public static User createUser(Long id) {
 		User user = User.of(
-				"uid",
-				"testpassword",
-				"test user",
-				"e@mail.com",
-				"test user",
-				"01012341234",
-				RoleType.USER
+			"uid",
+			"testpassword",
+			"test user",
+			"e@mail.com",
+			"test user",
+			"01012341234",
+			RoleType.USER
 		);
 		ReflectionTestUtils.setField(user, "id", id);
 		return user;
@@ -45,13 +45,13 @@ public class UserTestDataUtil {
 
 	public static User createAdmin(String uid) {
 		User admin = User.of(
-				uid,
-				"testpassword",
-				"test admin",
-				"e@mail.com",
-				"test admin",
-				"01012341234",
-				RoleType.ADMIN
+			uid,
+			"testpassword",
+			"test admin",
+			"e@mail.com",
+			"test admin",
+			"01012341234",
+			RoleType.ADMIN
 		);
 		ReflectionTestUtils.setField(admin, "id", 1L);
 		return admin;

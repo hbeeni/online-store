@@ -30,11 +30,11 @@ public class ProductApiController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<CategoryProductResponse>>> getProducts(
-			@RequestParam(required = false) String searchName,
-			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+		@RequestParam(required = false) String searchName,
+		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		return ResponseEntity.ok(
-				ApiResponse.pagination(productService.findProductsOnSaleForUser(searchName, pageable)));
+			ApiResponse.pagination(productService.findProductsOnSaleForUser(searchName, pageable)));
 	}
 
 	@GetMapping("/{productId}")

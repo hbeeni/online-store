@@ -39,9 +39,9 @@ class CategoryServiceTest {
 	void test_findCategoriesForAdmin() {
 		//Given
 		given(categoryRepository.findAll()).willReturn(List.of(
-				createCategory("상의"),
-				createCategory("하의"),
-				createCategory("음식")
+			createCategory("상의"),
+			createCategory("하의"),
+			createCategory("음식")
 		));
 
 		//When
@@ -49,11 +49,11 @@ class CategoryServiceTest {
 
 		//Then
 		assertThat(result).hasSize(3)
-				.first()
-				.hasFieldOrProperty("createdAt")
-				.hasFieldOrProperty("createdBy")
-				.hasFieldOrProperty("modifiedAt")
-				.hasFieldOrProperty("modifiedBy");
+			.first()
+			.hasFieldOrProperty("createdAt")
+			.hasFieldOrProperty("createdBy")
+			.hasFieldOrProperty("modifiedAt")
+			.hasFieldOrProperty("modifiedBy");
 		then(categoryRepository).should().findAll();
 	}
 
@@ -62,9 +62,9 @@ class CategoryServiceTest {
 	void test_findCategoriesForUser() {
 		//Given
 		given(categoryRepository.findAll()).willReturn(List.of(
-				createCategory("상의"),
-				createCategory("하의"),
-				createCategory("음식")
+			createCategory("상의"),
+			createCategory("하의"),
+			createCategory("음식")
 		));
 
 		//When
@@ -88,10 +88,10 @@ class CategoryServiceTest {
 
 		//Then
 		assertThat(result)
-				.hasFieldOrPropertyWithValue("id", category.getId())
-				.hasFieldOrPropertyWithValue("name", category.getName())
-				.hasFieldOrProperty("productCount")
-				.hasFieldOrProperty("createdAt");
+			.hasFieldOrPropertyWithValue("id", category.getId())
+			.hasFieldOrPropertyWithValue("name", category.getName())
+			.hasFieldOrProperty("productCount")
+			.hasFieldOrProperty("createdAt");
 		then(categoryRepository).should().findById(id);
 	}
 
@@ -117,7 +117,7 @@ class CategoryServiceTest {
 		long id = 1L;
 		Category category = createCategory(id, "category");
 		CategoryServiceRequest.Update serviceRequest = CategoryServiceRequest.Update.of("update category",
-				"update cateogory");
+			"update cateogory");
 		given(categoryRepository.findById(id)).willReturn(Optional.of(category));
 
 		//When
@@ -135,12 +135,12 @@ class CategoryServiceTest {
 		//Given
 		long id = 1L;
 		CategoryServiceRequest.Update serviceRequest = CategoryServiceRequest.Update.of("update category",
-				"update cateogory");
+			"update cateogory");
 		given(categoryRepository.findById(id)).willReturn(Optional.empty());
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateCategory(id, serviceRequest))
-				.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(IllegalArgumentException.class);
 		then(categoryRepository).should().findById(id);
 	}
 

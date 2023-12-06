@@ -45,20 +45,20 @@ class CartApiControllerTest extends RestDocsSupport {
 	void test_getProductsInCart() throws Exception {
 		//Given
 		CartResponse cartResponse1 = CartResponse.of(
-				1L,
-				"꽃무늬 바지",
-				10000,
-				2,
-				20000,
-				3000
+			1L,
+			"꽃무늬 바지",
+			10000,
+			2,
+			20000,
+			3000
 		);
 		CartResponse cartResponse2 = CartResponse.of(
-				2L,
-				"꽃무늬 셔츠",
-				12000,
-				1,
-				12000,
-				3000
+			2L,
+			"꽃무늬 셔츠",
+			12000,
+			1,
+			12000,
+			3000
 		);
 
 		Map<Long, Integer> idToQuantityMap = Map.of(1L, 2, 2L, 1);
@@ -68,33 +68,33 @@ class CartApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(get("/api/carts").cookie(cookie))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(jsonPath("$.data").isArray())
-				.andExpect(jsonPath("$.data[0].productId").value(cartResponse1.productId()))
-				.andExpect(jsonPath("$.data[0].quantity").value(cartResponse1.quantity()))
-				.andDo(document(
-						"user/cart/getCart",
-						userApiDescription(TagDescription.CART, "장바구니 조회"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						responseFields(
-								STATUS,
-								fieldWithPath("data[].productId").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_ID.getDescription()),
-								fieldWithPath("data[].productName").type(JsonFieldType.STRING)
-										.description(PRODUCT_NAME.getDescription()),
-								fieldWithPath("data[].productPrice").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_PRICE.getDescription()),
-								fieldWithPath("data[].quantity").type(JsonFieldType.NUMBER)
-										.description(CART_PRODUCT_QUANTITY.getDescription()),
-								fieldWithPath("data[].totalPrice").type(JsonFieldType.NUMBER)
-										.description(CART_PRODUCT_TOTAL_PRICE.getDescription()),
-								fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_DELIVERY_FEE.getDescription())
-						)
-				));
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].productId").value(cartResponse1.productId()))
+			.andExpect(jsonPath("$.data[0].quantity").value(cartResponse1.quantity()))
+			.andDo(document(
+				"user/cart/getCart",
+				userApiDescription(TagDescription.CART, "장바구니 조회"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				responseFields(
+					STATUS,
+					fieldWithPath("data[].productId").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data[].productName").type(JsonFieldType.STRING)
+						.description(PRODUCT_NAME.getDescription()),
+					fieldWithPath("data[].productPrice").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_PRICE.getDescription()),
+					fieldWithPath("data[].quantity").type(JsonFieldType.NUMBER)
+						.description(CART_PRODUCT_QUANTITY.getDescription()),
+					fieldWithPath("data[].totalPrice").type(JsonFieldType.NUMBER)
+						.description(CART_PRODUCT_TOTAL_PRICE.getDescription()),
+					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_DELIVERY_FEE.getDescription())
+				)
+			));
 		then(productService).should().findProductsInCart(idToQuantityMap);
 	}
 
@@ -103,35 +103,35 @@ class CartApiControllerTest extends RestDocsSupport {
 	void test_addProductToCart() throws Exception {
 		//Given
 		CartProductRequest.Create request = CartProductRequest.Create.builder()
-				.productId(1L)
-				.productQuantity(2)
-				.build();
+			.productId(1L)
+			.productQuantity(2)
+			.build();
 
 		//When & Then
 		mvc.perform(
-						post("/api/carts")
-								.contentType(MediaType.APPLICATION_JSON)
-								.accept(MediaType.APPLICATION_JSON)
-								.characterEncoding("UTF-8")
-								.content(mapper.writeValueAsString(request))
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(cookie().value(COOKIE_NAME, "1:2"))
-				.andDo(document(
-						"user/cart/addProductToCart",
-						userApiDescription(TagDescription.CART, "장바구니에 상품 추가"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						requestFields(
-								fieldWithPath("productId").type(JsonFieldType.NUMBER)
-										.description(PRODUCT_ID.getDescription()),
-								fieldWithPath("productQuantity").type(JsonFieldType.NUMBER)
-										.description("장바구니에 담을 상품 수량")
-						),
-						responseFields(STATUS)
-				));
+				post("/api/carts")
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.characterEncoding("UTF-8")
+					.content(mapper.writeValueAsString(request))
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(cookie().value(COOKIE_NAME, "1:2"))
+			.andDo(document(
+				"user/cart/addProductToCart",
+				userApiDescription(TagDescription.CART, "장바구니에 상품 추가"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("productId").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("productQuantity").type(JsonFieldType.NUMBER)
+						.description("장바구니에 담을 상품 수량")
+				),
+				responseFields(STATUS)
+			));
 	}
 
 	@DisplayName("[API][PUT] 장바구니 상품 수량 변경")
@@ -141,37 +141,37 @@ class CartApiControllerTest extends RestDocsSupport {
 		long cartProductId = 1L;
 
 		CartProductRequest.Update request = CartProductRequest.Update.builder()
-				.productQuantity(5)
-				.build();
+			.productQuantity(5)
+			.build();
 
 		Cookie cookie = new Cookie(COOKIE_NAME, "1:2|2:1");
 
 		//When & Then
 		mvc.perform(
-						put("/api/carts/products/{cartProductId}", cartProductId)
-								.contentType(MediaType.APPLICATION_JSON)
-								.accept(MediaType.APPLICATION_JSON)
-								.characterEncoding("UTF-8")
-								.content(mapper.writeValueAsString(request))
-								.cookie(cookie)
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(cookie().value(COOKIE_NAME, "1:5|2:1"))
-				.andDo(document(
-						"user/cart/updateProductInCart",
-						userApiDescription(TagDescription.CART, "장바구니 상품 수량 변경"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						pathParameters(
-								parameterWithName("cartProductId").description(CART_PRODUCT_ID.getDescription())
-						),
-						requestFields(
-								fieldWithPath("productQuantity").type(JsonFieldType.NUMBER).description("상품 수량")
-						),
-						responseFields(STATUS)
-				));
+				put("/api/carts/products/{cartProductId}", cartProductId)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.characterEncoding("UTF-8")
+					.content(mapper.writeValueAsString(request))
+					.cookie(cookie)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(cookie().value(COOKIE_NAME, "1:5|2:1"))
+			.andDo(document(
+				"user/cart/updateProductInCart",
+				userApiDescription(TagDescription.CART, "장바구니 상품 수량 변경"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("cartProductId").description(CART_PRODUCT_ID.getDescription())
+				),
+				requestFields(
+					fieldWithPath("productQuantity").type(JsonFieldType.NUMBER).description("상품 수량")
+				),
+				responseFields(STATUS)
+			));
 	}
 
 	@DisplayName("[API][DELETE] 장바구니 삭제")
@@ -182,17 +182,17 @@ class CartApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(delete("/api/carts").cookie(cookie))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(cookie().maxAge(COOKIE_NAME, 0))
-				.andDo(document(
-						"user/cart/deleteCart",
-						userApiDescription(TagDescription.CART, "장바구니 삭제 (장바구니 상품 전체 삭제)"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						responseFields(STATUS)
-				));
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(cookie().maxAge(COOKIE_NAME, 0))
+			.andDo(document(
+				"user/cart/deleteCart",
+				userApiDescription(TagDescription.CART, "장바구니 삭제 (장바구니 상품 전체 삭제)"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				responseFields(STATUS)
+			));
 	}
 
 	@DisplayName("[API][DELETE] 장바구니 상품 (복수) 삭제")
@@ -203,23 +203,23 @@ class CartApiControllerTest extends RestDocsSupport {
 
 		//When & Then
 		mvc.perform(
-						delete("/api/carts/products")
-								.queryParam("ids", "1", "2", "3")
-								.cookie(cookie)
-				)
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.status").value("success"))
-				.andExpect(cookie().value(COOKIE_NAME, "4:1"))
-				.andDo(document(
-						"user/cart/deleteCartProducts",
-						userApiDescription(TagDescription.CART, "장바구니 상품 선택 삭제"),
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint()),
-						requestParameters(
-								parameterWithName("ids").description("삭제할 상품 시퀀스 (복수)")
-						),
-						responseFields(STATUS)
-				));
+				delete("/api/carts/products")
+					.queryParam("ids", "1", "2", "3")
+					.cookie(cookie)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(cookie().value(COOKIE_NAME, "4:1"))
+			.andDo(document(
+				"user/cart/deleteCartProducts",
+				userApiDescription(TagDescription.CART, "장바구니 상품 선택 삭제"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestParameters(
+					parameterWithName("ids").description("삭제할 상품 시퀀스 (복수)")
+				),
+				responseFields(STATUS)
+			));
 	}
 }

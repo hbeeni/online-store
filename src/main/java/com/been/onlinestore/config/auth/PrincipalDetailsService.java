@@ -20,7 +20,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String uid) throws UsernameNotFoundException {
 		return userService.searchUser(uid)
-				.map(PrincipalDetails::from)
-				.orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
+			.map(PrincipalDetails::from)
+			.orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
 	}
 }

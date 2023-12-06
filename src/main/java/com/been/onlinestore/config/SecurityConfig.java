@@ -34,34 +34,34 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private static final String[] WHITE_LIST = {"/", "/api/login", "/api/sign-up", "/api/categories/**",
-			"/api/products/**"};
+		"/api/products/**"};
 	private final JwtProperties properties;
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-				.csrf().disable()
-				.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(
-						corsConfigurationSource()))
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.formLogin().disable()
-				.httpBasic().disable()
-				.apply(new JwtSecurityConfig(properties, jwtTokenProvider))
-				.and()
-				.authorizeRequests(auth -> auth
-						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-						.mvcMatchers(WHITE_LIST).permitAll()
-						.mvcMatchers("/api/admin/**").hasRole(RoleType.ADMIN.name())
-						.mvcMatchers("/api/seller/**").hasRole(RoleType.SELLER.name())
-						.mvcMatchers("/api/**").hasRole(RoleType.USER.name())
-				)
-				.exceptionHandling(configurer -> configurer
-						.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-						.accessDeniedHandler(new CustomAccessDeniedHandler()))
-				.logout(logout -> logout.logoutSuccessUrl("/"))
-				.build();
+			.csrf().disable()
+			.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(
+				corsConfigurationSource()))
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.formLogin().disable()
+			.httpBasic().disable()
+			.apply(new JwtSecurityConfig(properties, jwtTokenProvider))
+			.and()
+			.authorizeRequests(auth -> auth
+				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+				.mvcMatchers(WHITE_LIST).permitAll()
+				.mvcMatchers("/api/admin/**").hasRole(RoleType.ADMIN.name())
+				.mvcMatchers("/api/seller/**").hasRole(RoleType.SELLER.name())
+				.mvcMatchers("/api/**").hasRole(RoleType.USER.name())
+			)
+			.exceptionHandling(configurer -> configurer
+				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+				.accessDeniedHandler(new CustomAccessDeniedHandler()))
+			.logout(logout -> logout.logoutSuccessUrl("/"))
+			.build();
 	}
 
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -77,7 +77,7 @@ public class SecurityConfig {
 
 	@Bean
 	public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
-			PasswordEncoder passwordEncoder) {
+		PasswordEncoder passwordEncoder) {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder);

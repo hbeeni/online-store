@@ -24,9 +24,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.been.onlinestore.domain.constant.DeliveryStatus;
+import com.been.onlinestore.domain.constant.OrderStatus;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
 import com.been.onlinestore.service.request.OrderServiceRequest;
 import com.been.onlinestore.service.response.OrderResponse;
 
@@ -86,7 +89,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findOrderByOrderer(orderId, ordererId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(orderRepository).should().findOrderByOrderer(orderId, ordererId);
 	}
 
@@ -99,7 +102,7 @@ class OrderServiceTest {
 		long productId = 1L;
 		Map<Long, Integer> productIdToQuantityMap = Map.of(productId, 10);
 		OrderServiceRequest serviceRequest = new OrderServiceRequest(productIdToQuantityMap, "address", "name",
-				"01011112222");
+			"01011112222");
 
 		given(productRepository.findAllOnSaleById(Set.of(productId))).willReturn(List.of(createProduct(productId)));
 		given(userRepository.getReferenceById(ordererId)).willReturn(createUser(ordererId));
@@ -141,25 +144,26 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.cancelOrder(orderId, ordererId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(orderRepository).should().findByIdAndOrdererId(orderId, ordererId);
 	}
 
-	@DisplayName("[판매자] 모든 주문 내역을 조회하면, 주문내역 페이지를 반환한다.")
+	@DisplayName("[판매자] 주문 내역을 검색과 함께 조회하면, 해당 주문내역 페이지를 반환한다.")
 	@Test
-	void test_findOrdersBySeller() {
+	void test_findOrdersBySeller_withSearchCondition() {
 		//Given
 		long sellerId = 1L;
-		Pageable pageable = PageRequest.of(1, 2);
+		OrderSearchCondition cond = OrderSearchCondition.of(null, null, DeliveryStatus.ACCEPT, OrderStatus.ORDER);
+		Pageable pageable = PageRequest.of(0, 10);
 
-		given(orderRepository.findAllOrdersBySeller(sellerId, pageable)).willReturn(Page.empty());
+		given(orderRepository.searchOrdersBySeller(sellerId, cond, pageable)).willReturn(Page.empty());
 
 		//When
-		Page<OrderResponse> result = sut.findOrdersBySeller(sellerId, pageable);
+		Page<OrderResponse> result = sut.findOrdersBySeller(sellerId, cond, pageable);
 
 		//Then
 		assertThat(result).isNotNull();
-		then(orderRepository).should().findAllOrdersBySeller(sellerId, pageable);
+		then(orderRepository).should().searchOrdersBySeller(sellerId, cond, pageable);
 	}
 
 	@DisplayName("[판매자] 주문을 조회하면, 주문 정보를 반환한다.")
@@ -188,7 +192,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findOrderBySeller(orderId, sellerId))
-				.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(orderRepository).should().findOrderBySeller(orderId, sellerId);
 	}
 }

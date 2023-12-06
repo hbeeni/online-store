@@ -66,7 +66,7 @@ public class Product extends BaseEntity {
 	}
 
 	private Product(Category category, User seller, String name, int price, String description, int stockQuantity,
-			int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageName) {
+		int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageName) {
 		this.category = category;
 		this.seller = seller;
 		this.name = name;
@@ -80,13 +80,13 @@ public class Product extends BaseEntity {
 	}
 
 	public static Product of(Category category, User seller, String name, int price, String description,
-			int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageName) {
+		int stockQuantity, int salesVolume, SaleStatus saleStatus, int deliveryFee, String imageName) {
 		return new Product(category, seller, name, price, description, stockQuantity, salesVolume, saleStatus,
-				deliveryFee, imageName);
+			deliveryFee, imageName);
 	}
 
 	public void updateInfo(Category category, String name, int price, String description, int stockQuantity,
-			SaleStatus saleStatus, int deliveryFee) {
+		SaleStatus saleStatus, int deliveryFee) {
 		this.category = category;
 		this.name = name;
 		this.price = price;

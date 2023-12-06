@@ -29,8 +29,8 @@ public class AdminProductApiController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<AdminProductResponse>>> getProducts(
-			@ModelAttribute @Validated ProductSearchCondition cond,
-			@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+		@ModelAttribute @Validated ProductSearchCondition cond,
+		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		return ResponseEntity.ok(ApiResponse.pagination(productService.findProductsForAdmin(cond, pageable)));
 	}

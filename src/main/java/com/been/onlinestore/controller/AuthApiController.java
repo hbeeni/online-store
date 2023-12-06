@@ -42,8 +42,8 @@ public class AuthApiController {
 
 	@PostMapping("/api/login")
 	public ResponseEntity<ApiResponse<Map<String, String>>> loginUser(
-			@RequestBody @Validated UserRequest.Login request,
-			HttpServletResponse response
+		@RequestBody @Validated UserRequest.Login request,
+		HttpServletResponse response
 	) {
 		String jwt = createJwtToken(request.uid(), request.password(), response);
 		return ResponseEntity.ok(ApiResponse.success(createJwtTokenMap(jwt)));

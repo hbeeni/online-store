@@ -40,7 +40,7 @@ class OrderProductServiceTest {
 		OrderProduct orderProduct = createOrderProduct(orderProductId);
 
 		given(orderProductRepository.findAllByIdAndSellerId(orderProductIds, sellerId)).willReturn(
-				List.of(orderProduct));
+			List.of(orderProduct));
 		given(orderProductRepository.bulkStartPreparing(orderProductIds)).willReturn(orderProductIds.size());
 
 		//When
@@ -63,7 +63,7 @@ class OrderProductServiceTest {
 		ReflectionTestUtils.setField(orderProduct.getDelivery(), "deliveryStatus", DeliveryStatus.PREPARING);
 
 		given(orderProductRepository.findAllByIdAndSellerId(orderProductIds, sellerId)).willReturn(
-				List.of(orderProduct));
+			List.of(orderProduct));
 		given(orderProductRepository.bulkStartDelivery(orderProductIds)).willReturn(orderProductIds.size());
 
 		//When
@@ -86,7 +86,7 @@ class OrderProductServiceTest {
 		ReflectionTestUtils.setField(orderProduct.getDelivery(), "deliveryStatus", DeliveryStatus.DELIVERING);
 
 		given(orderProductRepository.findAllByIdAndSellerId(orderProductIds, sellerId)).willReturn(
-				List.of(orderProduct));
+			List.of(orderProduct));
 		given(orderProductRepository.bulkCompleteDelivery(orderProductIds)).willReturn(orderProductIds.size());
 
 		//When

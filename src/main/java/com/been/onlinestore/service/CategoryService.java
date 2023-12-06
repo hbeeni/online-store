@@ -31,23 +31,23 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public List<AdminCategoryResponse> findCategoriesForAdmin() {
 		return categoryRepository.findAll().stream()
-				.map(AdminCategoryResponse::from)
-				.toList();
+			.map(AdminCategoryResponse::from)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
 	public List<CategoryResponse> findCategoriesForUser() {
 		return categoryRepository.findAll().stream()
-				.filter(category -> category.getProducts().size() > 0)
-				.map(CategoryResponse::from)
-				.toList();
+			.filter(category -> category.getProducts().size() > 0)
+			.map(CategoryResponse::from)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
 	public AdminCategoryResponse findCategory(Long categoryId) {
 		return categoryRepository.findById(categoryId)
-				.map(AdminCategoryResponse::from)
-				.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_CATEGORY.getMessage()));
+			.map(AdminCategoryResponse::from)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_CATEGORY.getMessage()));
 	}
 
 	public Long addCategory(CategoryServiceRequest.Create serviceRequest) {
@@ -57,10 +57,10 @@ public class CategoryService {
 
 	public Long updateCategory(Long categoryId, CategoryServiceRequest.Update serviceRequest) {
 		Category category = categoryRepository.findById(categoryId)
-				.orElseThrow(() -> new IllegalArgumentException(ErrorMessages.FAIL_TO_UPDATE_CATEGORY.getMessage()));
+			.orElseThrow(() -> new IllegalArgumentException(ErrorMessages.FAIL_TO_UPDATE_CATEGORY.getMessage()));
 
 		String description = StringUtils.hasText(serviceRequest.description()) ? serviceRequest.description() :
-				category.getDescription();
+			category.getDescription();
 		category.updateCategory(serviceRequest.name(), description);
 		return category.getId();
 	}

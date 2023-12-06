@@ -22,53 +22,53 @@ public class OrderProductService {
 	private final OrderProductRepository orderProductRepository;
 
 	private static DeliveryStatusChangeResponse getDeliveryStatusChangeResponse(
-			Set<Long> orderProductIds,
-			List<OrderProduct> foundOrderProducts,
-			Set<Long> succeededOrderProductIds
+		Set<Long> orderProductIds,
+		List<OrderProduct> foundOrderProducts,
+		Set<Long> succeededOrderProductIds
 	) {
 		Set<Long> foundOrderProductIds = getFoundOrderProductIds(foundOrderProducts);
 		Set<Long> notFoundOrderProductIds = getNotFoundOrderProductIds(orderProductIds, foundOrderProductIds);
 		Set<Long> failedOrderProductIds = getFailedOrderProductIds(foundOrderProductIds, succeededOrderProductIds);
 
 		return DeliveryStatusChangeResponse.of(notFoundOrderProductIds, succeededOrderProductIds,
-				failedOrderProductIds);
+			failedOrderProductIds);
 	}
 
 	private static Set<Long> getNotFoundOrderProductIds(Set<Long> orderProductIds, Set<Long> foundOrderProductIds) {
 		return orderProductIds.stream()
-				.filter(orderProductId -> !foundOrderProductIds.contains(orderProductId))
-				.sorted()
-				.collect(Collectors.toCollection(LinkedHashSet::new));
+			.filter(orderProductId -> !foundOrderProductIds.contains(orderProductId))
+			.sorted()
+			.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	private static Set<Long> getFoundOrderProductIds(List<OrderProduct> foundOrderProducts) {
 		return foundOrderProducts.stream()
-				.map(OrderProduct::getId)
-				.collect(Collectors.toSet());
+			.map(OrderProduct::getId)
+			.collect(Collectors.toSet());
 	}
 
 	private static Set<Long> getSucceededOrderProductIds(Set<OrderProduct> succeededOrderProducts) {
 		return succeededOrderProducts.stream()
-				.map(OrderProduct::getId)
-				.sorted()
-				.collect(Collectors.toCollection(LinkedHashSet::new));
+			.map(OrderProduct::getId)
+			.sorted()
+			.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	private static Set<Long> getFailedOrderProductIds(Set<Long> foundOrderProductIds,
-			Set<Long> succeededOrderProductIds) {
+		Set<Long> succeededOrderProductIds) {
 		return foundOrderProductIds.stream()
-				.filter(orderProductId -> !succeededOrderProductIds.contains(orderProductId))
-				.sorted()
-				.collect(Collectors.toCollection(LinkedHashSet::new));
+			.filter(orderProductId -> !succeededOrderProductIds.contains(orderProductId))
+			.sorted()
+			.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	public DeliveryStatusChangeResponse startPreparing(Set<Long> orderProductIds, Long sellerId) {
 		List<OrderProduct> foundOrderProducts = orderProductRepository.findAllByIdAndSellerId(orderProductIds,
-				sellerId);
+			sellerId);
 
 		Set<OrderProduct> succeededOrderProducts = foundOrderProducts.stream()
-				.filter(OrderProduct::canStartPreparing)
-				.collect(Collectors.toSet());
+			.filter(OrderProduct::canStartPreparing)
+			.collect(Collectors.toSet());
 		Set<Long> succeededOrderProductIds = getSucceededOrderProductIds(succeededOrderProducts);
 
 		orderProductRepository.bulkStartPreparing(succeededOrderProductIds);
@@ -78,11 +78,11 @@ public class OrderProductService {
 
 	public DeliveryStatusChangeResponse startDelivery(Set<Long> orderProductIds, Long sellerId) {
 		List<OrderProduct> foundOrderProducts = orderProductRepository.findAllByIdAndSellerId(orderProductIds,
-				sellerId);
+			sellerId);
 
 		Set<OrderProduct> succeededOrderProducts = foundOrderProducts.stream()
-				.filter(OrderProduct::canStartDelivery)
-				.collect(Collectors.toSet());
+			.filter(OrderProduct::canStartDelivery)
+			.collect(Collectors.toSet());
 		Set<Long> succeededOrderProductIds = getSucceededOrderProductIds(succeededOrderProducts);
 
 		orderProductRepository.bulkStartDelivery(succeededOrderProductIds);
@@ -92,11 +92,11 @@ public class OrderProductService {
 
 	public DeliveryStatusChangeResponse completeDelivery(Set<Long> orderProductIds, Long sellerId) {
 		List<OrderProduct> foundOrderProducts = orderProductRepository.findAllByIdAndSellerId(orderProductIds,
-				sellerId);
+			sellerId);
 
 		Set<OrderProduct> succeededOrderProducts = foundOrderProducts.stream()
-				.filter(OrderProduct::canCompleteDelivery)
-				.collect(Collectors.toSet());
+			.filter(OrderProduct::canCompleteDelivery)
+			.collect(Collectors.toSet());
 		Set<Long> succeededOrderProductIds = getSucceededOrderProductIds(succeededOrderProducts);
 
 		orderProductRepository.bulkCompleteDelivery(succeededOrderProductIds);

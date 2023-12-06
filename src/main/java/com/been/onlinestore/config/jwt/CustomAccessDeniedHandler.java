@@ -17,7 +17,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
-			AccessDeniedException accessDeniedException) throws IOException {
+		AccessDeniedException accessDeniedException) throws IOException {
 		log.info("해당 권한으로는 접근할 수 없습니다. uri = {}", request.getRequestURI());
 		setErrorResponse(response, JwtErrorCode.FORBIDDEN_REQUEST);
 	}
