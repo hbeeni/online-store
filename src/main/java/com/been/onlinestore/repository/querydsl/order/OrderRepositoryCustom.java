@@ -13,7 +13,7 @@ public interface OrderRepositoryCustom {
 
 	Optional<Order> findOrderByOrderer(Long orderId, Long ordererId);
 
-	Page<Order> findAllOrdersBySeller(Long sellerId, Pageable pageable);
+	Page<Order> searchOrdersBySeller(Long sellerId, OrderSearchCondition cond, Pageable pageable);
 
 	Optional<Order> findOrderBySeller(Long orderId, Long sellerId);
 }

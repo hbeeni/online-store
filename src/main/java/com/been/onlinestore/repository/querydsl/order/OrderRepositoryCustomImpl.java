@@ -21,10 +21,17 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import com.been.onlinestore.domain.Order;
 import com.been.onlinestore.domain.OrderProduct;
+import com.been.onlinestore.domain.QUser;
+import com.been.onlinestore.domain.constant.DeliveryStatus;
+import com.been.onlinestore.domain.constant.OrderStatus;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport implements OrderRepositoryCustom {
+
+	private static final QUser seller = new QUser("seller");
+	private static final QUser orderer = new QUser("orderer");
 
 	private final JPAQueryFactory queryFactory;
 
@@ -65,21 +72,29 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 	}
 
 	@Override
-	public Page<Order> findAllOrdersBySeller(Long sellerId, Pageable pageable) {
-		List<Order> result = findOrdersBySeller(sellerId);
+	public Page<Order> searchOrdersBySeller(Long sellerId, OrderSearchCondition cond, Pageable pageable) {
+		List<Order> result = findOrdersBySellerWithCond(sellerId, cond);
 
-		Map<Long, List<OrderProduct>> orderProductMap = findOrderProductMapBySellerId(sellerId);
+		Map<Long, List<OrderProduct>> orderProductMap = findOrderProductMapBySellerIdAndCond(
+			sellerId, cond.productId(), cond.deliveryStatus()
+		);
 		result.forEach(o -> o.setOrderProducts(orderProductMap.get(o.getId())));
 
 		JPAQuery<Long> countQuery = queryFactory
 			.selectDistinct(order.count())
 			.from(order)
-			.join(order.orderer, user).fetchJoin()
-			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.orderer, orderer)
+			.join(order.deliveryRequest, deliveryRequest)
 			.join(order.orderProducts, orderProduct)
 			.join(orderProduct.product, product)
-			.where(product.seller.id.eq(sellerId));
+			.join(product.seller, seller)
+			.where(
+				sellerIdEq(sellerId),
+				ordererIdEq(cond.ordererId()),
+				productIdEq(cond.productId()),
+				deliveryStatusEq(cond.deliveryStatus()),
+				orderStatusEq(cond.orderStatus())
+			);
 
 		return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
 	}
@@ -114,19 +129,6 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.fetch();
 	}
 
-	private List<Order> findOrdersBySeller(Long sellerId) {
-		return queryFactory
-			.selectDistinct(order)
-			.from(order)
-			.join(order.orderer, user).fetchJoin()
-			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
-			.join(order.orderProducts, orderProduct)
-			.join(orderProduct.product, product)
-			.where(product.seller.id.eq(sellerId))
-			.fetch();
-	}
-
 	private Map<Long, List<OrderProduct>> findOrderProductMapByOrderIds(List<Long> orderIds) {
 		List<OrderProduct> orderProducts = queryFactory
 			.selectFrom(orderProduct)
@@ -139,15 +141,62 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.collect(Collectors.groupingBy(orderProduct -> orderProduct.getOrder().getId()));
 	}
 
-	private Map<Long, List<OrderProduct>> findOrderProductMapBySellerId(Long sellerId) {
+	private List<Order> findOrdersBySellerWithCond(Long sellerId, OrderSearchCondition cond) {
+		return queryFactory
+			.selectDistinct(order)
+			.from(order)
+			.join(order.orderer, orderer).fetchJoin()
+			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.orderProducts, orderProduct)
+			.join(orderProduct.product, product)
+			.join(orderProduct.delivery, delivery)
+			.join(product.seller, seller)
+			.where(
+				sellerIdEq(sellerId),
+				ordererIdEq(cond.ordererId()),
+				productIdEq(cond.productId()),
+				deliveryStatusEq(cond.deliveryStatus()),
+				orderStatusEq(cond.orderStatus())
+			)
+			.fetch();
+	}
+
+	private Map<Long, List<OrderProduct>> findOrderProductMapBySellerIdAndCond(
+		Long sellerId, Long productId, DeliveryStatus deliveryStatus
+	) {
 		List<OrderProduct> orderProducts = queryFactory
 			.selectFrom(orderProduct)
 			.join(orderProduct.product, product).fetchJoin()
 			.join(orderProduct.delivery, delivery).fetchJoin()
-			.where(product.seller.id.eq(sellerId))
+			.join(product.seller, seller)
+			.where(
+				sellerIdEq(sellerId),
+				productIdEq(productId),
+				deliveryStatusEq(deliveryStatus)
+			)
 			.fetch();
 
 		return orderProducts.stream()
-			.collect(Collectors.groupingBy(orderProduct1 -> orderProduct1.getOrder().getId()));
+			.collect(Collectors.groupingBy(op -> op.getOrder().getId()));
+	}
+
+	private BooleanExpression sellerIdEq(Long sellerId) {
+		return sellerId != null ? seller.id.eq(sellerId) : null;
+	}
+
+	private BooleanExpression ordererIdEq(Long ordererId) {
+		return ordererId != null ? orderer.id.eq(ordererId) : null;
+	}
+
+	private BooleanExpression productIdEq(Long productId) {
+		return productId != null ? product.id.eq(productId) : null;
+	}
+
+	private BooleanExpression deliveryStatusEq(DeliveryStatus deliveryStatus) {
+		return deliveryStatus != null ? delivery.deliveryStatus.eq(deliveryStatus) : null;
+	}
+
+	private BooleanExpression orderStatusEq(OrderStatus orderStatus) {
+		return orderStatus != null ? order.orderStatus.eq(orderStatus) : null;
 	}
 }
