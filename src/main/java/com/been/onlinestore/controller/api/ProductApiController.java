@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller;
+package com.been.onlinestore.controller.api;
 
 import java.util.List;
 
