@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout (~{::title}, ~{::link}, ~{::.head-script}, ~{::.container}, null)}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>회원 가입</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+
+    <script class="head-script" src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script class="head-script" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container py-5">
+    <div class="card bg-light">
+        <article class="card-body mx-auto" style="width: 400px;">
+            <h4 class="card-title mt-3 text-center">회원가입</h4>
+            <p class="text-center">회원 정보를 입력해주세요.</p>
+            <form th:action th:method="post" th:object="${user}">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-id-badge"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{uid}" placeholder="아이디" type="text" required>
+                    </div>
+                    <div class="field-error" th:errors="*{uid}">아이디 오류</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{password}" placeholder="비밀번호" type="password" required>
+                    </div>
+                    <div class="field-error" th:errors="*{password}">비밀번호 오류</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{email}" placeholder="이메일" type="email" required>
+                    </div>
+                    <div class="field-error" th:errors="*{email}">이메일 오류</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{name}" placeholder="이름" type="text" required>
+                    </div>
+                    <div class="field-error" th:errors="*{name}">이름 오류</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{nickname}" placeholder="닉네임 (옵션)" type="text">
+                    </div>
+                    <div class="field-error" th:errors="*{nickname}">닉네임 오류</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{phone}" placeholder="휴대폰 번호" type="text" required>
+                    </div>
+                    <div class="field-error" th:errors="*{phone}">휴대폰 번호 오류</div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">가입하기</button>
+                </div>
+
+                <p class="text-center">계정이 있으신가요? <a href="@{/login}">로그인</a></p>
+            </form>
+        </article>
+    </div> <!-- card.// -->
+</div>
+<!--container end.//-->
+</body>
+</html>
