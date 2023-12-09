@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout (~{::title}, ~{::link}, ~{::.head-script}, ~{::.container}, null)}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>로그인</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+
+    <script class="head-script" src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script class="head-script" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container py-5">
+    <div class="card bg-light">
+        <article class="card-body mx-auto" style="width: 400px;">
+            <h4 class="card-title mt-3 text-center">로그인</h4>
+            <p class="text-center">회원 정보를 입력해주세요.</p>
+            <form th:action th:method="post" th:object="${user}">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-id-badge"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{uid}" placeholder="아이디" type="text" required>
+                        <div class="field-error" th:errors="*{uid}">아이디 오류</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input class="form-control" th:field="*{password}" placeholder="비밀번호" type="password" required>
+                        <div class="field-error" th:errors="*{password}">비밀번호 오류</div>
+                    </div>
+                </div>
+
+                <div class="form-group" th:if="${param.error}">
+                    <div style="border-color: #dc3545; color: #dc3545; margin: 0px 12px; font-size: 14px;">
+                        아이디 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">로그인</button>
+                </div>
+            </form>
+        </article>
+    </div> <!-- card.// -->
+</div>
+<!--container end.//-->
+</body>
+</html>
