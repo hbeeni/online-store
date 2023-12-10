@@ -41,12 +41,12 @@
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                         <a class="nav-link dropdown-toggle" href="#" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span th:text="${#authentication.principal.nickname ?: #authentication.principal.name}"
-                                  style="font-weight: bold">
+                            <span class="fw-bold"
+                                  th:text="${#authentication.principal.nickname ?: #authentication.principal.name}">
                             닉네임 또는 이름</span>님
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#" th:href="@{/users/info}">내 정보</a></li>
+                            <li><a class="dropdown-item" href="#" th:href="@{/users/info}">내 정보 수정</a></li>
                             <li><a class="dropdown-item" href="#" th:href="@{/addresses}">배송지 관리</a></li>
                             <li><a class="dropdown-item" href="#" th:href="@{/orders}">주문 내역</a></li>
                         </ul>

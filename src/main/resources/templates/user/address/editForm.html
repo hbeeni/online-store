@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout (~{::title}, null, null, ~{::.container}, null)}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>배송지 수정</title>
+</head>
+<body>
+<div class="container py-5">
+    <div class="col-lg-6 mx-auto">
+        <form th:action th:method="post" th:object="${address}">
+            <div class="card mb-4">
+                <div class="card-header py-3 text-center fs-5 fw-bold">배송지 수정</div>
+                <article class="card-body d-grid gap-4">
+                    <div>
+                        <div class="mb-1">배송지</div>
+                        <div class="d-grid gap-2">
+                            <input type="text" class="form-control px-3 py-2" th:field="*{detail}" placeholder="주소"
+                                   required>
+                            <div class="field-error-without-top-margin" th:errors="*{detail}">주소 오류</div>
+                            <input type="text" class="form-control px-3 py-2" th:field="*{zipcode}" placeholder="우편번호"
+                                   required>
+                            <div class="field-error-without-top-margin" th:errors="*{zipcode}">우편번호 오류</div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" th:if="*{defaultAddress}" th:field="*{defaultAddress}">
+                    <div class="form-check" th:if="*{!defaultAddress}">
+                        <input class="form-check-input" type="checkbox" th:field="*{defaultAddress}">
+                        <label class="form-check-label" th:for="${#ids.prev('defaultAddress')}">기본 배송지로 설정</label>
+                    </div>
+                    <div class="field-error" th:errors="*{defaultAddress}">기본 배송지 오류</div>
+                </article>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-secondary">수정</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!--container end.//-->
+</body>
+</html>

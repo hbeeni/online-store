@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout (~{::title}, null, null, ~{::.container}, null)}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>내 정보</title>
+</head>
+<body>
+<div class="container py-5">
+    <div class="col-lg-8 mx-auto">
+
+        <div class="alert alert-success" role="alert" th:if="${param.status}" th:text="'수정 완료'">
+            수정 완료
+        </div>
+
+        <form th:action th:method="post" th:object="${user}">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-auto">아이디</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <input readonly type="text" class="form-control-plaintext fw-semibold py-0 mb-0"
+                                   th:field="*{uid}">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">이름</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <input readonly type="text" class="form-control-plaintext fw-semibold py-0"
+                                   th:field="*{name}">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">이메일</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <input readonly type="email" class="form-control-plaintext fw-semibold py-0"
+                                   th:field="*{email}">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3 d-flex align-items-center">
+                            <p class="mb-0">닉네임</p>
+                        </div>
+                        <div class="col-sm-9 d-flex align-items-center">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control form-control-sm text-muted mb-0"
+                                       th:field="*{nickname}">
+                            </div>
+                            <span class="field-error my-auto" th:errors="*{nickname}">닉네임 오류</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3 d-flex align-items-center">
+                            <p class="mb-0">휴대폰 번호</p>
+                        </div>
+                        <div class="col-sm-9 d-flex align-items-center">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control form-control-sm text-muted mb-0 py-0"
+                                       th:field="*{phone}">
+                            </div>
+                            <span class="field-error my-auto" th:errors="*{phone}">휴대폰 번호 오류</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3 d-flex align-items-center">
+                            <p class="mb-0">배송지</p>
+                        </div>
+                        <div class="col d-flex align-items-center">
+                            <div class="col">
+                                <p class="text-muted mb-0">배송지 주소는
+                                    <a class="fw-semibold link-offset-2 link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                       th:href="@{/addresses}">[배송지 관리]</a>에서 등록, 수정 합니다.
+                                </p>
+                            </div>
+                            <span class="field-error my-auto" th:errors="*{phone}">휴대폰 번호 오류</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">회원 가입 날짜</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <input readonly type="text" class="form-control-plaintext fw-semibold py-0"
+                                   th:field="*{createdAt}">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">최근 정보 수정 날짜</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <input readonly type="text" class="form-control-plaintext fw-semibold py-0"
+                                   th:field="*{modifiedAt}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-secondary btn-block d-flex justify-content-evenly">수정하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
