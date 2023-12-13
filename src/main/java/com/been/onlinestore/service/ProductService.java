@@ -2,6 +2,7 @@ package com.been.onlinestore.service;
 
 import static org.springframework.util.StringUtils.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
 import com.been.onlinestore.service.request.ProductServiceRequest;
+import com.been.onlinestore.service.response.CartFormResponse;
+import com.been.onlinestore.service.response.CartFormResponse.CartProductFormResponse;
 import com.been.onlinestore.service.response.CartResponse;
 import com.been.onlinestore.service.response.CategoryProductResponse;
 import com.been.onlinestore.service.response.ProductResponse;
@@ -68,10 +71,30 @@ public class ProductService {
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
 	}
 
+	@Transactional(readOnly = true)
 	public List<CartResponse> findProductsInCart(Map<Long, Integer> productToQuantityMap) {
 		return productRepository.findAllOnSaleById(productToQuantityMap.keySet()).stream()
 			.map(product -> CartResponse.from(product, productToQuantityMap))
 			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public CartFormResponse findProductsInCartForWeb(Map<Long, Integer> productToQuantityMap) {
+		List<Product> products = productRepository.findAllOnSaleById(productToQuantityMap.keySet());
+
+		int totalPriceInCart = 0;
+		List<CartProductFormResponse> cartProducts = new ArrayList<>();
+
+		for (Product product : products) {
+			CartProductFormResponse cartProduct = CartProductFormResponse.from(
+				product, productToQuantityMap, imageStore.getImageUrl(product.getImageName())
+			);
+
+			cartProducts.add(cartProduct);
+			totalPriceInCart += cartProduct.totalPrice();
+		}
+
+		return CartFormResponse.of(totalPriceInCart, cartProducts);
 	}
 
 	@Transactional(readOnly = true)
