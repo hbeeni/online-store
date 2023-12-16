@@ -36,30 +36,31 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final UserRepository userRepository;
 	private final ProductRepository productRepository;
+	private final ImageStore imageStore;
 
 	@Transactional(readOnly = true)
 	public Page<OrderResponse> findOrdersByOrderer(Long ordererId, Pageable pageable) {
 		return orderRepository.findAllOrdersByOrderer(ordererId, pageable)
-			.map(OrderResponse::from);
+			.map(order -> OrderResponse.from(order, imageStore));
 	}
 
 	@Transactional(readOnly = true)
 	public OrderResponse findOrderByOrderer(Long orderId, Long ordererId) {
 		return orderRepository.findOrderByOrderer(orderId, ordererId)
-			.map(OrderResponse::from)
+			.map(order -> OrderResponse.from(order, imageStore))
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 	}
 
 	@Transactional(readOnly = true)
 	public Page<OrderResponse> findOrdersBySeller(Long sellerId, OrderSearchCondition cond, Pageable pageable) {
 		return orderRepository.searchOrdersBySeller(sellerId, cond, pageable)
-			.map(OrderResponse::from);
+			.map(order -> OrderResponse.from(order, imageStore));
 	}
 
 	@Transactional(readOnly = true)
 	public OrderResponse findOrderBySeller(Long orderId, Long sellerId) {
 		return orderRepository.findOrderBySeller(orderId, sellerId)
-			.map(OrderResponse::from)
+			.map(order -> OrderResponse.from(order, imageStore))
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 	}
 
