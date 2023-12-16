@@ -45,7 +45,7 @@ public class CartController {
 
 		if (StringUtils.hasText(cart)) {
 			Map<Long, Integer> productToQuantityMap = cookieValueToMap(cart);
-			model.addAttribute("cart", productService.findProductsInCartForWeb(productToQuantityMap));
+			model.addAttribute("cart", productService.findCartOrderProductsForWeb(productToQuantityMap));
 		}
 
 		return "user/cart/cart";

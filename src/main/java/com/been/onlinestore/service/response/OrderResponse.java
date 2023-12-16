@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.been.onlinestore.domain.DeliveryRequest;
+import com.been.onlinestore.domain.Order;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.OrderStatus;
+import com.been.onlinestore.file.ImageStore;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record OrderResponse(
@@ -21,20 +23,23 @@ public record OrderResponse(
 	@JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime modifiedAt
 ) {
 
-	public static OrderResponse of(Long id, OrdererResponse orderer, DeliveryRequestResponse deliveryRequest,
-		List<OrderProductResponse> orderProducts, int totalPrice, OrderStatus orderStatus, LocalDateTime createdAt,
-		LocalDateTime modifiedAt) {
-		return new OrderResponse(id, orderer, deliveryRequest, orderProducts, totalPrice, orderStatus, createdAt,
-			modifiedAt);
+	public static OrderResponse of(
+		Long id, OrdererResponse orderer, DeliveryRequestResponse deliveryRequest,
+		List<OrderProductResponse> orderProducts,
+		int totalPrice, OrderStatus orderStatus, LocalDateTime createdAt, LocalDateTime modifiedAt
+	) {
+		return new OrderResponse(
+			id, orderer, deliveryRequest, orderProducts, totalPrice, orderStatus, createdAt, modifiedAt
+		);
 	}
 
-	public static OrderResponse from(com.been.onlinestore.domain.Order entity) {
+	public static OrderResponse from(Order entity, ImageStore imageStore) {
 		return OrderResponse.of(
 			entity.getId(),
 			OrdererResponse.from(entity.getOrderer()),
 			DeliveryRequestResponse.from(entity.getDeliveryRequest()),
 			entity.getOrderProducts().stream()
-				.map(OrderProductResponse::from)
+				.map(orderProduct -> OrderProductResponse.from(orderProduct, imageStore))
 				.toList(),
 			entity.getTotalPrice(),
 			entity.getOrderStatus(),
