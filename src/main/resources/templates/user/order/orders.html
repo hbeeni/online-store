@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout (~{::title}, null, null, ~{::.container}, null)}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>주문 내역</title>
+</head>
+<body>
+<div class="container py-5">
+    <div class="col-lg-6 mx-auto">
+        <div class="card mb-2 py-2 px-3" th:each="order : ${orders}">
+            <div class="mb-2">
+                <strong class="fs-5 text-dark-emphasis" th:text="${order.orderStatus.description}"></strong>
+            </div>
+            <div class="d-flex flex-row">
+                <div class="col-md-2 col-lg-2 col-xl-2 me-1 align-self-center">
+                    <img th:src="${order.orderProducts[0].imageUrl}"
+                         th:alt="${order.orderProducts[0].productName}"
+                         class="img-fluid rounded-3" style="max-width: 80px; max-height: 80px">
+                </div>
+                <div class="d-flex flex-column col-md-3 col-lg-3 col-xl-3 align-self-center">
+                    <div class="mb-0 text-secondary fs-6"
+                         th:text="|${#temporals.format(order.createdAt, 'MM.d')} 결제|">
+                        12.16 결제
+                    </div>
+
+                    <div class="mb-0" th:if="${order.orderProducts.size() == 1}"
+                         th:text="${order.orderProducts[0].productName}">
+                        컴퓨터
+                    </div>
+                    <div class="mb-0" th:if="${order.orderProducts.size() > 1}">
+                        <span th:text="|${order.orderProducts[0].productName} 포함 |">
+                            컴퓨터 포함
+                        </span>
+                        <span class="text-success fw-semibold" th:text="|총 ${order.orderProducts.size()}건|">
+                            총 3건
+                        </span>
+                    </div>
+
+                    <div class="mb-0 fw-semibold"
+                         th:text="|${#numbers.formatInteger(order.totalPrice, 0, 'COMMA')}원|">
+                        총 상품 금액
+                    </div>
+                    <a href="/orders/1" th:href="@{/orders/{id}(id=${order.id})}"
+                       class="link-underline link-underline-opacity-0"
+                       style="color: #09b65a">
+                        주문상세>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
