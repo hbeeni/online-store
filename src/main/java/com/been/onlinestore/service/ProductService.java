@@ -55,12 +55,10 @@ public class ProductService {
 	public Page<CategoryProductResponse> findProductsOnSaleForUser(String name, Pageable pageable) {
 		if (hasText(name)) {
 			return productRepository.findAllOnSaleByName(name, pageable)
-				.map(product -> CategoryProductResponse.from(product,
-					imageStore.getImageUrl(product.getImageName())));
+				.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
 		} else {
 			return productRepository.findAllOnSale(pageable)
-				.map(product -> CategoryProductResponse.from(product,
-					imageStore.getImageUrl(product.getImageName())));
+				.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
 		}
 	}
 
