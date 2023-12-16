@@ -18,17 +18,17 @@
                                         <div class="d-flex justify-content-between align-items-center mb-5">
                                             <h1 class="fw-bold mb-0 text-black">장바구니</h1>
                                             <h6 class="mb-0 text-muted"
-                                                th:text="${cart.cartProducts().size()} + '개의 상품'">
+                                                th:text="${cart.products().size()} + '개의 상품'">
                                                 1개의 상품
                                             </h6>
                                         </div>
                                         <hr class="my-4">
 
-                                        <div th:if="!${cart.totalPriceInCart > 0}"></div>
+                                        <div th:if="!${cart.totalPrice > 0}"></div>
 
-                                        <th:block th:if="${cart.totalPriceInCart > 0}">
+                                        <th:block th:if="${cart.totalPrice > 0}">
                                             <div class="row mb-4 d-flex justify-content-between align-items-center"
-                                                 th:each="cartProduct : ${cart.cartProducts}">
+                                                 th:each="cartProduct : ${cart.products}">
                                                 <span hidden class="productId"
                                                       th:value="${cartProduct.productId}"></span>
                                                 <div class="col-md-2 col-lg-2 col-xl-2">
@@ -61,7 +61,7 @@
 
                                                 <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                                                     <h6 class="mb-0"
-                                                        th:text="|${#numbers.formatInteger(cartProduct.totalPrice, 0, 'COMMA')}원|">
+                                                        th:text="|${#numbers.formatInteger(cartProduct.totalProductPrice, 0, 'COMMA')}원|">
                                                         25,000원
                                                     </h6>
                                                 </div>
@@ -96,7 +96,7 @@
 
                                         <div class="d-flex justify-content-between mb-4">
                                             <h5 class="text-uppercase">총 상품 가격</h5>
-                                            <h5 th:text="|${#numbers.formatInteger(cart.totalPriceInCart, 0, 'COMMA')}원|">
+                                            <h5 th:text="|${#numbers.formatInteger(cart.totalPrice, 0, 'COMMA')}원|">
                                                 25,000원
                                             </h5>
                                         </div>
@@ -110,7 +110,7 @@
 
                                         <div class="d-flex justify-content-between mb-5">
                                             <h5 class="text-uppercase">주문 금액</h5>
-                                            <h5 th:text="|${#numbers.formatInteger(cart.totalPriceInCart + 3000, 0, 'COMMA')}원|">
+                                            <h5 th:text="|${#numbers.formatInteger(cart.totalPrice + 3000, 0, 'COMMA')}원|">
                                                 28,000원
                                             </h5>
                                         </div>

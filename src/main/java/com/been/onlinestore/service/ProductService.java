@@ -25,8 +25,8 @@ import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
 import com.been.onlinestore.service.request.ProductServiceRequest;
-import com.been.onlinestore.service.response.CartFormResponse;
-import com.been.onlinestore.service.response.CartFormResponse.CartProductFormResponse;
+import com.been.onlinestore.service.response.CartOrderFormResponse;
+import com.been.onlinestore.service.response.CartOrderFormResponse.CartOrderProductResponse;
 import com.been.onlinestore.service.response.CartResponse;
 import com.been.onlinestore.service.response.CategoryProductResponse;
 import com.been.onlinestore.service.response.ProductResponse;
@@ -79,22 +79,22 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public CartFormResponse findProductsInCartForWeb(Map<Long, Integer> productToQuantityMap) {
+	public CartOrderFormResponse findCartOrderProductsForWeb(Map<Long, Integer> productToQuantityMap) {
 		List<Product> products = productRepository.findAllOnSaleById(productToQuantityMap.keySet());
 
-		int totalPriceInCart = 0;
-		List<CartProductFormResponse> cartProducts = new ArrayList<>();
+		int totalPrice = 0;
+		List<CartOrderProductResponse> cartOrderProducts = new ArrayList<>();
 
 		for (Product product : products) {
-			CartProductFormResponse cartProduct = CartProductFormResponse.from(
-				product, productToQuantityMap, imageStore.getImageUrl(product.getImageName())
+			CartOrderProductResponse cartOrderProduct = CartOrderProductResponse.from(
+				product, productToQuantityMap.get(product.getId()), imageStore.getImageUrl(product.getImageName())
 			);
 
-			cartProducts.add(cartProduct);
-			totalPriceInCart += cartProduct.totalPrice();
+			cartOrderProducts.add(cartOrderProduct);
+			totalPrice += cartOrderProduct.totalProductPrice();
 		}
 
-		return CartFormResponse.of(totalPriceInCart, cartProducts);
+		return CartOrderFormResponse.of(totalPrice, cartOrderProducts);
 	}
 
 	@Transactional(readOnly = true)

@@ -89,7 +89,7 @@ class CartApiControllerTest extends RestDocsSupport {
 						.description(PRODUCT_PRICE.getDescription()),
 					fieldWithPath("data[].quantity").type(JsonFieldType.NUMBER)
 						.description(CART_PRODUCT_QUANTITY.getDescription()),
-					fieldWithPath("data[].totalPrice").type(JsonFieldType.NUMBER)
+					fieldWithPath("data[].totalProductPrice").type(JsonFieldType.NUMBER)
 						.description(CART_PRODUCT_TOTAL_PRICE.getDescription()),
 					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
 						.description(PRODUCT_DELIVERY_FEE.getDescription())
