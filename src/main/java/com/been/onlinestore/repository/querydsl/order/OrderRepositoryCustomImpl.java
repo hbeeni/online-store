@@ -7,6 +7,7 @@ import static com.been.onlinestore.domain.QOrderProduct.*;
 import static com.been.onlinestore.domain.QProduct.*;
 import static com.been.onlinestore.domain.QUser.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import javax.persistence.EntityManager;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.data.support.PageableExecutionUtils;
 
@@ -24,7 +26,9 @@ import com.been.onlinestore.domain.OrderProduct;
 import com.been.onlinestore.domain.QUser;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -42,7 +46,7 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
 	@Override
 	public Page<Order> findAllOrdersByOrderer(Long ordererId, Pageable pageable) {
-		List<Order> result = findOrdersByOrderer(ordererId);
+		List<Order> result = findOrdersByOrderer(ordererId, pageable);
 
 		Map<Long, List<OrderProduct>> orderProductMap = findOrderProductMapByOrderIds(toOrderIds(result));
 		result.forEach(o -> o.setOrderProducts(orderProductMap.get(o.getId())));
@@ -120,12 +124,13 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.toList();
 	}
 
-	private List<Order> findOrdersByOrderer(Long ordererId) {
+	private List<Order> findOrdersByOrderer(Long ordererId, Pageable pageable) {
 		return queryFactory
 			.selectFrom(order)
 			.join(order.orderer, user).fetchJoin()
 			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
 			.where(user.id.eq(ordererId))
+			.orderBy(getOrderSpecifiers(pageable))
 			.fetch();
 	}
 
@@ -198,5 +203,25 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
 	private BooleanExpression orderStatusEq(OrderStatus orderStatus) {
 		return orderStatus != null ? order.orderStatus.eq(orderStatus) : null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private OrderSpecifier[] getOrderSpecifiers(Pageable pageable) {
+		List<OrderSpecifier> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
+		return orderSpecifiers.toArray(OrderSpecifier[]::new);
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	private List<OrderSpecifier> getOrderSpecifiers(Sort sort) {
+		List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
+		sort.stream().forEach(order -> {
+			com.querydsl.core.types.Order direction =
+				order.isAscending() ? com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC;
+			String property = order.getProperty();
+			PathBuilder<Order> pathBuilder = new PathBuilder<>(Order.class, "order1");
+			orderSpecifiers.add(new OrderSpecifier(direction, pathBuilder.get(property)));
+		});
+
+		return orderSpecifiers;
 	}
 }
