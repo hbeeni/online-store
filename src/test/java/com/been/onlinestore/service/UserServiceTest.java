@@ -23,8 +23,8 @@ import org.springframework.data.domain.Pageable;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.RoleType;
 import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.UserServiceRequest;
-import com.been.onlinestore.service.response.UserResponse;
+import com.been.onlinestore.service.dto.request.UserServiceRequest;
+import com.been.onlinestore.service.dto.response.UserResponse;
 
 @DisplayName("비즈니스 로직 - 회원")
 @ExtendWith(MockitoExtension.class)

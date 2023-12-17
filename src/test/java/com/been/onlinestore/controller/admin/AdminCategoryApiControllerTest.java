@@ -28,7 +28,7 @@ import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.RestDocsUtils;
 import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.service.CategoryService;
-import com.been.onlinestore.service.response.admin.AdminCategoryResponse;
+import com.been.onlinestore.service.dto.response.admin.AdminCategoryResponse;
 
 @DisplayName("API 컨트롤러 - 카테고리 (관리자)")
 @Import(TestSecurityConfig.class)

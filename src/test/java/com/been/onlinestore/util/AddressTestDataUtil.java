@@ -5,7 +5,7 @@ import static com.been.onlinestore.util.UserTestDataUtil.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.been.onlinestore.domain.Address;
-import com.been.onlinestore.service.request.AddressServiceRequest;
+import com.been.onlinestore.service.dto.request.AddressServiceRequest;
 
 public class AddressTestDataUtil {
 

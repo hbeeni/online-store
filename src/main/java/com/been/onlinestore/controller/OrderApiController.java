@@ -21,7 +21,7 @@ import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.OrderRequest;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.service.OrderService;
-import com.been.onlinestore.service.response.OrderResponse;
+import com.been.onlinestore.service.dto.response.OrderResponse;
 
 import lombok.RequiredArgsConstructor;
 

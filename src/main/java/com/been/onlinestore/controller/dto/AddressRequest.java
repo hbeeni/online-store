@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.been.onlinestore.service.request.AddressServiceRequest;
+import com.been.onlinestore.service.dto.request.AddressServiceRequest;
 
 import lombok.Builder;
 

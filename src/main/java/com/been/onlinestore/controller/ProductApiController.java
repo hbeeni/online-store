@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.service.ProductService;
-import com.been.onlinestore.service.response.CategoryProductResponse;
+import com.been.onlinestore.service.dto.response.CategoryProductResponse;
 
 import lombok.RequiredArgsConstructor;
 

@@ -3,7 +3,7 @@ package com.been.onlinestore.controller.dto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import com.been.onlinestore.service.request.CategoryServiceRequest;
+import com.been.onlinestore.service.dto.request.CategoryServiceRequest;
 
 import lombok.Builder;
 

@@ -26,7 +26,7 @@ import com.been.onlinestore.controller.dto.AddressRequest;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.service.AddressService;
-import com.been.onlinestore.service.response.AddressResponse;
+import com.been.onlinestore.service.dto.response.AddressResponse;
 
 @DisplayName("API 컨트롤러 - 주소 (배송지)")
 @Import(TestSecurityConfig.class)

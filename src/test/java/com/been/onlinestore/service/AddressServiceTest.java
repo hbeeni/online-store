@@ -22,8 +22,8 @@ import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.repository.AddressRepository;
 import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.AddressServiceRequest;
-import com.been.onlinestore.service.response.AddressResponse;
+import com.been.onlinestore.service.dto.request.AddressServiceRequest;
+import com.been.onlinestore.service.dto.response.AddressResponse;
 
 @DisplayName("비즈니스 로직 - 배송지")
 @ExtendWith(MockitoExtension.class)

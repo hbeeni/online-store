@@ -29,9 +29,9 @@ import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
-import com.been.onlinestore.service.request.ProductServiceRequest;
-import com.been.onlinestore.service.response.CategoryProductResponse;
-import com.been.onlinestore.service.response.ProductResponse;
+import com.been.onlinestore.service.dto.response.CartResponse;
+import com.been.onlinestore.service.dto.response.CategoryProductResponse;
+import com.been.onlinestore.service.dto.response.ProductResponse;
 
 @DisplayName("비즈니스 로직 - 상품")
 @ExtendWith(MockitoExtension.class)

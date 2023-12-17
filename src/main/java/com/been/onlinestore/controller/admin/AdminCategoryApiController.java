@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.CategoryRequest;
 import com.been.onlinestore.service.CategoryService;
-import com.been.onlinestore.service.response.admin.AdminCategoryResponse;
+import com.been.onlinestore.service.dto.response.admin.AdminCategoryResponse;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.been.onlinestore.service.response;
+package com.been.onlinestore.service.dto.response;
 
 import com.been.onlinestore.domain.Address;
 

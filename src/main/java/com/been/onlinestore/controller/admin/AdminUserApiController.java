@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.service.UserService;
-import com.been.onlinestore.service.response.UserResponse;
+import com.been.onlinestore.service.dto.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
 

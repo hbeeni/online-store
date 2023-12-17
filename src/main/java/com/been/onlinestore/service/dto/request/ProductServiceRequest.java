@@ -1,4 +1,4 @@
-package com.been.onlinestore.service.request;
+package com.been.onlinestore.service.dto.request;
 
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.domain.Product;

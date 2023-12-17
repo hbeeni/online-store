@@ -1,4 +1,4 @@
-package com.been.onlinestore.service.request;
+package com.been.onlinestore.service.dto.request;
 
 import java.util.List;
 

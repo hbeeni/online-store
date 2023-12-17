@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.UserServiceRequest;
-import com.been.onlinestore.service.response.UserResponse;
+import com.been.onlinestore.service.dto.request.UserServiceRequest;
+import com.been.onlinestore.service.dto.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
 

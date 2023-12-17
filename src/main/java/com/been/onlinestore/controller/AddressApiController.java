@@ -19,7 +19,7 @@ import com.been.onlinestore.controller.dto.AddressRequest;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.service.AddressService;
-import com.been.onlinestore.service.response.AddressResponse;
+import com.been.onlinestore.service.dto.response.AddressResponse;
 
 import lombok.RequiredArgsConstructor;
 

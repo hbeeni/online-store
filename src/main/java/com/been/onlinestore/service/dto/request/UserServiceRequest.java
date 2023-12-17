@@ -1,4 +1,4 @@
-package com.been.onlinestore.service.request;
+package com.been.onlinestore.service.dto.request;
 
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.RoleType;
@@ -15,8 +15,9 @@ public record UserServiceRequest() {
 		RoleType roleType
 	) {
 
-		public static SignUp of(String uid, String password, String name, String email, String nickname, String phone,
-			RoleType roleType) {
+		public static SignUp of(
+			String uid, String password, String name, String email, String nickname, String phone, RoleType roleType
+		) {
 			return new SignUp(uid, password, name, email, nickname, phone, roleType);
 		}
 

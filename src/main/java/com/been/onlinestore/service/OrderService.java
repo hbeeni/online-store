@@ -1,6 +1,6 @@
 package com.been.onlinestore.service;
 
-import static com.been.onlinestore.service.request.OrderServiceRequest.*;
+import static com.been.onlinestore.service.dto.request.OrderServiceRequest.*;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +25,8 @@ import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
-import com.been.onlinestore.service.request.OrderServiceRequest;
-import com.been.onlinestore.service.response.OrderResponse;
+import com.been.onlinestore.service.dto.request.OrderServiceRequest;
+import com.been.onlinestore.service.dto.response.OrderResponse;
 
 import lombok.RequiredArgsConstructor;
 

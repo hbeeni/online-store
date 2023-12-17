@@ -7,9 +7,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.been.onlinestore.domain.constant.SaleStatus;
-import com.been.onlinestore.service.request.ProductServiceRequest;
-
-import lombok.Builder;
+import com.been.onlinestore.service.dto.request.ProductServiceRequest;
 
 public record ProductRequest() {
 
@@ -23,7 +21,6 @@ public record ProductRequest() {
 	 * @param saleStatus 옵션 - 기본값: WAIT
 	 * @param deliveryFee 필수
 	 */
-	@Builder
 	public record Create(
 		@NotNull @Positive
 		Long categoryId,
@@ -69,7 +66,6 @@ public record ProductRequest() {
 	 * @param saleStatus 필수
 	 * @param deliveryFee 필수
 	 */
-	@Builder
 	public record Update(
 		@NotNull @Positive
 		Long categoryId,

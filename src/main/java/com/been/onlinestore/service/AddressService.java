@@ -13,9 +13,8 @@ import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.repository.AddressRepository;
 import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.AddressServiceRequest;
-import com.been.onlinestore.service.response.AddressFormResponse;
-import com.been.onlinestore.service.response.AddressResponse;
+import com.been.onlinestore.service.dto.request.AddressServiceRequest;
+import com.been.onlinestore.service.dto.response.AddressResponse;
 
 import lombok.RequiredArgsConstructor;
 

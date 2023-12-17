@@ -1,6 +1,6 @@
-package com.been.onlinestore.service.response;
+package com.been.onlinestore.service.dto.response;
 
-import static com.been.onlinestore.service.response.JsonFormatConst.*;
+import static com.been.onlinestore.service.dto.response.JsonFormatConst.*;
 
 import java.time.LocalDateTime;
 

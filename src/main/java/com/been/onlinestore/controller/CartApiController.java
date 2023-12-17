@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.CartProductRequest;
 import com.been.onlinestore.service.ProductService;
-import com.been.onlinestore.service.response.CartResponse;
+import com.been.onlinestore.service.dto.response.CartResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

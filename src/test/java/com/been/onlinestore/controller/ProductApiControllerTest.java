@@ -34,7 +34,7 @@ import com.been.onlinestore.controller.restdocs.RestDocsUtils;
 import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.service.ProductService;
-import com.been.onlinestore.service.response.CategoryProductResponse;
+import com.been.onlinestore.service.dto.response.CategoryProductResponse;
 
 @DisplayName("API 컨트롤러 - 상품")
 @Import(TestSecurityConfig.class)

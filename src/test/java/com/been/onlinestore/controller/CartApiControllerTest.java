@@ -28,7 +28,8 @@ import com.been.onlinestore.controller.dto.CartProductRequest;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.service.ProductService;
-import com.been.onlinestore.service.response.CartResponse;
+import com.been.onlinestore.service.dto.response.CartResponse;
+import com.been.onlinestore.service.dto.response.CartResponse.CartProductResponse;
 
 @DisplayName("API 컨트롤러 - 장바구니")
 @Import(TestSecurityConfig.class)
