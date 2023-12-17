@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout (~{::title}, null, null, ~{::.container}, null)}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>배송지 관리</title>
+</head>
+<body>
+<div class="container py-5">
+    <div class="col-lg-6 mx-auto">
+        <div class="card mb-4">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" th:each="address : ${addresses}">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <p class="my-0 badge" style="background-color: #e3f6ed;color: #09aa5c;"
+                               th:if="${address.defaultAddress.equals('Y')}">
+                                기본배송지
+                            </p>
+                            <p class="my-2" th:text="|${address.detail} (${address.zipcode})|">서울 종로구 청와대로 1 (03048)</p>
+                        </div>
+
+                        <div class="col-auto d-grid gap-2 d-md-flex justify-content-md-end">
+                            <form th:if="${address.defaultAddress.equals('N')}" method="post"
+                                  action="/addresses/1" th:action="@{/addresses/{id}/delete(id=${address.id})}">
+                                <button class="btn btn-outline-danger btn-sm" type="submit">삭제</button>
+                            </form>
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    onclick="location.href='editform.html'"
+                                    th:onclick="|location.href='@{/addresses/{id}/edit(id=${address.id})}'|"
+                                    type="button">수정
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="d-grid">
+            <a type="button" class="btn btn-secondary" role="button" th:href="@{/addresses/new}">배송지
+                등록
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

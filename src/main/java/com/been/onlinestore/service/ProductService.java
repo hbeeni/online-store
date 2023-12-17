@@ -2,6 +2,7 @@ package com.been.onlinestore.service;
 
 import static org.springframework.util.StringUtils.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
 import com.been.onlinestore.service.request.ProductServiceRequest;
+import com.been.onlinestore.service.response.CartOrderFormResponse;
+import com.been.onlinestore.service.response.CartOrderFormResponse.CartOrderProductResponse;
 import com.been.onlinestore.service.response.CartResponse;
 import com.been.onlinestore.service.response.CategoryProductResponse;
 import com.been.onlinestore.service.response.ProductResponse;
@@ -52,12 +55,10 @@ public class ProductService {
 	public Page<CategoryProductResponse> findProductsOnSaleForUser(String name, Pageable pageable) {
 		if (hasText(name)) {
 			return productRepository.findAllOnSaleByName(name, pageable)
-				.map(product -> CategoryProductResponse.from(product,
-					imageStore.getImageUrl(product.getImageName())));
+				.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
 		} else {
 			return productRepository.findAllOnSale(pageable)
-				.map(product -> CategoryProductResponse.from(product,
-					imageStore.getImageUrl(product.getImageName())));
+				.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())));
 		}
 	}
 
@@ -68,10 +69,30 @@ public class ProductService {
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
 	}
 
+	@Transactional(readOnly = true)
 	public List<CartResponse> findProductsInCart(Map<Long, Integer> productToQuantityMap) {
 		return productRepository.findAllOnSaleById(productToQuantityMap.keySet()).stream()
 			.map(product -> CartResponse.from(product, productToQuantityMap))
 			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public CartOrderFormResponse findCartOrderProductsForWeb(Map<Long, Integer> productToQuantityMap) {
+		List<Product> products = productRepository.findAllOnSaleById(productToQuantityMap.keySet());
+
+		int totalPrice = 0;
+		List<CartOrderProductResponse> cartOrderProducts = new ArrayList<>();
+
+		for (Product product : products) {
+			CartOrderProductResponse cartOrderProduct = CartOrderProductResponse.from(
+				product, productToQuantityMap.get(product.getId()), imageStore.getImageUrl(product.getImageName())
+			);
+
+			cartOrderProducts.add(cartOrderProduct);
+			totalPrice += cartOrderProduct.totalProductPrice();
+		}
+
+		return CartOrderFormResponse.of(totalPrice, cartOrderProducts);
 	}
 
 	@Transactional(readOnly = true)

@@ -1,6 +1,9 @@
 package com.been.onlinestore.controller.dto;
 
+import java.time.LocalDateTime;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -83,6 +86,32 @@ public record UserRequest() {
 		@NotBlank @Size(max = 20)
 		@Pattern(regexp = PHONE_PATTERN_REGEX, message = PHONE_PATTERN_MESSAGE)
 		String phone
+	) {
+	}
+
+	@Builder
+	public record UpdateForm(
+		@NotBlank
+		String uid,
+
+		@NotBlank
+		String name,
+
+		@NotBlank
+		String email,
+
+		@Size(max = 20)
+		String nickname,
+
+		@NotBlank @Size(max = 20)
+		@Pattern(regexp = PHONE_PATTERN_REGEX, message = PHONE_PATTERN_MESSAGE)
+		String phone,
+
+		@NotNull
+		LocalDateTime createdAt,
+
+		@NotNull
+		LocalDateTime modifiedAt
 	) {
 	}
 }
