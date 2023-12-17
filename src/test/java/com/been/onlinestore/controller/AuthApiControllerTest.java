@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller.api;
+package com.been.onlinestore.controller;
 
 import static com.been.onlinestore.controller.restdocs.FieldDescription.*;
 import static com.been.onlinestore.controller.restdocs.RestDocsUtils.*;
@@ -117,7 +117,8 @@ class AuthApiControllerTest extends RestDocsSupport {
 			"01012345678"
 		);
 		UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(
-			principalDetails, request.password(), Set.of(new SimpleGrantedAuthority(RoleType.USER.getRoleName())));
+			principalDetails, request.password(), Set.of(new SimpleGrantedAuthority(RoleType.USER.getRoleName()))
+		);
 		given(authenticationManager.authenticate(any())).willReturn(authentication);
 
 		//When & Then

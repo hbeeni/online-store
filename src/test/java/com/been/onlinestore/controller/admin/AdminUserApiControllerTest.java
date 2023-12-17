@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller.api.admin;
+package com.been.onlinestore.controller.admin;
 
 import static com.been.onlinestore.controller.restdocs.FieldDescription.*;
 import static com.been.onlinestore.controller.restdocs.RestDocsUtils.*;

@@ -40,13 +40,6 @@ public class AddressService {
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 	}
 
-	@Transactional(readOnly = true)
-	public AddressFormResponse findAddressForm(Long addressId, Long userId) {
-		return addressRepository.findByIdAndUser_Id(addressId, userId)
-			.map(AddressFormResponse::from)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
-	}
-
 	public Long addAddress(Long userId, AddressServiceRequest serviceRequest) {
 		Optional<Address> originalDefaultAddress = addressRepository.findDefaultAddressByUserId(userId);
 		boolean defaultAddressRequest = serviceRequest.defaultAddress();

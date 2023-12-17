@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller.api.admin;
+package com.been.onlinestore.controller.admin;
 
 import java.util.List;
 import java.util.Map;
