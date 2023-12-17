@@ -1,7 +1,6 @@
 package com.been.onlinestore.controller;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.CartProductRequest;
 import com.been.onlinestore.service.ProductService;
-import com.been.onlinestore.service.dto.response.CartResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,40 +44,8 @@ public class CartApiController {
 
 	private final ProductService productService;
 
-	/**
-	 * @param cart 쿠키 값
-	 * @return productId, quantity map
-	 */
-	private static Map<Long, Integer> cookieValueToMap(String cart) {
-		return Arrays.stream(cart.split(PRODUCT_PARTITION_REGEX))
-			.map(s -> s.split(PRODUCT_QUANTITY_PARTITION))
-			.collect(Collectors.toMap(
-					a -> Long.parseLong(a[0]),
-					a -> Integer.parseInt(a[1]),
-					Integer::sum
-				)
-			);
-	}
-
-	/**
-	 * @param productToQuantityMap productId, quantity map
-	 * @return 쿠키 값
-	 */
-	private static String mapToCookieValue(Map<Long, Integer> productToQuantityMap) {
-		return productToQuantityMap.entrySet().stream()
-			.map(entry -> entry.getKey() + PRODUCT_QUANTITY_PARTITION + entry.getValue())
-			.collect(Collectors.joining(PRODUCT_PARTITION));
-	}
-
-	private static void addCartCookie(HttpServletResponse response, String cookieValue) {
-		Cookie cookie = new Cookie(COOKIE_NAME, cookieValue);
-		cookie.setMaxAge(7 * 24 * 60 * 60); //일주일
-		cookie.setPath(COOKIE_PATH);
-		response.addCookie(cookie);
-	}
-
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<CartResponse>>> getProductsInCart(
+	public ResponseEntity<ApiResponse<?>> getProductsInCart(
 		@CookieValue(name = COOKIE_NAME, required = false) String cart) {
 		log.info("cart = {}", cart);
 
@@ -88,7 +54,7 @@ public class CartApiController {
 			return ResponseEntity.ok(ApiResponse.success(productService.findProductsInCart(productToQuantityMap)));
 		}
 
-		return ResponseEntity.ok(ApiResponse.success(List.of()));
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 
 	@PostMapping
@@ -172,5 +138,37 @@ public class CartApiController {
 		}
 
 		return ResponseEntity.ok(ApiResponse.success());
+	}
+
+	/**
+	 * @param cart 쿠키 값
+	 * @return productId, quantity map
+	 */
+	private static Map<Long, Integer> cookieValueToMap(String cart) {
+		return Arrays.stream(cart.split(PRODUCT_PARTITION_REGEX))
+			.map(s -> s.split(PRODUCT_QUANTITY_PARTITION))
+			.collect(Collectors.toMap(
+					a -> Long.parseLong(a[0]),
+					a -> Integer.parseInt(a[1]),
+					Integer::sum
+				)
+			);
+	}
+
+	/**
+	 * @param productToQuantityMap productId, quantity map
+	 * @return 쿠키 값
+	 */
+	private static String mapToCookieValue(Map<Long, Integer> productToQuantityMap) {
+		return productToQuantityMap.entrySet().stream()
+			.map(entry -> entry.getKey() + PRODUCT_QUANTITY_PARTITION + entry.getValue())
+			.collect(Collectors.joining(PRODUCT_PARTITION));
+	}
+
+	private static void addCartCookie(HttpServletResponse response, String cookieValue) {
+		Cookie cookie = new Cookie(COOKIE_NAME, cookieValue);
+		cookie.setMaxAge(7 * 24 * 60 * 60); //일주일
+		cookie.setPath(COOKIE_PATH);
+		response.addCookie(cookie);
 	}
 }

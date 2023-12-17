@@ -45,36 +45,39 @@ class CartApiControllerTest extends RestDocsSupport {
 	@Test
 	void test_getProductsInCart() throws Exception {
 		//Given
-		CartResponse cartResponse1 = CartResponse.of(
+		CartProductResponse cartProductResponse1 = CartProductResponse.of(
 			1L,
-			"꽃무늬 바지",
-			10000,
+			"깐대파 500g",
+			4500,
 			2,
-			20000,
-			3000
+			9000
 		);
-		CartResponse cartResponse2 = CartResponse.of(
+		CartProductResponse cartProductResponse2 = CartProductResponse.of(
 			2L,
-			"꽃무늬 셔츠",
-			12000,
+			"양파 1.5kg",
+			4290,
 			1,
-			12000,
-			3000
+			4290
 		);
+		List<CartProductResponse> cartProducts = List.of(cartProductResponse1, cartProductResponse2);
+		CartResponse response = CartResponse.of(13290, 3000, cartProducts);
 
 		Map<Long, Integer> idToQuantityMap = Map.of(1L, 2, 2L, 1);
 		Cookie cookie = new Cookie(COOKIE_NAME, "1:2|2:1");
 
-		given(productService.findProductsInCart(idToQuantityMap)).willReturn(List.of(cartResponse1, cartResponse2));
+		given(productService.findProductsInCart(idToQuantityMap)).willReturn(response);
 
 		//When & Then
 		mvc.perform(get("/api/carts").cookie(cookie))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
-			.andExpect(jsonPath("$.data").isArray())
-			.andExpect(jsonPath("$.data[0].productId").value(cartResponse1.productId()))
-			.andExpect(jsonPath("$.data[0].quantity").value(cartResponse1.quantity()))
+			.andExpect(jsonPath("$.data.totalPrice").value(response.totalPrice()))
+			.andExpect(jsonPath("$.data.deliveryFee").value(response.deliveryFee()))
+			.andExpect(jsonPath("$.data.cartProducts").isArray())
+			.andExpect(jsonPath("$.data.cartProducts[0].productId").value(cartProductResponse1.productId()))
+			.andExpect(jsonPath("$.data.cartProducts[0].productName").value(cartProductResponse1.productName()))
+			.andExpect(jsonPath("$.data.cartProducts[0].quantity").value(cartProductResponse1.quantity()))
 			.andDo(document(
 				"user/cart/getCart",
 				userApiDescription(TagDescription.CART, "장바구니 조회"),
@@ -82,18 +85,22 @@ class CartApiControllerTest extends RestDocsSupport {
 				preprocessResponse(prettyPrint()),
 				responseFields(
 					STATUS,
-					fieldWithPath("data[].productId").type(JsonFieldType.NUMBER)
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("장바구니 응답 (옵션)").optional(),
+					fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER)
+						.description(CART_TOTAL_PRICE.getDescription()),
+					fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
+						.description(DELIVERY_FEE.getDescription()),
+					fieldWithPath("data.cartProducts[].productId").type(JsonFieldType.NUMBER)
 						.description(PRODUCT_ID.getDescription()),
-					fieldWithPath("data[].productName").type(JsonFieldType.STRING)
+					fieldWithPath("data.cartProducts[].productName").type(JsonFieldType.STRING)
 						.description(PRODUCT_NAME.getDescription()),
-					fieldWithPath("data[].productPrice").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.cartProducts[].productPrice").type(JsonFieldType.NUMBER)
 						.description(PRODUCT_PRICE.getDescription()),
-					fieldWithPath("data[].quantity").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.cartProducts[].quantity").type(JsonFieldType.NUMBER)
 						.description(CART_PRODUCT_QUANTITY.getDescription()),
-					fieldWithPath("data[].totalProductPrice").type(JsonFieldType.NUMBER)
-						.description(CART_PRODUCT_TOTAL_PRICE.getDescription()),
-					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
-						.description(PRODUCT_DELIVERY_FEE.getDescription())
+					fieldWithPath("data.cartProducts[].totalPrice").type(JsonFieldType.NUMBER)
+						.description(CART_PRODUCT_TOTAL_PRICE.getDescription())
 				)
 			));
 		then(productService).should().findProductsInCart(idToQuantityMap);
