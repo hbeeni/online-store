@@ -43,10 +43,4 @@ public abstract class RestDocsUtils {
 			.tag("[어드민] " + tag.getTagName() + " API")
 			.summary(description);
 	}
-
-	public static ResourceSnippetDetails sellerApiDescription(TagDescription tag, String description) {
-		return resourceDetails()
-			.tag("[판매자] " + tag.getTagName() + " API")
-			.summary(description);
-	}
 }

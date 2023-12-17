@@ -20,6 +20,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import com.been.onlinestore.common.ErrorMessages;
+import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
 
 import lombok.Getter;
@@ -45,6 +47,10 @@ public class Order extends BaseTimeEntity {
 	private DeliveryRequest deliveryRequest;
 
 	@ToString.Exclude
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	private Delivery delivery;
+
+	@ToString.Exclude
 	@Setter
 	@OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
 	private List<OrderProduct> orderProducts = new ArrayList<>();
@@ -60,16 +66,20 @@ public class Order extends BaseTimeEntity {
 	protected Order() {
 	}
 
-	private Order(User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus) {
+	private Order(User orderer, DeliveryRequest deliveryRequest, Delivery delivery, String ordererPhone,
+		OrderStatus orderStatus) {
 		this.orderer = orderer;
 		this.deliveryRequest = deliveryRequest;
+		this.delivery = delivery;
 		this.ordererPhone = ordererPhone;
 		this.orderStatus = orderStatus;
 	}
 
-	public static Order of(User orderer, DeliveryRequest deliveryRequest, String ordererPhone,
-		OrderStatus orderStatus) {
-		return new Order(orderer, deliveryRequest, ordererPhone, orderStatus);
+	public static Order of(
+		User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus, int deliveryFee
+	) {
+		Delivery delivery = Delivery.of(DeliveryStatus.ACCEPT, deliveryFee, null);
+		return new Order(orderer, deliveryRequest, delivery, ordererPhone, orderStatus);
 	}
 
 	public void addOrderProducts(List<OrderProduct> orderProducts) {
@@ -84,8 +94,23 @@ public class Order extends BaseTimeEntity {
 	}
 
 	public void cancel() {
-		orderProducts.forEach(OrderProduct::cancel);
+		if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
+			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER_PRODUCT.getMessage());
+		}
+		orderProducts.forEach(OrderProduct::addStock);
 		this.orderStatus = OrderStatus.CANCEL;
+	}
+
+	public void startPreparing() {
+		this.getDelivery().startPreparing();
+	}
+
+	public void startDelivery() {
+		this.getDelivery().startDelivery();
+	}
+
+	public void completeDelivery() {
+		this.getDelivery().completeDelivery();
 	}
 
 	@Override

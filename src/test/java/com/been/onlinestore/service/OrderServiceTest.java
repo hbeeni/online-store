@@ -1,5 +1,6 @@
 package com.been.onlinestore.service;
 
+import static com.been.onlinestore.service.dto.request.OrderServiceRequest.*;
 import static com.been.onlinestore.util.OrderTestDataUtil.*;
 import static com.been.onlinestore.util.ProductTestDataUtil.*;
 import static com.been.onlinestore.util.UserTestDataUtil.*;
@@ -8,7 +9,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,14 +24,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.been.onlinestore.domain.constant.DeliveryStatus;
-import com.been.onlinestore.domain.constant.OrderStatus;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
-import com.been.onlinestore.service.request.OrderServiceRequest;
-import com.been.onlinestore.service.response.OrderResponse;
+import com.been.onlinestore.service.dto.request.OrderServiceRequest;
+import com.been.onlinestore.service.dto.response.OrderResponse;
 
 @DisplayName("비즈니스 로직 - 주문")
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +44,7 @@ class OrderServiceTest {
 	@InjectMocks
 	private OrderService sut;
 
-	@DisplayName("[일반 회원] 모든 주문 내역을 조회하면, 주문내역 페이지를 반환한다.")
+	@DisplayName("모든 주문 내역을 조회하면, 주문내역 페이지를 반환한다.")
 	@Test
 	void test_findOrdersByOrderer() {
 		//Given
@@ -63,7 +60,7 @@ class OrderServiceTest {
 		then(orderRepository).should().findAllOrdersByOrderer(ordererId, pageable);
 	}
 
-	@DisplayName("[일반 회원] 주문을 조회하면, 주문 상세 정보를 반환한다.")
+	@DisplayName("주문을 조회하면, 주문 상세 정보를 반환한다.")
 	@Test
 	void test_findOrderByOrderer() {
 		//Given
@@ -79,7 +76,7 @@ class OrderServiceTest {
 		then(orderRepository).should().findOrderByOrderer(orderId, ordererId);
 	}
 
-	@DisplayName("[일반 회원] 주문을 조회할 때, 주문을 찾지 못하면 예외를 던진다.")
+	@DisplayName("주문을 조회할 때, 주문을 찾지 못하면 예외를 던진다.")
 	@Test
 	void test_findOrderByOrderer_throwsEntityNotFoundException() {
 		//Given
@@ -93,16 +90,18 @@ class OrderServiceTest {
 		then(orderRepository).should().findOrderByOrderer(orderId, ordererId);
 	}
 
-	@DisplayName("[일반 회원] 주문을 하면, 주문 상품과 배송 정보를 함께 저장한 후, 저장된 주문의 id를 반환한다.")
+	@DisplayName("주문을 하면, 주문 상품과 배송 정보를 함께 저장한 후, 저장된 주문의 id를 반환한다.")
 	@Test
 	void test_order() {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
 		long productId = 1L;
-		Map<Long, Integer> productIdToQuantityMap = Map.of(productId, 10);
-		OrderServiceRequest serviceRequest = new OrderServiceRequest(productIdToQuantityMap, "address", "name",
-			"01011112222");
+		List<OrderProductServiceRequest> orderProductServiceRequests = List.of(
+			OrderProductServiceRequest.of(productId, 1)
+		);
+		OrderServiceRequest serviceRequest =
+			new OrderServiceRequest(orderProductServiceRequests, "address", "name", "01011112222");
 
 		given(productRepository.findAllOnSaleById(Set.of(productId))).willReturn(List.of(createProduct(productId)));
 		given(userRepository.getReferenceById(ordererId)).willReturn(createUser(ordererId));
@@ -118,7 +117,7 @@ class OrderServiceTest {
 		then(orderRepository).should().save(any());
 	}
 
-	@DisplayName("[일반 회원] 주문을 취소하면, 취소된 주문의 id를 반환한다.")
+	@DisplayName("주문을 취소하면, 취소된 주문의 id를 반환한다.")
 	@Test
 	void test_cancelOrder() {
 		//Given
@@ -134,7 +133,7 @@ class OrderServiceTest {
 		then(orderRepository).should().findByIdAndOrdererId(orderId, ordererId);
 	}
 
-	@DisplayName("[일반 회원] 주문을 취소할 때, 취소할 주문을 찾지 못하면 예외를 던진다.")
+	@DisplayName("주문을 취소할 때, 취소할 주문을 찾지 못하면 예외를 던진다.")
 	@Test
 	void test_cancelOrder_throwsEntityNotFoundException() {
 		//Given
@@ -146,53 +145,5 @@ class OrderServiceTest {
 		assertThatThrownBy(() -> sut.cancelOrder(orderId, ordererId))
 			.isInstanceOf(EntityNotFoundException.class);
 		then(orderRepository).should().findByIdAndOrdererId(orderId, ordererId);
-	}
-
-	@DisplayName("[판매자] 주문 내역을 검색과 함께 조회하면, 해당 주문내역 페이지를 반환한다.")
-	@Test
-	void test_findOrdersBySeller_withSearchCondition() {
-		//Given
-		long sellerId = 1L;
-		OrderSearchCondition cond = OrderSearchCondition.of(null, null, DeliveryStatus.ACCEPT, OrderStatus.ORDER);
-		Pageable pageable = PageRequest.of(0, 10);
-
-		given(orderRepository.searchOrdersBySeller(sellerId, cond, pageable)).willReturn(Page.empty());
-
-		//When
-		Page<OrderResponse> result = sut.findOrdersBySeller(sellerId, cond, pageable);
-
-		//Then
-		assertThat(result).isNotNull();
-		then(orderRepository).should().searchOrdersBySeller(sellerId, cond, pageable);
-	}
-
-	@DisplayName("[판매자] 주문을 조회하면, 주문 정보를 반환한다.")
-	@Test
-	void test_findOrderBySeller() {
-		//Given
-		long orderId = 1L;
-		long sellerId = 1L;
-		given(orderRepository.findOrderBySeller(orderId, sellerId)).willReturn(Optional.of(createOrder(orderId)));
-
-		//When
-		OrderResponse result = sut.findOrderBySeller(orderId, sellerId);
-
-		//Then
-		assertThat(result).isNotNull();
-		then(orderRepository).should().findOrderBySeller(orderId, sellerId);
-	}
-
-	@DisplayName("[판매자] 주문을 조회할 때, 해당 주문이 없으면 예외를 던진다.")
-	@Test
-	void test_findOrderBySeller_throwEntityNotFoundException() {
-		//Given
-		long orderId = 1L;
-		long sellerId = 1L;
-		given(orderRepository.findOrderBySeller(orderId, sellerId)).willReturn(Optional.empty());
-
-		//When & Then
-		assertThatThrownBy(() -> sut.findOrderBySeller(orderId, sellerId))
-			.isInstanceOf(EntityNotFoundException.class);
-		then(orderRepository).should().findOrderBySeller(orderId, sellerId);
 	}
 }

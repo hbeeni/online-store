@@ -12,7 +12,6 @@ import com.been.onlinestore.domain.constant.RoleType;
 @TestConfiguration
 public class TestSecurityConfig {
 
-	public static final Long SELLER_ID = 1L;
 	public static final Long USER_ID = 1L;
 
 	@Bean
@@ -26,26 +25,19 @@ public class TestSecurityConfig {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return username -> {
-			if (username.equals("seller")) {
-				return createPrincipalDetails(SELLER_ID, "seller", RoleType.SELLER);
-			}
 			if (username.equals("user")) {
-				return createPrincipalDetails(USER_ID, "user", RoleType.USER);
+				return PrincipalDetails.of(
+					USER_ID,
+					"user",
+					"pw",
+					RoleType.USER,
+					"user",
+					"user@mail.com",
+					"user",
+					"01011112222"
+				);
 			}
 			return null;
 		};
-	}
-
-	private PrincipalDetails createPrincipalDetails(Long id, String uid, RoleType roleType) {
-		return PrincipalDetails.of(
-			id,
-			uid,
-			"pw",
-			roleType,
-			uid,
-			uid + "@mail.com",
-			uid,
-			"01011112222"
-		);
 	}
 }

@@ -34,7 +34,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport implements OrderRepositoryCustom {
 
-	private static final QUser seller = new QUser("seller");
 	private static final QUser orderer = new QUser("orderer");
 
 	private final JPAQueryFactory queryFactory;
@@ -67,20 +66,19 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.join(order.orderer, user).fetchJoin()
 			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
 			.join(order.orderProducts, orderProduct).fetchJoin()
+			.join(order.delivery, delivery).fetchJoin()
 			.join(orderProduct.product, product)
-			.join(orderProduct.delivery, delivery).fetchJoin()
 			.where(order.id.eq(orderId),
 				order.orderer.id.eq(ordererId))
 			.fetchOne();
 		return Optional.ofNullable(result);
 	}
 
-	@Override
-	public Page<Order> searchOrdersBySeller(Long sellerId, OrderSearchCondition cond, Pageable pageable) {
-		List<Order> result = findOrdersBySellerWithCond(sellerId, cond);
+	public Page<Order> searchOrders(OrderSearchCondition cond, Pageable pageable) {
+		List<Order> result = findOrdersWithCond(cond);
 
-		Map<Long, List<OrderProduct>> orderProductMap = findOrderProductMapBySellerIdAndCond(
-			sellerId, cond.productId(), cond.deliveryStatus()
+		Map<Long, List<OrderProduct>> orderProductMap = findOrderProductMapByCond(
+			cond.productId(), cond.deliveryStatus()
 		);
 		result.forEach(o -> o.setOrderProducts(orderProductMap.get(o.getId())));
 
@@ -91,9 +89,7 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.join(order.deliveryRequest, deliveryRequest)
 			.join(order.orderProducts, orderProduct)
 			.join(orderProduct.product, product)
-			.join(product.seller, seller)
 			.where(
-				sellerIdEq(sellerId),
 				ordererIdEq(cond.ordererId()),
 				productIdEq(cond.productId()),
 				deliveryStatusEq(cond.deliveryStatus()),
@@ -103,17 +99,15 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 		return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
 	}
 
-	@Override
-	public Optional<Order> findOrderBySeller(Long orderId, Long sellerId) {
+	public Optional<Order> findOrderByIdForAdmin(Long orderId) {
 		Order result = queryFactory
 			.selectFrom(order)
 			.join(order.orderer, user).fetchJoin()
 			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
 			.join(order.orderProducts, orderProduct).fetchJoin()
+			.join(order.delivery, delivery).fetchJoin()
 			.join(orderProduct.product, product).fetchJoin()
-			.join(orderProduct.delivery, delivery).fetchJoin()
-			.where(order.id.eq(orderId),
-				product.seller.id.eq(sellerId))
+			.where(order.id.eq(orderId))
 			.fetchOne();
 		return Optional.ofNullable(result);
 	}
@@ -138,7 +132,6 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 		List<OrderProduct> orderProducts = queryFactory
 			.selectFrom(orderProduct)
 			.join(orderProduct.product, product).fetchJoin()
-			.join(orderProduct.delivery, delivery).fetchJoin()
 			.where(orderProduct.order.id.in(orderIds))
 			.fetch();
 
@@ -146,18 +139,16 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.collect(Collectors.groupingBy(orderProduct -> orderProduct.getOrder().getId()));
 	}
 
-	private List<Order> findOrdersBySellerWithCond(Long sellerId, OrderSearchCondition cond) {
+	private List<Order> findOrdersWithCond(OrderSearchCondition cond) {
 		return queryFactory
 			.selectDistinct(order)
 			.from(order)
 			.join(order.orderer, orderer).fetchJoin()
 			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
 			.join(order.orderProducts, orderProduct)
+			.join(order.delivery, delivery)
 			.join(orderProduct.product, product)
-			.join(orderProduct.delivery, delivery)
-			.join(product.seller, seller)
 			.where(
-				sellerIdEq(sellerId),
 				ordererIdEq(cond.ordererId()),
 				productIdEq(cond.productId()),
 				deliveryStatusEq(cond.deliveryStatus()),
@@ -166,16 +157,13 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.fetch();
 	}
 
-	private Map<Long, List<OrderProduct>> findOrderProductMapBySellerIdAndCond(
-		Long sellerId, Long productId, DeliveryStatus deliveryStatus
+	private Map<Long, List<OrderProduct>> findOrderProductMapByCond(
+		Long productId, DeliveryStatus deliveryStatus
 	) {
 		List<OrderProduct> orderProducts = queryFactory
 			.selectFrom(orderProduct)
 			.join(orderProduct.product, product).fetchJoin()
-			.join(orderProduct.delivery, delivery).fetchJoin()
-			.join(product.seller, seller)
 			.where(
-				sellerIdEq(sellerId),
 				productIdEq(productId),
 				deliveryStatusEq(deliveryStatus)
 			)
@@ -183,10 +171,6 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
 		return orderProducts.stream()
 			.collect(Collectors.groupingBy(op -> op.getOrder().getId()));
-	}
-
-	private BooleanExpression sellerIdEq(Long sellerId) {
-		return sellerId != null ? seller.id.eq(sellerId) : null;
 	}
 
 	private BooleanExpression ordererIdEq(Long ordererId) {

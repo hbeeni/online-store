@@ -1,7 +1,8 @@
 package com.been.onlinestore.service;
 
-import static com.been.onlinestore.service.request.OrderServiceRequest.*;
+import static com.been.onlinestore.service.dto.request.OrderServiceRequest.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,9 +25,8 @@ import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
-import com.been.onlinestore.service.request.OrderServiceRequest;
-import com.been.onlinestore.service.response.OrderResponse;
+import com.been.onlinestore.service.dto.request.OrderServiceRequest;
+import com.been.onlinestore.service.dto.response.OrderResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,19 +53,6 @@ public class OrderService {
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 	}
 
-	@Transactional(readOnly = true)
-	public Page<OrderResponse> findOrdersBySeller(Long sellerId, OrderSearchCondition cond, Pageable pageable) {
-		return orderRepository.searchOrdersBySeller(sellerId, cond, pageable)
-			.map(order -> OrderResponse.from(order, imageStore));
-	}
-
-	@Transactional(readOnly = true)
-	public OrderResponse findOrderBySeller(Long orderId, Long sellerId) {
-		return orderRepository.findOrderBySeller(orderId, sellerId)
-			.map(order -> OrderResponse.from(order, imageStore))
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
-	}
-
 	public Long order(Long ordererId, OrderServiceRequest serviceRequest) {
 		List<OrderProductServiceRequest> orderProductServiceRequests = serviceRequest.orderProducts();
 		Map<Long, OrderProductServiceRequest> orderProductServiceRequestMap =
@@ -76,6 +63,10 @@ public class OrderService {
 			throw new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage());
 		}
 
+		int deliveryFee = products.stream()
+			.map(Product::getDeliveryFee)
+			.min(Comparator.naturalOrder())
+			.orElseGet(() -> 3000);
 		List<OrderProduct> orderProducts = createOrderProducts(products, orderProductServiceRequestMap);
 
 		User orderer = userRepository.getReferenceById(ordererId);
@@ -87,7 +78,8 @@ public class OrderService {
 				serviceRequest.receiverPhone()
 			),
 			orderer.getPhone(),
-			OrderStatus.ORDER
+			OrderStatus.ORDER,
+			deliveryFee
 		);
 		order.addOrderProducts(orderProducts);
 		return orderRepository.save(order).getId();

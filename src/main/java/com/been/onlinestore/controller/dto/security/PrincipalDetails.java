@@ -8,7 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.been.onlinestore.domain.constant.RoleType;
-import com.been.onlinestore.service.response.UserResponse;
+import com.been.onlinestore.service.dto.response.UserResponse;
 
 public record PrincipalDetails(
 	Long id,

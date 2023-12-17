@@ -39,6 +39,4 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 
 	@Query("select p from Product p join fetch p.category where p.saleStatus = 'SALE' and p.id = :id")
 	Optional<Product> findOnSaleById(@Param("id") Long id);
-
-	Optional<Product> findByIdAndSeller_Id(Long productId, Long sellerId);
 }

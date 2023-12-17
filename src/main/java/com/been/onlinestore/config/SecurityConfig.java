@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,17 +34,14 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private static final String[] WHITE_LIST = {
-		"/", "/api/login", "/api/sign-up", "/api/categories/**", "/api/products/**",
-		"/sign-up", "/categories/**", "/products/**"
+		"/", "/api/login", "/api/sign-up", "/api/categories/**", "/api/products/**"
 	};
 	private final JwtProperties properties;
 	private final JwtTokenProvider jwtTokenProvider;
 
-	@Order(1)
 	@Bean
 	public SecurityFilterChain jsonSecurityFilterChain(HttpSecurity http) throws Exception {
 		return http
-			.antMatcher("/api/**")
 			.csrf().disable()
 			.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(
 				corsConfigurationSource()))
@@ -59,32 +55,11 @@ public class SecurityConfig {
 				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 				.mvcMatchers(WHITE_LIST).permitAll()
 				.mvcMatchers("/api/admin/**").hasRole(RoleType.ADMIN.name())
-				.mvcMatchers("/api/seller/**").hasRole(RoleType.SELLER.name())
 				.mvcMatchers("/api/**").hasRole(RoleType.USER.name())
 			)
 			.exceptionHandling(configurer -> configurer
 				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
 				.accessDeniedHandler(new CustomAccessDeniedHandler()))
-			.logout(logout -> logout.logoutSuccessUrl("/"))
-			.build();
-	}
-
-	@Bean
-	public SecurityFilterChain formSecurityFilterChain(HttpSecurity http) throws Exception {
-		return http
-			.csrf().disable()
-			.formLogin(configurer -> configurer
-				.usernameParameter("uid")
-				.loginPage("/login")
-				.permitAll()
-			)
-			.authorizeRequests(auth -> auth
-				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-				.mvcMatchers(WHITE_LIST).permitAll()
-				.mvcMatchers("/admin/**").hasRole(RoleType.ADMIN.name())
-				.mvcMatchers("/seller/**").hasRole(RoleType.SELLER.name())
-				.mvcMatchers("/addresses/**", "/carts/**", "/orders/**", "/users/**").hasRole(RoleType.USER.name())
-			)
 			.logout(logout -> logout.logoutSuccessUrl("/"))
 			.build();
 	}

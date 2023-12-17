@@ -1,12 +1,12 @@
 package com.been.onlinestore.service;
 
-import static com.been.onlinestore.util.CategoryTestDataUtil.*;
 import static com.been.onlinestore.util.ProductTestDataUtil.*;
-import static com.been.onlinestore.util.UserTestDataUtil.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -22,16 +22,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.file.ImageStore;
-import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
-import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
-import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
-import com.been.onlinestore.service.request.ProductServiceRequest;
-import com.been.onlinestore.service.response.CategoryProductResponse;
-import com.been.onlinestore.service.response.ProductResponse;
+import com.been.onlinestore.service.dto.response.CartResponse;
+import com.been.onlinestore.service.dto.response.CategoryProductResponse;
+import com.been.onlinestore.service.dto.response.ProductResponse;
 
 @DisplayName("비즈니스 로직 - 상품")
 @ExtendWith(MockitoExtension.class)
@@ -39,10 +34,6 @@ class ProductServiceTest {
 
 	@Mock
 	private ProductRepository productRepository;
-	@Mock
-	private CategoryRepository categoryRepository;
-	@Mock
-	private UserRepository userRepository;
 	@Mock
 	private ImageStore imageStore;
 
@@ -58,7 +49,7 @@ class ProductServiceTest {
 		given(productRepository.findAllOnSaleByCategory(categoryId, pageable)).willReturn(Page.empty());
 
 		//When
-		Page<ProductResponse> products = sut.findProductsInCategoryForUser(categoryId, pageable);
+		Page<ProductResponse> products = sut.findProductsInCategory(categoryId, pageable);
 
 		//Then
 		assertThat(products).isEmpty();
@@ -73,7 +64,7 @@ class ProductServiceTest {
 		given(productRepository.findAllOnSale(pageable)).willReturn(Page.empty());
 
 		//When
-		Page<CategoryProductResponse> result = sut.findProductsOnSaleForUser(null, pageable);
+		Page<CategoryProductResponse> result = sut.findProductsOnSale(null, pageable);
 
 		//Then
 		assertThat(result).isEmpty();
@@ -89,7 +80,7 @@ class ProductServiceTest {
 		given(productRepository.findAllOnSaleByName(name, pageable)).willReturn(Page.empty());
 
 		//When
-		Page<CategoryProductResponse> result = sut.findProductsOnSaleForUser(name, pageable);
+		Page<CategoryProductResponse> result = sut.findProductsOnSale(name, pageable);
 
 		//Then
 		assertThat(result).isEmpty();
@@ -105,7 +96,7 @@ class ProductServiceTest {
 		given(imageStore.getImageUrl(anyString())).willReturn("image url");
 
 		//When
-		CategoryProductResponse result = sut.findProductOnSaleForUser(id);
+		CategoryProductResponse result = sut.findProductOnSale(id);
 
 		//Then
 		assertThat(result).isNotNull();
@@ -120,201 +111,26 @@ class ProductServiceTest {
 		given(productRepository.findOnSaleById(id)).willReturn(Optional.empty());
 
 		//When & Then
-		assertThatThrownBy(() -> sut.findProductOnSaleForUser(id))
+		assertThatThrownBy(() -> sut.findProductOnSale(id))
 			.isInstanceOf(EntityNotFoundException.class);
 		then(productRepository).should().findOnSaleById(id);
 	}
 
-	@DisplayName("검색어 없이 상품을 검색하면, 상품의 페이지를 반환한다.")
+	@DisplayName("장바구니에 있는 상품의 id와 수량으로 조회하면, 상품을 반환한다.")
 	@Test
-	void test_findProducts() {
+	void test_findProductsInCart() {
 		//Given
-		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
-		given(productRepository.searchProducts(null, null, pageable)).willReturn(Page.empty());
+		long productId = 1L;
+		Map<Long, Integer> productIdToQuantityMap = Map.of(productId, 1);
+
+		given(productRepository.findAllOnSaleById(productIdToQuantityMap.keySet()))
+			.willReturn(List.of(createProduct(productId)));
 
 		//When
-		Page<AdminProductResponse> result = sut.findProductsForAdmin(null, pageable);
-
-		//Then
-		assertThat(result).isEmpty();
-		then(productRepository).should().searchProducts(null, null, pageable);
-	}
-
-	@DisplayName("검색 조건과 함께 상품을 검색하면, 검색 조건에 맞는 상품의 페이지를 반환한다.")
-	@Test
-	void test_findProducts_withKeyword() {
-		//Given
-		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
-		ProductSearchCondition searchCondition = ProductSearchCondition.of(null, "product", null);
-		given(productRepository.searchProducts(null, searchCondition, pageable)).willReturn(Page.empty());
-
-		//When
-		Page<AdminProductResponse> result = sut.findProductsForAdmin(searchCondition, pageable);
-
-		//Then
-		assertThat(result).isEmpty();
-		then(productRepository).should().searchProducts(null, searchCondition, pageable);
-	}
-
-	@DisplayName("상품을 조회하면, 상품을 반환한다.")
-	@Test
-	void test_findProductInfo() {
-		//Given
-		long id = 1L;
-		given(productRepository.searchProduct(id, null)).willReturn(Optional.of(createAdminProductResponse(id)));
-
-		//When
-		AdminProductResponse result = sut.findProductForAdmin(id);
+		CartResponse result = sut.findProductsInCart(productIdToQuantityMap);
 
 		//Then
 		assertThat(result).isNotNull();
-		then(productRepository).should().searchProduct(id, null);
-	}
-
-	@DisplayName("상품이 없으면, 예외를 던진다.")
-	@Test
-	void test_findProductInfo_throwsEntityNotFoundException() {
-		//Given
-		long id = 1L;
-		given(productRepository.searchProduct(id, null)).willReturn(Optional.empty());
-
-		//When & Then
-		assertThatThrownBy(() -> sut.findProductForAdmin(id))
-			.isInstanceOf(EntityNotFoundException.class);
-		then(productRepository).should().searchProduct(id, null);
-	}
-
-	@DisplayName("해당 판매자가 판매하는 상품을 검색어 없이 검색하면, 상품의 페이지를 반환한다.")
-	@Test
-	void test_findProductsBySellerId() {
-		//Given
-		long sellerId = 1L;
-		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
-		given(productRepository.searchProducts(sellerId, null, pageable)).willReturn(Page.empty());
-
-		//When
-		Page<AdminProductResponse> result = sut.findProductsForSeller(sellerId, null, pageable);
-
-		//Then
-		assertThat(result).isEmpty();
-		then(productRepository).should().searchProducts(sellerId, null, pageable);
-	}
-
-	@DisplayName("해당 판매자가 판매하는 상품을 조회하면, 상품을 반환한다.")
-	@Test
-	void test_findProductInfoBySellerId() {
-		//Given
-		long productId = 1L;
-		long sellerId = 1L;
-		given(productRepository.searchProduct(productId, sellerId)).willReturn(
-			Optional.of(createAdminProductResponse(productId)));
-
-		//When
-		AdminProductResponse result = sut.findProductForSeller(productId, sellerId);
-
-		//Then
-		assertThat(result).isNotNull();
-		then(productRepository).should().searchProduct(productId, sellerId);
-	}
-
-	@DisplayName("해당 판매자가 판매하지 않는 상품을 조회하면, 예외를 반환한다.")
-	@Test
-	void test_findProductInfoBySellerId_throwsEntityNotFoundException() {
-		//Given
-		long productId = 1L;
-		long sellerId = 1L;
-		given(productRepository.searchProduct(productId, sellerId)).willReturn(Optional.empty());
-
-		//When & Then
-		assertThatThrownBy(() -> sut.findProductForSeller(productId, sellerId))
-			.isInstanceOf(EntityNotFoundException.class);
-		then(productRepository).should().searchProduct(productId, sellerId);
-	}
-
-	@DisplayName("상품을 등록하면, 등록된 상품의 id를 반환한다.")
-	@Test
-	void test_addProduct() {
-		//Given
-		long categoryId = 1L;
-		long productId = 1L;
-		long sellerId = 1L;
-		ProductServiceRequest.Create serviceRequest =
-			ProductServiceRequest.Create.of(categoryId, "product", 10000, "des", 100, null, 3000);
-
-		given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
-		given(userRepository.getReferenceById(sellerId)).willReturn(createUser("user"));
-		given(productRepository.save(any())).willReturn(createProduct());
-
-		//When
-		Long result = sut.addProduct(sellerId, serviceRequest, "image.png");
-
-		//Then
-		assertThat(result).isEqualTo(productId);
-		then(categoryRepository).should().getReferenceById(categoryId);
-		then(userRepository).should().getReferenceById(sellerId);
-		then(productRepository).should().save(any());
-	}
-
-	@DisplayName("상품 정보를 수정하면, 수정된 상품의 id를 반환한다.")
-	@Test
-	void test_updateProductInfo() {
-		//Given
-		long productId = 1L;
-		long sellerId = 1L;
-		long categoryId = 1L;
-		ProductServiceRequest.Update serviceRequest =
-			ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
-
-		given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(
-			Optional.of(createProduct(productId)));
-		given(categoryRepository.getReferenceById(categoryId)).willReturn(createCategory("category"));
-
-		//When
-		Long result = sut.updateProductInfo(productId, categoryId, serviceRequest);
-
-		//Then
-		assertThat(result).isEqualTo(productId);
-		then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
-		then(categoryRepository).should().getReferenceById(categoryId);
-	}
-
-	@DisplayName("없는 상품의 수정 정보를 입력하면, 예외를 던진다.")
-	@Test
-	void testUpdateProductInfo_throwsEntityNotFoundException() {
-		//Given
-		long categoryId = 1L;
-		long sellerId = 1L;
-		long productId = 1L;
-		ProductServiceRequest.Update serviceRequest =
-			ProductServiceRequest.Update.of(categoryId, "product", 10000, "des", 100, SaleStatus.CLOSE, 3000);
-
-		given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(Optional.empty());
-
-		//When & Then
-		assertThatThrownBy(() -> sut.updateProductInfo(productId, categoryId, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
-		then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
-		then(categoryRepository).shouldHaveNoInteractions();
-	}
-
-	@DisplayName("상품 이미지를 수정하면, 수정된 상품의 id를 반환한다.")
-	@Test
-	void test_updateProductImage() {
-		//Given
-		long productId = 1L;
-		long sellerId = 1L;
-		long categoryId = 1L;
-
-		given(productRepository.findByIdAndSeller_Id(productId, sellerId)).willReturn(
-			Optional.of(createProduct(productId)));
-		willDoNothing().given(imageStore).deleteImage(anyString());
-
-		//When
-		Long result = sut.updateProductImage(productId, categoryId, "image.png");
-
-		//Then
-		assertThat(result).isEqualTo(productId);
-		then(productRepository).should().findByIdAndSeller_Id(productId, sellerId);
-		then(imageStore).should().deleteImage(anyString());
+		then(productRepository).should().findAllOnSaleById(productIdToQuantityMap.keySet());
 	}
 }

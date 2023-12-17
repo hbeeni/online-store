@@ -13,9 +13,8 @@ import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.repository.AddressRepository;
 import com.been.onlinestore.repository.UserRepository;
-import com.been.onlinestore.service.request.AddressServiceRequest;
-import com.been.onlinestore.service.response.AddressFormResponse;
-import com.been.onlinestore.service.response.AddressResponse;
+import com.been.onlinestore.service.dto.request.AddressServiceRequest;
+import com.been.onlinestore.service.dto.response.AddressResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,13 +37,6 @@ public class AddressService {
 	public AddressResponse findAddress(Long addressId, Long userId) {
 		return addressRepository.findByIdAndUser_Id(addressId, userId)
 			.map(AddressResponse::from)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
-	}
-
-	@Transactional(readOnly = true)
-	public AddressFormResponse findAddressForm(Long addressId, Long userId) {
-		return addressRepository.findByIdAndUser_Id(addressId, userId)
-			.map(AddressFormResponse::from)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 	}
 
