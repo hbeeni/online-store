@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,8 +31,8 @@ import com.been.onlinestore.config.TestSecurityConfig;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.domain.constant.RoleType;
-import com.been.onlinestore.service.UserService;
-import com.been.onlinestore.service.response.UserResponse;
+import com.been.onlinestore.service.admin.AdminUserService;
+import com.been.onlinestore.service.dto.response.UserResponse;
 
 @DisplayName("API 컨트롤러 - 회원 (관리자)")
 @Import(TestSecurityConfig.class)
@@ -41,7 +40,7 @@ import com.been.onlinestore.service.response.UserResponse;
 class AdminUserApiControllerTest extends RestDocsSupport {
 
 	@MockBean
-	UserService userService;
+	AdminUserService adminUserService;
 
 	@DisplayName("[API][GET] 회원 리스트 조회 + 페이징")
 	@Test
@@ -73,14 +72,14 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 			"seller@mail.com",
 			"test user",
 			"01012123434",
-			RoleType.SELLER,
+			RoleType.USER,
 			now().minusDays(30),
 			now().minusDays(22)
 		);
 		List<UserResponse> content = List.of(sellerResponse, userResponse);
 		Page<UserResponse> page = new PageImpl<>(content, pageable, content.size());
 
-		given(userService.findUsers(pageable)).willReturn(page);
+		given(adminUserService.findUsers(pageable)).willReturn(page);
 
 		//When & Then
 		mvc.perform(
@@ -129,7 +128,7 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 						.description(USER_MODIFIED_AT.getDescription())
 				).and(PAGE_INFO)
 			));
-		then(userService).should().findUsers(pageable);
+		then(adminUserService).should().findUsers(pageable);
 	}
 
 	@DisplayName("[API][GET] 회원 상세 조회")
@@ -151,7 +150,7 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 			now()
 		);
 
-		given(userService.findUser(id)).willReturn(response);
+		given(adminUserService.findUser(id)).willReturn(response);
 
 		//When & Then
 		mvc.perform(get("/api/admin/users/{userId}", id))
@@ -161,7 +160,7 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(response.id()))
 			.andExpect(jsonPath("$.data.uid").value(response.uid()))
 			.andExpect(jsonPath("$.data.name").value(response.name()))
-			.andExpect(jsonPath("$.data[0].password").doesNotExist())
+			.andExpect(jsonPath("$.data.password").doesNotExist())
 			.andDo(document(
 				"admin/user/getUser",
 				adminApiDescription(TagDescription.USER, "회원 상세 조회"),
@@ -192,21 +191,6 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 						.description(USER_MODIFIED_AT.getDescription())
 				)
 			));
-		then(userService).should().findUser(id);
-	}
-
-	@Disabled("마지막에 구현")
-	@DisplayName("[API][DELETE] 회원 삭제(강제 탈퇴)")
-	@Test
-	void test_deleteUser() throws Exception {
-		//Given
-		long id = 1L;
-
-		//When & Then
-		mvc.perform(delete("/api/admin/users/" + id))
-			.andExpect(status().isOk())
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.status").value("success"))
-			.andExpect(jsonPath("$.data.id").value(id));
+		then(adminUserService).should().findUser(id);
 	}
 }

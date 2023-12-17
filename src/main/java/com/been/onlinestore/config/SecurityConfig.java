@@ -55,7 +55,6 @@ public class SecurityConfig {
 				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 				.mvcMatchers(WHITE_LIST).permitAll()
 				.mvcMatchers("/api/admin/**").hasRole(RoleType.ADMIN.name())
-				.mvcMatchers("/api/seller/**").hasRole(RoleType.SELLER.name())
 				.mvcMatchers("/api/**").hasRole(RoleType.USER.name())
 			)
 			.exceptionHandling(configurer -> configurer

@@ -1,7 +1,6 @@
 package com.been.onlinestore.util;
 
 import static com.been.onlinestore.util.CategoryTestDataUtil.*;
-import static com.been.onlinestore.util.UserTestDataUtil.*;
 import static java.time.LocalDateTime.*;
 
 import org.springframework.test.util.ReflectionTestUtils;
@@ -9,7 +8,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
-import com.been.onlinestore.service.dto.response.CategoryProductResponse;
 
 public class ProductTestDataUtil {
 
@@ -20,7 +18,6 @@ public class ProductTestDataUtil {
 	public static Product createProduct(Long id) {
 		Product product = Product.of(
 			createCategory(1L, "category"),
-			createUser(),
 			"name",
 			10000,
 			"description",
@@ -34,19 +31,6 @@ public class ProductTestDataUtil {
 		return product;
 	}
 
-	public static CategoryProductResponse createCategoryProductResponse(Long id, String productName,
-		String categoryName) {
-		return CategoryProductResponse.of(
-			id,
-			categoryName,
-			productName,
-			10000,
-			"description",
-			3000,
-			"-"
-		);
-	}
-
 	public static AdminProductResponse createAdminProductResponse(Long id) {
 		return createAdminProductResponse(id, "name", "category");
 	}
@@ -55,7 +39,6 @@ public class ProductTestDataUtil {
 		return AdminProductResponse.of(
 			id,
 			categoryName,
-			AdminProductResponse.Seller.of(1L, "uid"),
 			productName,
 			1000,
 			"des",

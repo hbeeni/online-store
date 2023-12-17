@@ -1,8 +1,7 @@
-package com.been.onlinestore.controller.api;
+package com.been.onlinestore.controller;
 
 import static com.been.onlinestore.controller.restdocs.FieldDescription.*;
 import static com.been.onlinestore.controller.restdocs.RestDocsUtils.*;
-import static com.been.onlinestore.util.ProductTestDataUtil.*;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -49,23 +48,28 @@ class ProductApiControllerTest extends RestDocsSupport {
 	@MockBean
 	private ImageStore imageStore;
 
-	@DisplayName("[API][GET] 신상품 조회 - 기본: 생성일 내림차순으로 20개")
+	@DisplayName("[API][GET] 상품 조회")
 	@Test
-	void test_get20ProductsOrderByCreatedAtDesc() throws Exception {
+	void test_getProducts() throws Exception {
 		//Given
-		long productId = 1L;
-		String productName = "test product";
-		int productPrice = 10000;
-
 		int pageNumber = 0;
 		int pageSize = 20;
 		String sortName = "createdAt";
 
-		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
-		Page<CategoryProductResponse> page = new PageImpl<>(
-			List.of(createCategoryProductResponse(productId, productName, "category")), pageable, 1);
+		CategoryProductResponse response = CategoryProductResponse.of(
+			1L,
+			"채소",
+			"깐대파 500g",
+			4500,
+			"시원한 국물 맛의 비밀",
+			3000,
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
+		);
 
-		given(productService.findProductsOnSaleForUser(null, pageable)).willReturn(page);
+		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
+		Page<CategoryProductResponse> page = new PageImpl<>(List.of(response), pageable, 1);
+
+		given(productService.findProductsOnSale(null, pageable)).willReturn(page);
 
 		//When & Then
 		mvc.perform(
@@ -78,14 +82,14 @@ class ProductApiControllerTest extends RestDocsSupport {
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
 			.andExpect(jsonPath("$.data").isArray())
-			.andExpect(jsonPath("$.data[0].id").value(productId))
-			.andExpect(jsonPath("$.data[0].name").value(productName))
-			.andExpect(jsonPath("$.data[0].price").value(productPrice))
+			.andExpect(jsonPath("$.data[0].id").value(response.id()))
+			.andExpect(jsonPath("$.data[0].name").value(response.name()))
+			.andExpect(jsonPath("$.data[0].price").value(response.price()))
 			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
 			.andExpect(jsonPath("$.page.size").value(page.getSize()))
 			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()));
-		then(productService).should().findProductsOnSaleForUser(null, pageable);
+		then(productService).should().findProductsOnSale(null, pageable);
 	}
 
 	@DisplayName("[API][GET] 상품 조회 - 생성일 내림차순으로 20개 + 상품명 검색")
@@ -99,16 +103,16 @@ class ProductApiControllerTest extends RestDocsSupport {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
 		CategoryProductResponse response = CategoryProductResponse.of(
 			1L,
-			"상의",
-			"꽃무늬 셔츠",
-			12000,
-			"이쁜 꽃무늬 셔츠입니다.",
+			"채소",
+			"깐대파 500g",
+			4500,
+			"시원한 국물 맛의 비밀",
 			3000,
-			imagePath + UUID.randomUUID() + ".png"
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
 		Page<CategoryProductResponse> page = new PageImpl<>(List.of(response), pageable, 1);
 
-		given(productService.findProductsOnSaleForUser(response.name(), pageable)).willReturn(page);
+		given(productService.findProductsOnSale(response.name(), pageable)).willReturn(page);
 
 		//When & Then
 		mvc.perform(
@@ -154,7 +158,7 @@ class ProductApiControllerTest extends RestDocsSupport {
 						.description(PRODUCT_IMAGE_URL.getDescription())
 				).and(PAGE_INFO)
 			));
-		then(productService).should().findProductsOnSaleForUser(response.name(), pageable);
+		then(productService).should().findProductsOnSale(response.name(), pageable);
 	}
 
 	@DisplayName("[API][GET] 상품 상세 조회")
@@ -163,14 +167,14 @@ class ProductApiControllerTest extends RestDocsSupport {
 		//Given
 		CategoryProductResponse response = CategoryProductResponse.of(
 			1L,
-			"상의",
-			"꽃무늬 셔츠",
-			12000,
-			"이쁜 꽃무늬 셔츠입니다.",
+			"채소",
+			"깐대파 500g",
+			4500,
+			"시원한 국물 맛의 비밀",
 			3000,
-			imagePath + UUID.randomUUID() + ".png"
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
-		given(productService.findProductOnSaleForUser(response.id())).willReturn(response);
+		given(productService.findProductOnSale(response.id())).willReturn(response);
 
 		//When & Then
 		mvc.perform(get("/api/products/{productId}", response.id()))
@@ -206,7 +210,7 @@ class ProductApiControllerTest extends RestDocsSupport {
 						.description(PRODUCT_IMAGE_URL.getDescription())
 				)
 			));
-		then(productService).should().findProductOnSaleForUser(response.id());
+		then(productService).should().findProductOnSale(response.id());
 	}
 
 	@DisplayName("[API][GET] 상품 이미지 조회")

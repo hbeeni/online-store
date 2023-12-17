@@ -1,5 +1,6 @@
 package com.been.onlinestore.controller;
 
+import static com.been.onlinestore.controller.dto.OrderRequest.*;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.*;
 import static com.been.onlinestore.controller.restdocs.RestDocsUtils.*;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
@@ -12,10 +13,10 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -44,13 +45,16 @@ import com.been.onlinestore.service.dto.response.OrderResponse;
 @WebMvcTest(OrderApiController.class)
 class OrderApiControllerTest extends RestDocsSupport {
 
+	@Value("${image.path}")
+	private String imagePath;
+
 	@MockBean
 	private OrderService orderService;
 
 	@WithUserDetails
 	@DisplayName("[API][GET] 주문 리스트 조회 + 페이징 - 생성일 내림차순")
 	@Test
-	void test_getOrderList_withPagination() throws Exception {
+	void test_getOrders_withPagination() throws Exception {
 		//Given
 		long userId = TestSecurityConfig.USER_ID;
 		long orderProductId = 1L;
@@ -63,33 +67,32 @@ class OrderApiControllerTest extends RestDocsSupport {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
 		OrderProductResponse orderProductResponse1 = OrderProductResponse.of(
 			1L,
-			"꽃무늬 셔츠",
-			12000,
+			"깐대파 500g",
+			4500,
 			2,
-			24000,
-			DeliveryStatus.ACCEPT,
-			3000,
-			null
+			9000,
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
 		OrderProductResponse orderProductResponse2 = OrderProductResponse.of(
 			2L,
-			"체크 셔츠",
-			23000,
+			"양파 1.5kg",
+			4290,
 			3,
-			69000,
-			DeliveryStatus.ACCEPT,
-			0,
-			null
+			12870,
+			imagePath + "f33104ba-2e81-4b2e-91f7-658d45ec2d6d.jpg"
 		);
 		OrderResponse response = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user", "01012345678"),
+			OrderResponse.OrdererResponse.of("user", "01011111111"),
 			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
 			List.of(orderProductResponse1, orderProductResponse2),
-			93000,
+			21870,
 			OrderStatus.ORDER,
+			DeliveryStatus.ACCEPT,
+			0,
 			now(),
-			now()
+			now(),
+			null
 		);
 		List<OrderResponse> content = List.of(response);
 		Page<OrderResponse> page = new PageImpl<>(content, pageable, content.size());
@@ -146,20 +149,22 @@ class OrderApiControllerTest extends RestDocsSupport {
 						.description(ORDER_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("data[].orderProducts[].totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_TOTAL_PRICE.getDescription()),
-					fieldWithPath("data[].orderProducts[].deliveryStatus").type(JsonFieldType.STRING)
-						.description(ORDER_PRODUCT_DELIVERY_STATUS.getDescription()),
-					fieldWithPath("data[].orderProducts[].deliveryFee").type(JsonFieldType.NUMBER)
-						.description(ORDER_PRODUCT_DELIVERY_FEE.getDescription()),
-					fieldWithPath("data[].orderProducts[].deliveredAt").type(JsonFieldType.VARIES)
-						.description(ORDER_PRODUCT_DELIVERED_AT.getDescription()),
+					fieldWithPath("data[].orderProducts[].imageUrl").type(JsonFieldType.STRING)
+						.description(PRODUCT_IMAGE_URL.getDescription()),
 					fieldWithPath("data[].totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_TOTAL_PRICE.getDescription()),
 					fieldWithPath("data[].orderStatus").type(JsonFieldType.STRING)
 						.description(ORDER_STATUS.getDescription()),
+					fieldWithPath("data[].deliveryStatus").type(JsonFieldType.STRING)
+						.description(ORDER_DELIVERY_STATUS.getDescription()),
+					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
+						.description(DELIVERY_FEE.getDescription()),
 					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
 						.description(CREATED_AT.getDescription()),
 					fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING)
-						.description(MODIFIED_AT.getDescription())
+						.description(MODIFIED_AT.getDescription()),
+					fieldWithPath("data[].deliveredAt").type(JsonFieldType.VARIES)
+						.description(DELIVERED_AT.getDescription())
 				).and(PAGE_INFO)
 			));
 		then(orderService).should().findOrdersByOrderer(userId, pageable);
@@ -174,33 +179,32 @@ class OrderApiControllerTest extends RestDocsSupport {
 
 		OrderProductResponse orderProductResponse1 = OrderProductResponse.of(
 			1L,
-			"꽃무늬 셔츠",
-			12000,
+			"깐대파 500g",
+			4500,
 			2,
-			24000,
-			DeliveryStatus.ACCEPT,
-			3000,
-			null
+			9000,
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
 		OrderProductResponse orderProductResponse2 = OrderProductResponse.of(
 			2L,
-			"체크 셔츠",
-			23000,
+			"양파 1.5kg",
+			4290,
 			3,
-			69000,
-			DeliveryStatus.ACCEPT,
-			0,
-			null
+			12870,
+			imagePath + "f33104ba-2e81-4b2e-91f7-658d45ec2d6d.jpg"
 		);
 		OrderResponse response = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user", "01012345678"),
+			OrderResponse.OrdererResponse.of("user", "01011111111"),
 			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
 			List.of(orderProductResponse1, orderProductResponse2),
-			93000,
+			21870,
 			OrderStatus.ORDER,
+			DeliveryStatus.ACCEPT,
+			0,
 			now(),
-			now()
+			now(),
+			null
 		);
 		given(orderService.findOrderByOrderer(response.id(), userId)).willReturn(response);
 
@@ -246,12 +250,12 @@ class OrderApiControllerTest extends RestDocsSupport {
 						.description(ORDER_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("data.orderProducts[].totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_TOTAL_PRICE.getDescription()),
-					fieldWithPath("data.orderProducts[].deliveryStatus").type(JsonFieldType.STRING)
-						.description(ORDER_PRODUCT_DELIVERY_STATUS.getDescription()),
-					fieldWithPath("data.orderProducts[].deliveryFee").type(JsonFieldType.NUMBER)
-						.description(ORDER_PRODUCT_DELIVERY_FEE.getDescription()),
-					fieldWithPath("data.orderProducts[].deliveredAt").type(JsonFieldType.VARIES)
-						.description(ORDER_PRODUCT_DELIVERED_AT.getDescription()),
+					fieldWithPath("data.orderProducts[].imageUrl").type(JsonFieldType.STRING)
+						.description(PRODUCT_IMAGE_URL.getDescription()),
+					fieldWithPath("data.deliveryStatus").type(JsonFieldType.STRING)
+						.description(ORDER_DELIVERY_STATUS.getDescription()),
+					fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
+						.description(DELIVERY_FEE.getDescription()),
 					fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_TOTAL_PRICE.getDescription()),
 					fieldWithPath("data.orderStatus").type(JsonFieldType.STRING)
@@ -259,7 +263,9 @@ class OrderApiControllerTest extends RestDocsSupport {
 					fieldWithPath("data.createdAt").type(JsonFieldType.STRING)
 						.description(CREATED_AT.getDescription()),
 					fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING)
-						.description(MODIFIED_AT.getDescription())
+						.description(MODIFIED_AT.getDescription()),
+					fieldWithPath("data.deliveredAt").type(JsonFieldType.VARIES)
+						.description(DELIVERED_AT.getDescription())
 				)
 			));
 		then(orderService).should().findOrderByOrderer(response.id(), userId);
@@ -272,7 +278,8 @@ class OrderApiControllerTest extends RestDocsSupport {
 		//Given
 		long orderId = 1L;
 		long userId = TestSecurityConfig.USER_ID;
-		OrderRequest request = new OrderRequest(Map.of(1L, 10), "서울 종로구 청와대로 1", "user", "01011112222");
+		OrderProductRequest orderProductRequest = new OrderProductRequest(1L, 10);
+		OrderRequest request = new OrderRequest(List.of(orderProductRequest), "서울 종로구 청와대로 1", "user", "01011112222");
 
 		given(orderService.order(userId, request.toServiceRequest())).willReturn(orderId);
 
@@ -294,8 +301,8 @@ class OrderApiControllerTest extends RestDocsSupport {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
-					subsectionWithPath("productIdToQuantity").type(JsonFieldType.OBJECT)
-						.description("상품 시퀀스 : 수량 맵"),
+					subsectionWithPath("orderProducts").type(JsonFieldType.ARRAY)
+						.description("주문 상품"),
 					fieldWithPath("deliveryAddress").type(JsonFieldType.STRING)
 						.description(DELIVERY_REQUEST_ADDRESS.getDescription()),
 					fieldWithPath("receiverName").type(JsonFieldType.STRING)

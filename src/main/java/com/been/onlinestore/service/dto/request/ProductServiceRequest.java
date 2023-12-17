@@ -2,7 +2,6 @@ package com.been.onlinestore.service.dto.request;
 
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.domain.Product;
-import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.SaleStatus;
 
 public record ProductServiceRequest() {
@@ -17,19 +16,20 @@ public record ProductServiceRequest() {
 		Integer deliveryFee
 	) {
 
-		public static Create of(Long categoryId, String name, Integer price, String description, Integer stockQuantity,
-			SaleStatus saleStatus, Integer deliveryFee) {
+		public static Create of(
+			Long categoryId, String name, Integer price, String description, Integer stockQuantity,
+			SaleStatus saleStatus, Integer deliveryFee
+		) {
 			return new Create(categoryId, name, price, description, stockQuantity, saleStatus, deliveryFee);
 		}
 
-		public Product toEntity(Category category, User seller, String imageName) {
-			return toEntity(category, seller, saleStatus, imageName);
+		public Product toEntity(Category category, String imageName) {
+			return toEntity(category, saleStatus, imageName);
 		}
 
-		public Product toEntity(Category category, User seller, SaleStatus saleStatus, String imageName) {
+		public Product toEntity(Category category, SaleStatus saleStatus, String imageName) {
 			return Product.of(
 				category,
-				seller,
 				name,
 				price,
 				description,
@@ -52,8 +52,10 @@ public record ProductServiceRequest() {
 		Integer deliveryFee
 	) {
 
-		public static Update of(Long categoryId, String name, Integer price, String description, Integer stockQuantity,
-			SaleStatus saleStatus, Integer deliveryFee) {
+		public static Update of(
+			Long categoryId, String name, Integer price, String description, Integer stockQuantity,
+			SaleStatus saleStatus, Integer deliveryFee
+		) {
 			return new Update(categoryId, name, price, description, stockQuantity, saleStatus, deliveryFee);
 		}
 	}

@@ -41,6 +41,9 @@ public enum FieldDescription {
 	ORDER_ID("주문 시퀀스"),
 	ORDER_TOTAL_PRICE("주문 총합"),
 	ORDER_STATUS("주문 상태 (ORDER, CANCEL)"),
+	ORDER_DELIVERY_STATUS("배송 상태 (ACCEPT, PREPARING, DELIVERING, FINAL_DELIVERY)"),
+	DELIVERY_FEE("배송비"),
+	DELIVERED_AT("배송 완료일"),
 
 	ORDERER_ID("주문자 시퀀스"),
 	ORDERER_UID("주문자 아이디"),
@@ -55,9 +58,6 @@ public enum FieldDescription {
 	ORDER_PRODUCT_PRICE("주문 상품 가격"),
 	ORDER_PRODUCT_QUANTITY("주문 상품 수량"),
 	ORDER_PRODUCT_TOTAL_PRICE("주문 상품 총합"),
-	ORDER_PRODUCT_DELIVERY_STATUS("주문 상품 배송 상태 (ACCEPT, PREPARING, DELIVERING, FINAL_DELIVERY)"),
-	ORDER_PRODUCT_DELIVERY_FEE("주문 상품 배송비"),
-	ORDER_PRODUCT_DELIVERED_AT("주문 상품 배송 완료일"),
 
 	USER_ID("회원 시퀀스"),
 	USER_UID("회원 아이디"),
@@ -66,12 +66,9 @@ public enum FieldDescription {
 	USER_EMAIL("회원 이메일"),
 	USER_NICKNAME("회원 닉네임"),
 	USER_PHONE("회원 휴대폰 번호"),
-	USER_ROLE_TYPE("회원 권한 (USER, SELLER, ADMIN)"),
+	USER_ROLE_TYPE("회원 권한 (USER, ADMIN)"),
 	USER_CREATED_AT("회원 가입 날짜"),
-	USER_MODIFIED_AT("최근 회원 정보 수정 날짜"),
-
-	SELLER_ID("판매자 시퀀스"),
-	SELLER_UID("판매자 아이디");
+	USER_MODIFIED_AT("최근 회원 정보 수정 날짜");
 
 	private final String description;
 

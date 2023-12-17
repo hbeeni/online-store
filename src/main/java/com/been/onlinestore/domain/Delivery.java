@@ -56,12 +56,30 @@ public class Delivery {
 		return this.deliveryStatus == DeliveryStatus.ACCEPT;
 	}
 
+	public void startPreparing() {
+		if (canStartPreparing()) {
+			this.deliveryStatus = DeliveryStatus.PREPARING;
+		}
+	}
+
 	public boolean canStartDelivery() {
 		return this.deliveryStatus == DeliveryStatus.PREPARING;
 	}
 
+	public void startDelivery() {
+		if (canStartDelivery()) {
+			this.deliveryStatus = DeliveryStatus.DELIVERING;
+		}
+	}
+
 	public boolean canCompleteDelivery() {
 		return this.deliveryStatus == DeliveryStatus.DELIVERING;
+	}
+
+	public void completeDelivery() {
+		if (canCompleteDelivery()) {
+			this.deliveryStatus = DeliveryStatus.FINAL_DELIVERY;
+		}
 	}
 
 	@Override

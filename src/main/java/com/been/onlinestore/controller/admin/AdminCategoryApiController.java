@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.CategoryRequest;
-import com.been.onlinestore.service.CategoryService;
+import com.been.onlinestore.service.admin.AdminCategoryService;
 import com.been.onlinestore.service.dto.response.admin.AdminCategoryResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -26,22 +26,22 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class AdminCategoryApiController {
 
-	private final CategoryService categoryService;
+	private final AdminCategoryService adminCategoryService;
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<AdminCategoryResponse>>> getCategories() {
-		return ResponseEntity.ok(ApiResponse.success(categoryService.findCategoriesForAdmin()));
+		return ResponseEntity.ok(ApiResponse.success(adminCategoryService.findCategories()));
 	}
 
 	@GetMapping("/{categoryId}")
 	public ResponseEntity<ApiResponse<AdminCategoryResponse>> getCategory(@PathVariable Long categoryId) {
-		return ResponseEntity.ok(ApiResponse.success(categoryService.findCategory(categoryId)));
+		return ResponseEntity.ok(ApiResponse.success(adminCategoryService.findCategory(categoryId)));
 	}
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<Map<String, Long>>> addCategory(
 		@RequestBody @Validated CategoryRequest.Create request) {
-		return ResponseEntity.ok(ApiResponse.successId(categoryService.addCategory(request.toServiceRequest())));
+		return ResponseEntity.ok(ApiResponse.successId(adminCategoryService.addCategory(request.toServiceRequest())));
 	}
 
 	@PutMapping("/{categoryId}")
@@ -50,11 +50,11 @@ public class AdminCategoryApiController {
 		@RequestBody @Validated CategoryRequest.Update request
 	) {
 		return ResponseEntity.ok(
-			ApiResponse.successId(categoryService.updateCategory(categoryId, request.toServiceRequest())));
+			ApiResponse.successId(adminCategoryService.updateCategory(categoryId, request.toServiceRequest())));
 	}
 
 	@DeleteMapping("/{categoryId}")
 	public ResponseEntity<ApiResponse<Map<String, Long>>> deleteCategory(@PathVariable Long categoryId) {
-		return ResponseEntity.ok(ApiResponse.successId(categoryService.deleteCategory(categoryId)));
+		return ResponseEntity.ok(ApiResponse.successId(adminCategoryService.deleteCategory(categoryId)));
 	}
 }

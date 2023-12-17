@@ -2,7 +2,6 @@ package com.been.onlinestore.domain;
 
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,10 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
-import com.been.onlinestore.common.ErrorMessages;
-import com.been.onlinestore.domain.constant.DeliveryStatus;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,10 +32,6 @@ public class OrderProduct {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Product product;
 
-	@ToString.Exclude
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-	private Delivery delivery;
-
 	@Column(nullable = false)
 	private int price;
 
@@ -50,44 +41,23 @@ public class OrderProduct {
 	protected OrderProduct() {
 	}
 
-	private OrderProduct(Order order, Product product, Delivery delivery, int price, int quantity) {
-		this.order = order;
+	private OrderProduct(Product product, int price, int quantity) {
 		this.product = product;
-		this.delivery = delivery;
 		this.price = price;
 		this.quantity = quantity;
 	}
 
-	/**
-	 * 자동으로 배송 정보를 생성하고, 상품의 재고를 감소시킨다.
-	 */
 	public static OrderProduct of(Product product, int quantity) {
 		product.removeStock(quantity);
-		Delivery delivery = Delivery.of(DeliveryStatus.ACCEPT, product.getDeliveryFee(), null);
-		return new OrderProduct(null, product, delivery, product.getPrice(), quantity);
+		return new OrderProduct(product, product.getPrice(), quantity);
 	}
 
 	public int getTotalPrice() {
 		return price * quantity;
 	}
 
-	public void cancel() {
-		if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
-			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER_PRODUCT.getMessage());
-		}
-		product.addStock(this.quantity);
-	}
-
-	public boolean canStartPreparing() {
-		return this.getDelivery().canStartPreparing();
-	}
-
-	public boolean canStartDelivery() {
-		return this.getDelivery().canStartDelivery();
-	}
-
-	public boolean canCompleteDelivery() {
-		return this.getDelivery().canCompleteDelivery();
+	public void addStock() {
+		product.addStock(quantity);
 	}
 
 	@Override

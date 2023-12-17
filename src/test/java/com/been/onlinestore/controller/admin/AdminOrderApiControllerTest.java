@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller.api.seller;
+package com.been.onlinestore.controller.admin;
 
 import static com.been.onlinestore.controller.restdocs.FieldDescription.*;
 import static com.been.onlinestore.controller.restdocs.RestDocsUtils.*;
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -25,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithUserDetails;
 
 import com.been.onlinestore.config.TestSecurityConfig;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
@@ -34,24 +34,25 @@ import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
 import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
-import com.been.onlinestore.service.OrderService;
+import com.been.onlinestore.service.admin.AdminOrderService;
 import com.been.onlinestore.service.dto.response.OrderProductResponse;
 import com.been.onlinestore.service.dto.response.OrderResponse;
 
-@DisplayName("API 컨트롤러 - 주문")
+@DisplayName("어드민 API 컨트롤러 - 주문")
 @Import(TestSecurityConfig.class)
-@WebMvcTest(SellerOrderApiController.class)
-class SellerOrderApiControllerTest extends RestDocsSupport {
+@WebMvcTest(AdminOrderApiController.class)
+class AdminOrderApiControllerTest extends RestDocsSupport {
+
+	@Value("${image.path}")
+	private String imagePath;
 
 	@MockBean
-	private OrderService orderService;
+	private AdminOrderService adminOrderService;
 
-	@WithUserDetails("seller")
 	@DisplayName("[API][GET] 주문 리스트 조회 + 검색 + 페이징")
 	@Test
-	void test_getOrderList_withPagination() throws Exception {
+	void test_getOrders_withPagination() throws Exception {
 		//Given
-		long sellerId = TestSecurityConfig.SELLER_ID;
 		Long searchProductId = 1L;
 		OrderSearchCondition cond = OrderSearchCondition.of(null, searchProductId, null, null);
 
@@ -62,55 +63,57 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
 		OrderProductResponse orderProductResponse1 = OrderProductResponse.of(
-			4L,
-			"체크 셔츠",
-			23000,
-			3,
-			69000,
-			DeliveryStatus.ACCEPT,
-			0,
-			null
+			1L,
+			"깐대파 500g",
+			4500,
+			2,
+			9000,
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
 		OrderProductResponse orderProductResponse2 = OrderProductResponse.of(
-			1L,
-			"체크 셔츠",
-			23000,
-			5,
-			115000,
-			DeliveryStatus.ACCEPT,
-			0,
-			null
+			2L,
+			"양파 1.5kg",
+			4290,
+			3,
+			12870,
+			imagePath + "f33104ba-2e81-4b2e-91f7-658d45ec2d6d.jpg"
 		);
 		OrderResponse response1 = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user1", "01012345678"),
-			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user1", "01012345678"),
+			OrderResponse.OrdererResponse.of("user", "01011111111"),
+			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
 			List.of(orderProductResponse1),
-			85500,
+			4500,
 			OrderStatus.ORDER,
+			DeliveryStatus.ACCEPT,
+			3000,
 			now().minusDays(1),
-			now().minusDays(1)
+			now().minusDays(1),
+			null
 		);
 		OrderResponse response2 = OrderResponse.of(
 			2L,
-			OrderResponse.OrdererResponse.of("user2", "01011112222"),
+			OrderResponse.OrdererResponse.of("user2", "01022222222"),
 			OrderResponse.DeliveryRequestResponse.of("서울 중구 세종대로 110 서울특별시청", "user2", "01011112222"),
 			List.of(orderProductResponse2),
-			24000,
+			12870,
 			OrderStatus.ORDER,
+			DeliveryStatus.ACCEPT,
+			0,
 			now().minusHours(1),
-			now().minusHours(1)
+			now().minusHours(1),
+			null
 		);
 		List<OrderResponse> content = List.of(response2, response1);
 		Page<OrderResponse> page = new PageImpl<>(content, pageable, content.size());
 
-		given(orderService.findOrdersBySeller(sellerId, cond, pageable)).willReturn(page);
+		given(adminOrderService.findOrders(cond, pageable)).willReturn(page);
 
 		//When & Then
 		String prefix = "검색할 ";
 
 		mvc.perform(
-				get("/api/seller/orders")
+				get("/api/admin/orders")
 					.queryParam("productId", String.valueOf(searchProductId))
 					.queryParam("page", String.valueOf(pageNumber))
 					.queryParam("size", String.valueOf(pageSize))
@@ -130,8 +133,8 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
-				"seller/order/getOrders-searching",
-				sellerApiDescription(TagDescription.ORDER, "주문 페이징 조회 + 검색"),
+				"admin/order/getOrders-searching",
+				adminApiDescription(TagDescription.ORDER, "주문 페이징 조회 + 검색"),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(PAGE_REQUEST_PARAM)
@@ -141,7 +144,7 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 						parameterWithName("productId")
 							.description(prefix + PRODUCT_ID.getDescription()).optional(),
 						parameterWithName("deliveryStatus")
-							.description(prefix + ORDER_PRODUCT_DELIVERY_STATUS.getDescription()).optional(),
+							.description(prefix + ORDER_DELIVERY_STATUS.getDescription()).optional(),
 						parameterWithName("orderStatus")
 							.description(prefix + ORDER_STATUS.getDescription()).optional()
 					),
@@ -169,57 +172,57 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 						.description(ORDER_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("data[].orderProducts[].totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_TOTAL_PRICE.getDescription()),
-					fieldWithPath("data[].orderProducts[].deliveryStatus").type(JsonFieldType.STRING)
-						.description(ORDER_PRODUCT_DELIVERY_STATUS.getDescription()),
-					fieldWithPath("data[].orderProducts[].deliveryFee").type(JsonFieldType.NUMBER)
-						.description(ORDER_PRODUCT_DELIVERY_FEE.getDescription()),
-					fieldWithPath("data[].orderProducts[].deliveredAt").type(JsonFieldType.VARIES)
-						.description(ORDER_PRODUCT_DELIVERED_AT.getDescription()),
+					fieldWithPath("data[].orderProducts[].imageUrl").type(JsonFieldType.STRING)
+						.description(PRODUCT_IMAGE_URL.getDescription()),
 					fieldWithPath("data[].totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_TOTAL_PRICE.getDescription()),
 					fieldWithPath("data[].orderStatus").type(JsonFieldType.STRING)
 						.description(ORDER_STATUS.getDescription()),
+					fieldWithPath("data[].deliveryStatus").type(JsonFieldType.STRING)
+						.description(ORDER_DELIVERY_STATUS.getDescription()),
+					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
+						.description(DELIVERY_FEE.getDescription()),
 					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
 						.description(CREATED_AT.getDescription()),
 					fieldWithPath("data[].modifiedAt").type(JsonFieldType.STRING)
-						.description(MODIFIED_AT.getDescription())
+						.description(MODIFIED_AT.getDescription()),
+					fieldWithPath("data[].deliveredAt").type(JsonFieldType.VARIES)
+						.description(DELIVERED_AT.getDescription())
 				).and(PAGE_INFO)
 			));
-		then(orderService).should().findOrdersBySeller(sellerId, cond, pageable);
+		then(adminOrderService).should().findOrders(cond, pageable);
 	}
 
-	@WithUserDetails("seller")
 	@DisplayName("[API][GET] 주문 상세 조회")
 	@Test
 	void test_getOrder() throws Exception {
 		//Given
-		long sellerId = TestSecurityConfig.SELLER_ID;
-
 		OrderProductResponse orderProductResponse = OrderProductResponse.of(
-			2L,
-			"체크 셔츠",
-			23000,
-			3,
-			69000,
-			DeliveryStatus.ACCEPT,
-			0,
-			null
+			1L,
+			"깐대파 500g",
+			4500,
+			2,
+			9000,
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
 		OrderResponse response = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user1", "01012345678"),
-			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user1", "01012345678"),
+			OrderResponse.OrdererResponse.of("user", "01011111111"),
+			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
 			List.of(orderProductResponse),
-			69000,
+			4500,
 			OrderStatus.ORDER,
+			DeliveryStatus.ACCEPT,
+			3000,
 			now().minusDays(1),
-			now().minusDays(1)
+			now().minusDays(1),
+			null
 		);
 
-		given(orderService.findOrderBySeller(response.id(), sellerId)).willReturn(response);
+		given(adminOrderService.findOrder(response.id())).willReturn(response);
 
 		//When & Then
-		mvc.perform(get("/api/seller/orders/{orderId}", response.id()))
+		mvc.perform(get("/api/admin/orders/{orderId}", response.id()))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
@@ -229,8 +232,8 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.orderProducts").isArray())
 			.andExpect(jsonPath("$.data.orderProducts[0].id").value(response.orderProducts().get(0).id()))
 			.andDo(document(
-				"seller/order/getOrder",
-				sellerApiDescription(TagDescription.ORDER, "주문 상세 조회"),
+				"admin/order/getOrder",
+				adminApiDescription(TagDescription.ORDER, "주문 상세 조회"),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -260,12 +263,12 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 						.description(ORDER_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("data.orderProducts[].totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_TOTAL_PRICE.getDescription()),
-					fieldWithPath("data.orderProducts[].deliveryStatus").type(JsonFieldType.STRING)
-						.description(ORDER_PRODUCT_DELIVERY_STATUS.getDescription()),
-					fieldWithPath("data.orderProducts[].deliveryFee").type(JsonFieldType.NUMBER)
-						.description(ORDER_PRODUCT_DELIVERY_FEE.getDescription()),
-					fieldWithPath("data.orderProducts[].deliveredAt").type(JsonFieldType.VARIES)
-						.description(ORDER_PRODUCT_DELIVERED_AT.getDescription()),
+					fieldWithPath("data.orderProducts[].imageUrl").type(JsonFieldType.STRING)
+						.description(PRODUCT_IMAGE_URL.getDescription()),
+					fieldWithPath("data.deliveryStatus").type(JsonFieldType.STRING)
+						.description(ORDER_DELIVERY_STATUS.getDescription()),
+					fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
+						.description(DELIVERY_FEE.getDescription()),
 					fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER)
 						.description(ORDER_TOTAL_PRICE.getDescription()),
 					fieldWithPath("data.orderStatus").type(JsonFieldType.STRING)
@@ -273,8 +276,110 @@ class SellerOrderApiControllerTest extends RestDocsSupport {
 					fieldWithPath("data.createdAt").type(JsonFieldType.STRING)
 						.description(CREATED_AT.getDescription()),
 					fieldWithPath("data.modifiedAt").type(JsonFieldType.STRING)
-						.description(MODIFIED_AT.getDescription())
+						.description(MODIFIED_AT.getDescription()),
+					fieldWithPath("data.deliveredAt").type(JsonFieldType.VARIES)
+						.description(DELIVERED_AT.getDescription())
 				)
 			));
+		then(adminOrderService).should().findOrder(response.id());
+	}
+
+	@DisplayName("[API][PUT] 베송 상태 수정 - 상품 준비 중")
+	@Test
+	void test_prepareOrders() throws Exception {
+		//Given
+		long orderId = 1L;
+
+		given(adminOrderService.startPreparing(orderId)).willReturn(orderId);
+
+		//When & Then
+		mvc.perform(
+				put("/api/admin/orders/{orderId}/deliveries/prepare", orderId)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.id").value(orderId))
+			.andDo(document(
+				"admin/order/prepareOrders",
+				adminApiDescription(TagDescription.ORDER, "상품 준비 중 처리"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("orderId").description(ORDER_ID.getDescription())
+				),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(ORDER_ID.getDescription())
+				)
+			));
+		then(adminOrderService).should().startPreparing(orderId);
+	}
+
+	@DisplayName("[API][PUT] 베송 상태 수정 - 배송 시작")
+	@Test
+	void test_startDelivery() throws Exception {
+		//Given
+		long orderId = 1L;
+
+		given(adminOrderService.startDelivery(orderId)).willReturn(orderId);
+
+		//When & Then
+		mvc.perform(
+				put("/api/admin/orders/{orderId}/deliveries/start", orderId)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.id").value(orderId))
+			.andDo(document(
+				"admin/order/startDelivery",
+				adminApiDescription(TagDescription.ORDER, "배송 중 처리"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("orderId").description(ORDER_ID.getDescription())
+				),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(ORDER_ID.getDescription())
+				)
+			));
+		then(adminOrderService).should().startDelivery(orderId);
+	}
+
+	@DisplayName("[API][PUT] 베송 상태 수정 - 배송 완료")
+	@Test
+	void test_completeDelivery() throws Exception {
+		//Given
+		long orderId = 1L;
+
+		given(adminOrderService.completeDelivery(orderId)).willReturn(orderId);
+
+		//When & Then
+		mvc.perform(
+				put("/api/admin/orders/{orderId}/deliveries/complete", orderId)
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.id").value(orderId))
+			.andDo(document(
+				"admin/order/completeDelivery",
+				adminApiDescription(TagDescription.ORDER, "배송 완료 처리"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("orderId").description(ORDER_ID.getDescription())
+				),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(ORDER_ID.getDescription())
+				)
+			));
+		then(adminOrderService).should().completeDelivery(orderId);
 	}
 }

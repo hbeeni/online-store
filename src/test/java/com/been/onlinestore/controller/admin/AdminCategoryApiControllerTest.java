@@ -27,16 +27,16 @@ import com.been.onlinestore.controller.dto.CategoryRequest;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.RestDocsUtils;
 import com.been.onlinestore.controller.restdocs.TagDescription;
-import com.been.onlinestore.service.CategoryService;
+import com.been.onlinestore.service.admin.AdminCategoryService;
 import com.been.onlinestore.service.dto.response.admin.AdminCategoryResponse;
 
-@DisplayName("API 컨트롤러 - 카테고리 (관리자)")
+@DisplayName("어드민 API 컨트롤러 - 카테고리")
 @Import(TestSecurityConfig.class)
 @WebMvcTest(AdminCategoryApiController.class)
 class AdminCategoryApiControllerTest extends RestDocsSupport {
 
 	@MockBean
-	private CategoryService categoryService;
+	private AdminCategoryService adminCategoryService;
 
 	@DisplayName("[API][GET] 카테고리 조회")
 	@Test
@@ -44,9 +44,9 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 		//Given
 		AdminCategoryResponse response1 = AdminCategoryResponse.of(
 			1L,
-			"상의",
-			"상의입니다.",
-			10,
+			"채소",
+			"채소.",
+			100,
 			now(),
 			"admin",
 			now(),
@@ -54,16 +54,16 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 		);
 		AdminCategoryResponse response2 = AdminCategoryResponse.of(
 			2L,
-			"하의",
-			"하의입니다.",
-			20,
+			"과일",
+			"과일.",
+			200,
 			now(),
 			"admin",
 			now(),
 			"admin"
 		);
 
-		given(categoryService.findCategoriesForAdmin()).willReturn(List.of(response1, response2));
+		given(adminCategoryService.findCategories()).willReturn(List.of(response1, response2));
 
 		//When & Then
 		mvc.perform(get("/api/admin/categories"))
@@ -101,7 +101,7 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 						.description(MODIFIED_BY.getDescription())
 				)
 			));
-		then(categoryService).should().findCategoriesForAdmin();
+		then(adminCategoryService).should().findCategories();
 	}
 
 	@DisplayName("[API][GET] 카테고리 상세 조회")
@@ -110,8 +110,8 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 		//Given
 		AdminCategoryResponse response = AdminCategoryResponse.of(
 			1L,
-			"상의",
-			"상의입니다.",
+			"채소",
+			"채소.",
 			10,
 			now(),
 			"admin",
@@ -119,7 +119,7 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 			"admin"
 		);
 
-		given(categoryService.findCategory(response.id())).willReturn(response);
+		given(adminCategoryService.findCategory(response.id())).willReturn(response);
 
 		//When & Then
 		mvc.perform(get("/api/admin/categories/{categoryId}", response.id()))
@@ -159,7 +159,7 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 						.description(MODIFIED_BY.getDescription())
 				)
 			));
-		then(categoryService).should().findCategory(response.id());
+		then(adminCategoryService).should().findCategory(response.id());
 	}
 
 	@DisplayName("[API][POST] 카테고리 추가")
@@ -168,10 +168,10 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 		//Given
 		long id = 1L;
 		CategoryRequest.Create request = CategoryRequest.Create.builder()
-			.name("상의")
-			.description("상의입니다.")
+			.name("건강식품")
+			.description("건강식품")
 			.build();
-		given(categoryService.addCategory(request.toServiceRequest())).willReturn(id);
+		given(adminCategoryService.addCategory(request.toServiceRequest())).willReturn(id);
 
 		//When & Then
 		mvc.perform(
@@ -202,7 +202,7 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 						.description(ADD.getDescription() + CATEGORY_ID.getDescription())
 				)
 			));
-		then(categoryService).should().addCategory(request.toServiceRequest());
+		then(adminCategoryService).should().addCategory(request.toServiceRequest());
 	}
 
 	@DisplayName("[API][PUT] 카테고리 수정")
@@ -210,11 +210,11 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 	void test_updateCategory() throws Exception {
 		//Given
 		long id = 1L;
-		String name = "updated name";
+		String name = "수정할 카테고리 이름";
 		CategoryRequest.Update request = CategoryRequest.Update.builder()
 			.name(name)
 			.build();
-		given(categoryService.updateCategory(id, request.toServiceRequest())).willReturn(id);
+		given(adminCategoryService.updateCategory(id, request.toServiceRequest())).willReturn(id);
 
 		//When & Then
 		mvc.perform(
@@ -248,7 +248,7 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 						.description(UPDATE.getDescription() + CATEGORY_ID.getDescription())
 				)
 			));
-		then(categoryService).should().updateCategory(id, request.toServiceRequest());
+		then(adminCategoryService).should().updateCategory(id, request.toServiceRequest());
 	}
 
 	@DisplayName("[API][DELETE] 카테고리 삭제")
@@ -256,7 +256,7 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 	void test_deleteCategory() throws Exception {
 		//Given
 		long id = 1L;
-		given(categoryService.deleteCategory(id)).willReturn(id);
+		given(adminCategoryService.deleteCategory(id)).willReturn(id);
 
 		//When & Then
 		mvc.perform(delete("/api/admin/categories/{categoryId}", id))
@@ -278,6 +278,6 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 						.description(DELETE.getDescription() + CATEGORY_ID.getDescription())
 				)
 			));
-		then(categoryService).should().deleteCategory(any());
+		then(adminCategoryService).should().deleteCategory(any());
 	}
 }

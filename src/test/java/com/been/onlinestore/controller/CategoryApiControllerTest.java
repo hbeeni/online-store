@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -44,23 +45,26 @@ class CategoryApiControllerTest extends RestDocsSupport {
 	@MockBean
 	private ProductService productService;
 
+	@Value("${image.path}")
+	private String imagePath;
+
 	@DisplayName("[API][GET] 카테고리 리스트 조회")
 	@Test
-	void test_getAllCategories() throws Exception {
+	void test_getCategories() throws Exception {
 		//Given
 		CategoryResponse response1 = CategoryResponse.of(
 			1L,
-			"상의",
-			"상의입니다.",
+			"채소",
+			"채소.",
 			10
 		);
 		CategoryResponse response2 = CategoryResponse.of(
 			2L,
-			"하의",
-			"하의입니다.",
+			"과일",
+			"과일.",
 			20
 		);
-		given(categoryService.findCategoriesForUser()).willReturn(List.of(response1, response2));
+		given(categoryService.findCategories()).willReturn(List.of(response1, response2));
 
 		//When & Then
 		mvc.perform(get("/api/categories"))
@@ -88,7 +92,7 @@ class CategoryApiControllerTest extends RestDocsSupport {
 						.description(CATEGORY_PRODUCT_COUNT.getDescription())
 				)
 			));
-		then(categoryService).should().findCategoriesForUser();
+		then(categoryService).should().findCategories();
 	}
 
 	@DisplayName("[API][GET] 해당 카테고리의 상품 리스트 조회 + 페이징")
@@ -104,24 +108,24 @@ class CategoryApiControllerTest extends RestDocsSupport {
 		long categoryId = 1L;
 		ProductResponse response1 = ProductResponse.of(
 			1L,
-			"꽃무늬 셔츠",
-			12000,
-			"이쁜 꽃무늬 셔츠입니다.",
+			"깐대파 500g",
+			4500,
+			"시원한 국물 맛의 비밀",
 			3000,
-			"-"
+			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
 		ProductResponse response2 = ProductResponse.of(
 			2L,
-			"체크 셔츠",
-			23000,
-			"이쁜 체크 셔츠입니다.",
+			"양파 1.5kg",
+			4290,
+			"단단하고 아삭한 양파의 매력",
 			0,
-			"-"
+			imagePath + "f33104ba-2e81-4b2e-91f7-658d45ec2d6d.jpg"
 		);
 		List<ProductResponse> content = List.of(response1, response2);
 		Page<ProductResponse> page = new PageImpl<>(content, pageable, content.size());
 
-		given(productService.findProductsInCategoryForUser(categoryId, pageable)).willReturn(page);
+		given(productService.findProductsInCategory(categoryId, pageable)).willReturn(page);
 
 		//When & Then
 		mvc.perform(

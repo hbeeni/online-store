@@ -5,9 +5,11 @@ import static com.been.onlinestore.service.dto.response.JsonFormatConst.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.been.onlinestore.domain.Delivery;
 import com.been.onlinestore.domain.DeliveryRequest;
 import com.been.onlinestore.domain.Order;
 import com.been.onlinestore.domain.User;
+import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
 import com.been.onlinestore.file.ImageStore;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -19,21 +21,28 @@ public record OrderResponse(
 	List<OrderProductResponse> orderProducts,
 	int totalPrice,
 	OrderStatus orderStatus,
+	DeliveryStatus deliveryStatus,
+	int deliveryFee,
 	@JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime createdAt,
-	@JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime modifiedAt
+	@JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime modifiedAt,
+	@JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime deliveredAt
 ) {
 
 	public static OrderResponse of(
 		Long id, OrdererResponse orderer, DeliveryRequestResponse deliveryRequest,
-		List<OrderProductResponse> orderProducts,
-		int totalPrice, OrderStatus orderStatus, LocalDateTime createdAt, LocalDateTime modifiedAt
+		List<OrderProductResponse> orderProducts, int totalPrice, OrderStatus orderStatus,
+		DeliveryStatus deliveryStatus, int deliveryFee,
+		LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime deliveredAt
 	) {
 		return new OrderResponse(
-			id, orderer, deliveryRequest, orderProducts, totalPrice, orderStatus, createdAt, modifiedAt
+			id, orderer, deliveryRequest, orderProducts, totalPrice, orderStatus, deliveryStatus, deliveryFee,
+			createdAt, modifiedAt, deliveredAt
 		);
 	}
 
 	public static OrderResponse from(Order entity, ImageStore imageStore) {
+		Delivery delivery = entity.getDelivery();
+
 		return OrderResponse.of(
 			entity.getId(),
 			OrdererResponse.from(entity.getOrderer()),
@@ -43,8 +52,11 @@ public record OrderResponse(
 				.toList(),
 			entity.getTotalPrice(),
 			entity.getOrderStatus(),
+			delivery.getDeliveryStatus(),
+			delivery.getDeliveryFee(),
 			entity.getCreatedAt(),
-			entity.getModifiedAt()
+			entity.getModifiedAt(),
+			delivery.getDeliveredAt()
 		);
 	}
 

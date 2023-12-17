@@ -46,7 +46,6 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 			.select(getAdminProductResponseProjection())
 			.from(product)
 			.leftJoin(product.category, category)
-			.join(product.seller, user)
 			.where(sellerIdEq(sellerId),
 				categoryIdEq(cond.categoryId()),
 				productNameContains(cond.name()),
@@ -61,7 +60,6 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 			.select(product.count())
 			.from(product)
 			.leftJoin(product.category, category)
-			.join(product.seller, user)
 			.where(sellerIdEq(sellerId),
 				categoryIdEq(cond.categoryId()),
 				productNameContains(cond.name()),
@@ -77,7 +75,6 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 			.select(getAdminProductResponseProjection())
 			.from(product)
 			.leftJoin(product.category, category)
-			.join(product.seller, user)
 			.where(productIdEq(productId),
 				sellerIdEq(sellerId)
 			)
@@ -89,10 +86,6 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 		return Projections.constructor(AdminProductResponse.class,
 			product.id,
 			category.name,
-			Projections.constructor(AdminProductResponse.Seller.class,
-				user.id,
-				user.uid
-			),
 			product.name,
 			product.price,
 			product.description,

@@ -34,12 +34,12 @@ public class ProductApiController {
 		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		return ResponseEntity.ok(
-			ApiResponse.pagination(productService.findProductsOnSaleForUser(searchName, pageable)));
+			ApiResponse.pagination(productService.findProductsOnSale(searchName, pageable)));
 	}
 
 	@GetMapping("/{productId}")
 	public ResponseEntity<ApiResponse<CategoryProductResponse>> getProduct(@PathVariable Long productId) {
-		return ResponseEntity.ok(ApiResponse.success(productService.findProductOnSaleForUser(productId)));
+		return ResponseEntity.ok(ApiResponse.success(productService.findProductOnSale(productId)));
 	}
 
 	@GetMapping(value = "/img/{imageName}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})

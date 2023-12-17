@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
-import com.been.onlinestore.service.UserService;
+import com.been.onlinestore.service.admin.AdminUserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class PrincipalDetailsService implements UserDetailsService {
 
-	private final UserService userService;
+	private final AdminUserService adminUserService;
 
 	@Override
 	public UserDetails loadUserByUsername(String uid) throws UsernameNotFoundException {
-		return userService.searchUser(uid)
+		return adminUserService.searchUser(uid)
 			.map(PrincipalDetails::from)
 			.orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
 	}
