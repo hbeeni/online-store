@@ -14,7 +14,6 @@ import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
-import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
 import com.been.onlinestore.repository.querydsl.product.ProductSearchCondition;
 import com.been.onlinestore.service.dto.request.ProductServiceRequest;
@@ -30,17 +29,16 @@ public class AdminProductService {
 
 	private final ProductRepository productRepository;
 	private final CategoryRepository categoryRepository;
-	private final UserRepository userRepository;
 	private final ImageStore imageStore;
 
 	@Transactional(readOnly = true)
 	public Page<AdminProductResponse> findProducts(ProductSearchCondition cond, Pageable pageable) {
-		return productRepository.searchProducts(null, cond, pageable);
+		return productRepository.searchProducts(cond, pageable);
 	}
 
 	@Transactional(readOnly = true)
 	public AdminProductResponse findProduct(Long id) {
-		return productRepository.searchProduct(id, null)
+		return productRepository.searchProduct(id)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
 	}
 

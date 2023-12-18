@@ -48,14 +48,14 @@ class AdminProductServiceTest {
 	void test_findProducts() {
 		//Given
 		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
-		given(productRepository.searchProducts(null, null, pageable)).willReturn(Page.empty());
+		given(productRepository.searchProducts(null, pageable)).willReturn(Page.empty());
 
 		//When
 		Page<AdminProductResponse> result = sut.findProducts(null, pageable);
 
 		//Then
 		assertThat(result).isEmpty();
-		then(productRepository).should().searchProducts(null, null, pageable);
+		then(productRepository).should().searchProducts(null, pageable);
 	}
 
 	@DisplayName("검색 조건과 함께 상품을 검색하면, 검색 조건에 맞는 상품의 페이지를 반환한다.")
@@ -64,14 +64,14 @@ class AdminProductServiceTest {
 		//Given
 		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
 		ProductSearchCondition searchCondition = ProductSearchCondition.of(null, "product", null);
-		given(productRepository.searchProducts(null, searchCondition, pageable)).willReturn(Page.empty());
+		given(productRepository.searchProducts(searchCondition, pageable)).willReturn(Page.empty());
 
 		//When
 		Page<AdminProductResponse> result = sut.findProducts(searchCondition, pageable);
 
 		//Then
 		assertThat(result).isEmpty();
-		then(productRepository).should().searchProducts(null, searchCondition, pageable);
+		then(productRepository).should().searchProducts(searchCondition, pageable);
 	}
 
 	@DisplayName("상품을 조회하면, 상품을 반환한다.")
@@ -79,14 +79,14 @@ class AdminProductServiceTest {
 	void test_findProductInfo() {
 		//Given
 		long id = 1L;
-		given(productRepository.searchProduct(id, null)).willReturn(Optional.of(createAdminProductResponse(id)));
+		given(productRepository.searchProduct(id)).willReturn(Optional.of(createAdminProductResponse(id)));
 
 		//When
 		AdminProductResponse result = sut.findProduct(id);
 
 		//Then
 		assertThat(result).isNotNull();
-		then(productRepository).should().searchProduct(id, null);
+		then(productRepository).should().searchProduct(id);
 	}
 
 	@DisplayName("상품이 없으면, 예외를 던진다.")
@@ -94,12 +94,12 @@ class AdminProductServiceTest {
 	void test_findProductInfo_throwsEntityNotFoundException() {
 		//Given
 		long id = 1L;
-		given(productRepository.searchProduct(id, null)).willReturn(Optional.empty());
+		given(productRepository.searchProduct(id)).willReturn(Optional.empty());
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findProduct(id))
 			.isInstanceOf(EntityNotFoundException.class);
-		then(productRepository).should().searchProduct(id, null);
+		then(productRepository).should().searchProduct(id);
 	}
 
 	@DisplayName("상품을 등록하면, 등록된 상품의 id를 반환한다.")

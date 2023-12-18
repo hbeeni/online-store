@@ -2,7 +2,6 @@ package com.been.onlinestore.repository.querydsl.product;
 
 import static com.been.onlinestore.domain.QCategory.*;
 import static com.been.onlinestore.domain.QProduct.*;
-import static com.been.onlinestore.domain.QUser.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.util.ArrayList;
@@ -41,13 +40,12 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 	}
 
 	@Override
-	public Page<AdminProductResponse> searchProducts(Long sellerId, ProductSearchCondition cond, Pageable pageable) {
+	public Page<AdminProductResponse> searchProducts(ProductSearchCondition cond, Pageable pageable) {
 		List<AdminProductResponse> content = queryFactory
 			.select(getAdminProductResponseProjection())
 			.from(product)
 			.leftJoin(product.category, category)
-			.where(sellerIdEq(sellerId),
-				categoryIdEq(cond.categoryId()),
+			.where(categoryIdEq(cond.categoryId()),
 				productNameContains(cond.name()),
 				saleStatusEq(cond.saleStatus())
 			)
@@ -60,8 +58,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 			.select(product.count())
 			.from(product)
 			.leftJoin(product.category, category)
-			.where(sellerIdEq(sellerId),
-				categoryIdEq(cond.categoryId()),
+			.where(categoryIdEq(cond.categoryId()),
 				productNameContains(cond.name()),
 				saleStatusEq(cond.saleStatus())
 			);
@@ -70,14 +67,12 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 	}
 
 	@Override
-	public Optional<AdminProductResponse> searchProduct(Long productId, Long sellerId) {
+	public Optional<AdminProductResponse> searchProduct(Long productId) {
 		AdminProductResponse adminProductResponse = queryFactory
 			.select(getAdminProductResponseProjection())
 			.from(product)
 			.leftJoin(product.category, category)
-			.where(productIdEq(productId),
-				sellerIdEq(sellerId)
-			)
+			.where(productIdEq(productId))
 			.fetchOne();
 		return Optional.ofNullable(adminProductResponse);
 	}
@@ -103,10 +98,6 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
 	private BooleanExpression productIdEq(Long productId) {
 		return productId != null ? product.id.eq(productId) : null;
-	}
-
-	private BooleanExpression sellerIdEq(Long sellerId) {
-		return sellerId != null ? user.id.eq(sellerId) : null;
 	}
 
 	private BooleanExpression categoryIdEq(Long categoryId) {
