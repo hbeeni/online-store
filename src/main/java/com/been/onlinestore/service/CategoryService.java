@@ -21,8 +21,7 @@ public class CategoryService {
 
 	@Transactional(readOnly = true)
 	public List<CategoryResponse> findCategories() {
-		return categoryRepository.findAll().stream()
-			.filter(category -> !category.getProducts().isEmpty())
+		return categoryRepository.findAllByProductOnSale().stream()
 			.map(CategoryResponse::from)
 			.toList();
 	}
