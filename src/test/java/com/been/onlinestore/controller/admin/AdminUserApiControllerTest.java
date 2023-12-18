@@ -52,31 +52,31 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 		int pageSize = 10;
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.asc(sortName)));
-		UserResponse userResponse = UserResponse.of(
+		UserResponse userResponse1 = UserResponse.of(
 			1L,
-			"user",
+			"user1",
 			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-			"user",
-			"user@mail.com",
-			"test user",
+			"user1",
+			"user1@mail.com",
+			"test user1",
 			"01012345678",
 			RoleType.USER,
 			LocalDateTime.now().minusDays(3),
 			now()
 		);
-		UserResponse sellerResponse = UserResponse.of(
+		UserResponse userResponse2 = UserResponse.of(
 			2L,
-			"seller",
+			"user2",
 			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-			"seller",
-			"seller@mail.com",
-			"test user",
+			"user2",
+			"user2@mail.com",
+			"test user2",
 			"01012123434",
 			RoleType.USER,
 			now().minusDays(30),
 			now().minusDays(22)
 		);
-		List<UserResponse> content = List.of(sellerResponse, userResponse);
+		List<UserResponse> content = List.of(userResponse1, userResponse2);
 		Page<UserResponse> page = new PageImpl<>(content, pageable, content.size());
 
 		given(adminUserService.findUsers(pageable)).willReturn(page);
@@ -92,9 +92,9 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
 			.andExpect(jsonPath("$.data").isArray())
-			.andExpect(jsonPath("$.data[0].id").value(sellerResponse.id()))
-			.andExpect(jsonPath("$.data[0].uid").value(sellerResponse.uid()))
-			.andExpect(jsonPath("$.data[0].name").value(sellerResponse.name()))
+			.andExpect(jsonPath("$.data[0].id").value(userResponse1.id()))
+			.andExpect(jsonPath("$.data[0].uid").value(userResponse1.uid()))
+			.andExpect(jsonPath("$.data[0].name").value(userResponse1.name()))
 			.andExpect(jsonPath("$.data[0].password").doesNotExist())
 			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
 			.andExpect(jsonPath("$.page.size").value(page.getSize()))
