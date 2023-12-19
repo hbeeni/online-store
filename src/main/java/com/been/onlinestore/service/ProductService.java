@@ -2,10 +2,6 @@ package com.been.onlinestore.service;
 
 import static org.springframework.util.StringUtils.*;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.data.domain.Page;
@@ -14,10 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.been.onlinestore.common.ErrorMessages;
-import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.ProductRepository;
-import com.been.onlinestore.service.dto.response.CartResponse;
 import com.been.onlinestore.service.dto.response.CategoryProductResponse;
 import com.been.onlinestore.service.dto.response.ProductResponse;
 
@@ -52,19 +46,5 @@ public class ProductService {
 		return productRepository.findOnSaleById(id)
 			.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())))
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
-	}
-
-	public CartResponse findProductsInCart(Map<Long, Integer> productIdToQuantityMap) {
-		List<Product> products = productRepository.findAllOnSaleById(productIdToQuantityMap.keySet());
-		int deliveryFee = getDeliveryFee(products);
-
-		return CartResponse.from(products, productIdToQuantityMap, deliveryFee);
-	}
-
-	private static int getDeliveryFee(List<Product> products) {
-		return products.stream()
-			.map(Product::getDeliveryFee)
-			.min(Comparator.naturalOrder())
-			.orElseGet(() -> 3000);
 	}
 }

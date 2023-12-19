@@ -1,0 +1,184 @@
+package com.been.onlinestore.service;
+
+import static com.been.onlinestore.util.ProductTestDataUtil.*;
+import static com.been.onlinestore.util.UserTestDataUtil.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import com.been.onlinestore.config.TestSecurityConfig;
+import com.been.onlinestore.domain.CartProduct;
+import com.been.onlinestore.repository.CartProductRepository;
+import com.been.onlinestore.repository.ProductRepository;
+import com.been.onlinestore.repository.UserRepository;
+import com.been.onlinestore.service.dto.request.CartProductServiceRequest;
+import com.been.onlinestore.service.dto.response.CartProductResponse;
+import com.been.onlinestore.service.dto.response.CartResponse;
+
+@DisplayName("비즈니스 로직 - 장바구니 상품")
+@ExtendWith(MockitoExtension.class)
+class CartProductServiceTest {
+
+	private static final Long userId = TestSecurityConfig.USER_ID;
+
+	@Mock
+	private CartProductRepository cartProductRepository;
+	@Mock
+	private UserRepository userRepository;
+	@Mock
+	private ProductRepository productRepository;
+
+	@InjectMocks
+	private CartProductService sut;
+
+	@DisplayName("장바구니에 있는 모든 상품을 조회한다.")
+	@Test
+	void test_findCartProducts() {
+		//Given
+		Long productId = 1L;
+		int quantity = 1;
+
+		given(cartProductRepository.findAllByUserId(userId))
+			.willReturn(List.of(createCartProduct(productId, quantity)));
+
+		//When
+		CartResponse result = sut.findCartProducts(userId);
+
+		//Then
+		assertThat(result).isNotNull();
+		then(cartProductRepository).should().findAllByUserId(userId);
+	}
+
+	@DisplayName("장바구니에 상품을 추가한다.")
+	@Test
+	void test_addCartProduct() {
+		//Given
+		Long productId = 1L;
+		int quantity = 1;
+		CartProductServiceRequest.Create serviceRequest = CartProductServiceRequest.Create.of(productId, quantity);
+		CartProduct savedCartProduct = createSavedCartProduct(productId, quantity);
+
+		given(productRepository.findOnSaleById(productId)).willReturn(Optional.of(createProduct(productId)));
+		given(cartProductRepository.findByUserIdAndProductId(userId, productId)).willReturn(Optional.empty());
+		given(userRepository.getReferenceById(userId)).willReturn(createUser(userId));
+		given(cartProductRepository.save(any())).willReturn(savedCartProduct);
+
+		//When
+		CartProductResponse result = sut.addCartProduct(userId, serviceRequest);
+
+		//Then
+		assertThat(result.quantity()).isEqualTo(quantity);
+		then(productRepository).should().findOnSaleById(productId);
+		then(cartProductRepository).should().findByUserIdAndProductId(userId, productId);
+		then(userRepository).should().getReferenceById(userId);
+		then(cartProductRepository).should().save(any());
+	}
+
+	@DisplayName("장바구니에 상품을 추가할 때, 해당 상품이 이미 장바구니에 존재하면 수량을 추가한다.")
+	@Test
+	void test_addCartProduct_whenCartProductIsAlreadyExisting() {
+		//Given
+		Long productId = 1L;
+		int originalQuantity = 1;
+		int addQuantity = 2;
+		CartProductServiceRequest.Create serviceRequest = CartProductServiceRequest.Create.of(productId, addQuantity);
+
+		given(productRepository.findOnSaleById(productId)).willReturn(Optional.of(createProduct(productId)));
+		given(cartProductRepository.findByUserIdAndProductId(userId, productId))
+			.willReturn(Optional.of(createCartProduct(productId, originalQuantity)));
+
+		//When
+		CartProductResponse result = sut.addCartProduct(userId, serviceRequest);
+
+		//Then
+		assertThat(result.quantity()).isEqualTo(originalQuantity + addQuantity);
+		then(productRepository).should().findOnSaleById(productId);
+		then(cartProductRepository).should().findByUserIdAndProductId(userId, productId);
+	}
+
+	@DisplayName("장바구니에 상품을 추가할 때, 해당 상품이 존재하지 않으면 예외가 발생한다.")
+	@Test
+	void test_addCartProduct_throwsEntityNotFoundException() {
+		//Given
+		Long productId = 1L;
+		int addQuantity = 2;
+		CartProductServiceRequest.Create serviceRequest = CartProductServiceRequest.Create.of(productId, addQuantity);
+
+		given(productRepository.findOnSaleById(productId)).willReturn(Optional.empty());
+
+		//When & Then
+		assertThatThrownBy(() -> sut.addCartProduct(userId, serviceRequest))
+			.isInstanceOf(EntityNotFoundException.class);
+		then(productRepository).should().findOnSaleById(productId);
+		then(cartProductRepository).shouldHaveNoInteractions();
+		then(userRepository).shouldHaveNoInteractions();
+	}
+
+	@DisplayName("장바구니에 담긴 상품의 수량을 변경한다.")
+	@Test
+	void test_updateCartProductQuantity() {
+		//Given
+		Long cartProductId = 1L;
+		int updateQuantity = 1;
+		given(cartProductRepository.findCartProduct(userId, cartProductId))
+			.willReturn(Optional.of(createCartProduct(1L, updateQuantity)));
+
+		//When
+		CartProductResponse result = sut.updateCartProductQuantity(userId, cartProductId, updateQuantity);
+
+		//Then
+		assertThat(result.quantity()).isEqualTo(updateQuantity);
+		then(cartProductRepository).should().findCartProduct(userId, cartProductId);
+	}
+
+	@DisplayName("장바구니에 담긴 상품의 수량을 변경할 때, 해당 장바구니 상품이 존재하지 않으면 예외를 던진다.")
+	@Test
+	void test_updateCartProductQuantity_throwsEntityNotFoundException() {
+		//Given
+		Long cartProductId = 1L;
+		int updateQuantity = 1;
+		given(cartProductRepository.findCartProduct(userId, cartProductId)).willReturn(Optional.empty());
+
+		//When & Then
+		assertThatThrownBy(() -> sut.updateCartProductQuantity(userId, cartProductId, updateQuantity))
+			.isInstanceOf(EntityNotFoundException.class);
+
+		then(cartProductRepository).should().findCartProduct(userId, cartProductId);
+	}
+
+	@DisplayName("장바구니에 담긴 상품을 (복수) 삭제한다.")
+	@Test
+	void test_deleteCartProducts() {
+		//Given
+		List<Long> cartProductIds = List.of(1L);
+		willDoNothing().given(cartProductRepository).deleteCartProducts(userId, cartProductIds);
+
+		//When
+		sut.deleteCartProducts(userId, cartProductIds);
+
+		//Then
+		then(cartProductRepository).should().deleteCartProducts(userId, cartProductIds);
+	}
+
+	private static CartProduct createCartProduct(Long productId, int quantity) {
+		return CartProduct.of(createUser(userId), createProduct(productId), quantity);
+	}
+
+	private static CartProduct createSavedCartProduct(Long productId, int quantity) {
+		CartProduct cartProduct = CartProduct.of(createUser(userId), createProduct(productId), quantity);
+		ReflectionTestUtils.setField(cartProduct, "id", 1L);
+		return cartProduct;
+	}
+}
