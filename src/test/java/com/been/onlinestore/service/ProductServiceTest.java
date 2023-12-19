@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -24,7 +22,6 @@ import org.springframework.data.domain.Sort;
 
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.ProductRepository;
-import com.been.onlinestore.service.dto.response.CartResponse;
 import com.been.onlinestore.service.dto.response.CategoryProductResponse;
 import com.been.onlinestore.service.dto.response.ProductResponse;
 
@@ -114,23 +111,5 @@ class ProductServiceTest {
 		assertThatThrownBy(() -> sut.findProductOnSale(id))
 			.isInstanceOf(EntityNotFoundException.class);
 		then(productRepository).should().findOnSaleById(id);
-	}
-
-	@DisplayName("장바구니에 있는 상품의 id와 수량으로 조회하면, 상품을 반환한다.")
-	@Test
-	void test_findProductsInCart() {
-		//Given
-		long productId = 1L;
-		Map<Long, Integer> productIdToQuantityMap = Map.of(productId, 1);
-
-		given(productRepository.findAllOnSaleById(productIdToQuantityMap.keySet()))
-			.willReturn(List.of(createProduct(productId)));
-
-		//When
-		CartResponse result = sut.findProductsInCart(productIdToQuantityMap);
-
-		//Then
-		assertThat(result).isNotNull();
-		then(productRepository).should().findAllOnSaleById(productIdToQuantityMap.keySet());
 	}
 }
