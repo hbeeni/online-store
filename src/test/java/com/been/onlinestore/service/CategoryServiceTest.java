@@ -28,9 +28,9 @@ class CategoryServiceTest {
 
 	@DisplayName("판매 중인 상품이 존재하는 모든 카테고리 정보를 반환한다.")
 	@Test
-	void test_findCategoriesForUser() {
+	void test_findCategories() {
 		//Given
-		given(categoryRepository.findAll()).willReturn(List.of(
+		given(categoryRepository.findAllByProductOnSale()).willReturn(List.of(
 			createCategory("채소"),
 			createCategory("과일"),
 			createCategory("수산")
@@ -40,7 +40,7 @@ class CategoryServiceTest {
 		List<CategoryResponse> result = sut.findCategories();
 
 		//Then
-		assertThat(result).isEmpty();
-		then(categoryRepository).should().findAll();
+		assertThat(result).isNotNull();
+		then(categoryRepository).should().findAllByProductOnSale();
 	}
 }
