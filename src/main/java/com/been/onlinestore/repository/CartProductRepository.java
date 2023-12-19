@@ -1,5 +1,6 @@
 package com.been.onlinestore.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,8 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Long> 
 		+ "join fetch cp.user u "
 		+ "where u.id = :userId")
 	List<CartProduct> findAllByUserId(@Param("userId") Long userId);
+
+	List<CartProduct> findAllByModifiedAtBefore(LocalDateTime modifiedAt);
 
 	@Query("select cp from CartProduct cp "
 		+ "join fetch cp.product p "

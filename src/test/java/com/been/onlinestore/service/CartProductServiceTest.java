@@ -172,8 +172,34 @@ class CartProductServiceTest {
 		then(cartProductRepository).should().deleteCartProducts(userId, cartProductIds);
 	}
 
+	@DisplayName("30일 전에 담긴 장바구니 상품을 삭제한다.")
+	@Test
+	void test_cleanUpExpiredCartProducts() {
+		//Given
+		Long cartProductId1 = 1L;
+		Long cartProductId2 = 2L;
+		CartProduct cartProduct1 = createSavedCartProduct(cartProductId1);
+		CartProduct cartProduct2 = createSavedCartProduct(cartProductId2);
+
+		given(cartProductRepository.findAllByModifiedAtBefore(any())).willReturn(List.of(cartProduct1, cartProduct2));
+		willDoNothing().given(cartProductRepository).deleteAllByIdInBatch(List.of(cartProductId1, cartProductId2));
+
+		//When
+		sut.cleanUpExpiredCartProducts();
+
+		//Then
+		then(cartProductRepository).should().findAllByModifiedAtBefore(any());
+		then(cartProductRepository).should().deleteAllByIdInBatch(List.of(cartProductId1, cartProductId2));
+	}
+
 	private static CartProduct createCartProduct(Long productId, int quantity) {
 		return CartProduct.of(createUser(userId), createProduct(productId), quantity);
+	}
+
+	private static CartProduct createSavedCartProduct(Long cartProductId) {
+		CartProduct cartProduct = CartProduct.of(createUser(userId), createProduct(1L), 1);
+		ReflectionTestUtils.setField(cartProduct, "id", cartProductId);
+		return cartProduct;
 	}
 
 	private static CartProduct createSavedCartProduct(Long productId, int quantity) {

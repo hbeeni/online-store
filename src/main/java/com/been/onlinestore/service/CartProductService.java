@@ -1,11 +1,13 @@
 package com.been.onlinestore.service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,9 @@ import com.been.onlinestore.service.dto.response.CartProductResponse;
 import com.been.onlinestore.service.dto.response.CartResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -68,6 +72,19 @@ public class CartProductService {
 
 	public void deleteCartProducts(Long userId, List<Long> cartProductIds) {
 		cartProductRepository.deleteCartProducts(userId, cartProductIds);
+	}
+
+	@Scheduled(cron = "0 0 0 * * *")
+	public void cleanUpExpiredCartProducts() {
+		log.info("CartProductService.cleanUpExpiredCartProducts 실행");
+
+		LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+		List<CartProduct> expiredCartProducts = cartProductRepository.findAllByModifiedAtBefore(thirtyDaysAgo);
+		List<Long> expiredCartProductIds = expiredCartProducts.stream()
+			.map(CartProduct::getId)
+			.toList();
+
+		cartProductRepository.deleteAllByIdInBatch(expiredCartProductIds);
 	}
 
 	private static int getDeliveryFee(List<CartProduct> cartProducts) {
