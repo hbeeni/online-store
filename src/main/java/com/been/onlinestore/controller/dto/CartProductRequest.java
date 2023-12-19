@@ -4,11 +4,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
-import lombok.Builder;
+import com.been.onlinestore.service.dto.request.CartProductServiceRequest;
 
 public record CartProductRequest() {
 
-	@Builder
 	public record Create(
 		@NotNull @Positive
 		Long productId,
@@ -16,9 +15,15 @@ public record CartProductRequest() {
 		@NotNull @PositiveOrZero
 		Integer productQuantity
 	) {
+
+		public CartProductServiceRequest.Create toServiceRequest() {
+			return CartProductServiceRequest.Create.of(
+				productId,
+				productQuantity
+			);
+		}
 	}
 
-	@Builder
 	public record Update(
 		@NotNull @PositiveOrZero
 		Integer productQuantity
