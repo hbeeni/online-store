@@ -26,7 +26,7 @@ spring:
 my:
   jwt:
     secret: ${JWT_SECRET}
-    expiration-time: 600000
+    expiration-time: 1800000 # 1000 * 60 * 30, 30분
     token-prefix: "Bearer "
     header-string: Authorization
 
