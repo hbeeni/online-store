@@ -69,14 +69,14 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ApiErrorResponse<Void>> runtimeEx(RuntimeException ex) {
 		Throwable throwable = ex.getCause() == null ? ex : ex.getCause();
-		log.error(throwable.getMessage());
+		log.error(throwable.getMessage(), throwable);
 		return ResponseEntity.badRequest().body(ApiErrorResponse.fail(ex));
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiErrorResponse<Void>> internalServerError(Exception ex) {
 		Throwable throwable = ex.getCause() == null ? ex : ex.getCause();
-		log.error(throwable.getMessage());
+		log.error(throwable.getMessage(), throwable);
 		return ResponseEntity.internalServerError().body(ApiErrorResponse.error(ex));
 	}
 }
