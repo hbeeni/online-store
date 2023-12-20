@@ -1,6 +1,6 @@
-package com.been.onlinestore.config.jwt;
+package com.been.onlinestore.security.jwt.filter;
 
-import static com.been.onlinestore.config.jwt.JwtUtils.*;
+import static com.been.onlinestore.security.jwt.util.JwtUtils.*;
 
 import java.io.IOException;
 
@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.been.onlinestore.security.jwt.exception.JwtErrorCode;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -21,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+		throws ServletException, IOException {
 		String requestURI = request.getRequestURI();
 
 		try {

@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.config.jwt.JwtProperties;
-import com.been.onlinestore.config.jwt.JwtTokenProvider;
 import com.been.onlinestore.controller.dto.ApiResponse;
 import com.been.onlinestore.controller.dto.UserRequest;
+import com.been.onlinestore.security.jwt.util.JwtProperties;
+import com.been.onlinestore.security.jwt.util.JwtTokenProvider;
 import com.been.onlinestore.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -51,9 +51,11 @@ public class AuthApiController {
 
 	private String createJwtToken(String uid, String password, HttpServletResponse response) {
 		Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(uid, password);
-		Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
-		String jwt = jwtTokenProvider.createToken(authenticationResponse);
+		Authentication authentication = authenticationManager.authenticate(authenticationRequest);
+
+		String jwt = jwtTokenProvider.createToken(authentication);
 		response.addHeader(properties.headerString(), properties.tokenPrefix() + jwt);
+
 		return jwt;
 	}
 

@@ -1,4 +1,4 @@
-package com.been.onlinestore.config.jwt;
+package com.been.onlinestore.security.jwt.util;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

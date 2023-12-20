@@ -1,4 +1,4 @@
-package com.been.onlinestore.config.jwt;
+package com.been.onlinestore.security.jwt.filter;
 
 import java.io.IOException;
 
@@ -12,6 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.been.onlinestore.security.jwt.util.JwtProperties;
+import com.been.onlinestore.security.jwt.util.JwtTokenProvider;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,12 +26,12 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+		throws ServletException, IOException {
 		String jwt = resolveToken(request);
 		String requestURI = request.getRequestURI();
 
-		if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
+		if (StringUtils.hasText(jwt)) {
 			Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			log.debug("Security Context에 '{}' 인증 정보를 저장했습니다. uri: {}", authentication, requestURI);

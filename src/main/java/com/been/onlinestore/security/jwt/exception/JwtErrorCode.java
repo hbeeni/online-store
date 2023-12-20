@@ -1,4 +1,4 @@
-package com.been.onlinestore.config.jwt;
+package com.been.onlinestore.security.jwt.exception;
 
 import org.springframework.http.HttpStatus;
 

@@ -4,8 +4,10 @@ import java.util.Map;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -23,6 +25,13 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler({EntityNotFoundException.class, IllegalArgumentException.class})
 	public ResponseEntity<ApiErrorResponse<Void>> badRequest(Exception ex) {
 		return ResponseEntity.badRequest().body(ApiErrorResponse.fail(ex));
+	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<ApiErrorResponse<Void>> failAuthentication(Exception ex) {
+		Throwable throwable = ex.getCause() == null ? ex : ex.getCause();
+		log.error(throwable.getMessage(), throwable);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiErrorResponse.fail("로그인에 실패하였습니다."));
 	}
 
 	/**
@@ -60,14 +69,14 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ApiErrorResponse<Void>> runtimeEx(RuntimeException ex) {
 		Throwable throwable = ex.getCause() == null ? ex : ex.getCause();
-		log.error(throwable.getMessage());
+		log.error(throwable.getMessage(), throwable);
 		return ResponseEntity.badRequest().body(ApiErrorResponse.fail(ex));
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiErrorResponse<Void>> internalServerError(Exception ex) {
 		Throwable throwable = ex.getCause() == null ? ex : ex.getCause();
-		log.error(throwable.getMessage());
+		log.error(throwable.getMessage(), throwable);
 		return ResponseEntity.internalServerError().body(ApiErrorResponse.error(ex));
 	}
 }
