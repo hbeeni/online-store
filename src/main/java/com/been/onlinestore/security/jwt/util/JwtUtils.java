@@ -1,10 +1,11 @@
-package com.been.onlinestore.config.jwt;
+package com.been.onlinestore.security.jwt.util;
 
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
 import com.been.onlinestore.exception.ApiErrorResponse;
+import com.been.onlinestore.security.jwt.exception.JwtErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class JwtUtils {
@@ -13,6 +14,9 @@ public abstract class JwtUtils {
 
 	static {
 		mapper = new ObjectMapper();
+	}
+
+	private JwtUtils() {
 	}
 
 	public static void setErrorResponse(HttpServletResponse response, JwtErrorCode code) throws IOException {

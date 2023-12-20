@@ -1,4 +1,4 @@
-package com.been.onlinestore.config.auth;
+package com.been.onlinestore.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

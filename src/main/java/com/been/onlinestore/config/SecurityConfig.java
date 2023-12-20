@@ -19,12 +19,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.been.onlinestore.config.jwt.CustomAccessDeniedHandler;
-import com.been.onlinestore.config.jwt.CustomAuthenticationEntryPoint;
-import com.been.onlinestore.config.jwt.JwtProperties;
-import com.been.onlinestore.config.jwt.JwtSecurityConfig;
-import com.been.onlinestore.config.jwt.JwtTokenProvider;
 import com.been.onlinestore.domain.constant.RoleType;
+import com.been.onlinestore.security.jwt.exception.CustomAccessDeniedHandler;
+import com.been.onlinestore.security.jwt.exception.CustomAuthenticationEntryPoint;
+import com.been.onlinestore.security.jwt.util.JwtProperties;
+import com.been.onlinestore.security.jwt.util.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,8 +42,9 @@ public class SecurityConfig {
 	public SecurityFilterChain jsonSecurityFilterChain(HttpSecurity http) throws Exception {
 		return http
 			.csrf().disable()
-			.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(
-				corsConfigurationSource()))
+			.cors(httpSecurityCorsConfigurer ->
+				httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource())
+			)
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.formLogin().disable()
@@ -76,8 +76,9 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
-		PasswordEncoder passwordEncoder) {
+	public AuthenticationManager authenticationManager(
+		UserDetailsService userDetailsService, PasswordEncoder passwordEncoder
+	) {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder);

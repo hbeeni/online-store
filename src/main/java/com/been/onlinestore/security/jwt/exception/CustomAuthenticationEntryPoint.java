@@ -1,6 +1,6 @@
-package com.been.onlinestore.config.jwt;
+package com.been.onlinestore.security.jwt.exception;
 
-import static com.been.onlinestore.config.jwt.JwtUtils.*;
+import static com.been.onlinestore.security.jwt.util.JwtUtils.*;
 
 import java.io.IOException;
 

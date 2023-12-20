@@ -1,4 +1,4 @@
-package com.been.onlinestore.config.jwt;
+package com.been.onlinestore.security.jwt.util;
 
 import java.security.Key;
 import java.util.Date;
@@ -29,6 +29,7 @@ public class JwtTokenProvider {
 
 	private static final String UID_KEY = "uid";
 	private static final String ROLE_KEY = "role";
+
 	private final UserDetailsService userDetailsService;
 	private final JwtProperties properties;
 	private Key key;
@@ -41,12 +42,14 @@ public class JwtTokenProvider {
 
 	public String createToken(Authentication authentication) {
 		log.info("create token");
+
 		PrincipalDetails principal = (PrincipalDetails)(authentication.getPrincipal());
 		String role = principal.roleType().getRoleName();
-		String uid = principal.uid();
+		String uid = principal.getUsername();
 
 		long now = (new Date()).getTime();
 		Date validity = new Date(now + properties.expirationTime());
+		log.info("validity = {}", validity);
 
 		return Jwts.builder()
 			.setSubject(authentication.getName())
@@ -70,10 +73,5 @@ public class JwtTokenProvider {
 			token,
 			Set.of(new SimpleGrantedAuthority(claims.get(ROLE_KEY).toString()))
 		);
-	}
-
-	public boolean validateToken(String token) {
-		Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-		return true;
 	}
 }
