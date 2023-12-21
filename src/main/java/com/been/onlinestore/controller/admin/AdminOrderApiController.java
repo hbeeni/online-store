@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
 import com.been.onlinestore.service.admin.AdminOrderService;
 import com.been.onlinestore.service.dto.response.OrderResponse;

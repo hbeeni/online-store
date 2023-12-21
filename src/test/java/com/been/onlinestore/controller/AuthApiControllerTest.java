@@ -2,26 +2,36 @@ package com.been.onlinestore.controller;
 
 import static com.been.onlinestore.controller.restdocs.FieldDescription.*;
 import static com.been.onlinestore.controller.restdocs.RestDocsUtils.*;
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.been.onlinestore.controller.dto.UserRequest;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
@@ -30,10 +40,15 @@ import com.been.onlinestore.controller.restdocs.TagDescription;
 import com.been.onlinestore.domain.constant.RoleType;
 import com.been.onlinestore.service.UserService;
 
-@DisplayName("API 컨트롤러 - 회원가입, 로그인")
+@DisplayName("API 컨트롤러 - 회원가입, 로그인/로그아웃")
 @ActiveProfiles("test")
 @SpringBootTest
 class AuthApiControllerTest extends RestDocsSupport {
+
+	@Autowired
+	private WebApplicationContext context;
+	@Autowired
+	private RestDocumentationContextProvider restDocumentation;
 
 	@MockBean
 	UserService userService;
@@ -132,7 +147,6 @@ class AuthApiControllerTest extends RestDocsSupport {
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
-			.andExpect(jsonPath("$.data.token").exists())
 			.andDo(document(
 				"home/auth/login",
 				homeApiDescription(TagDescription.AUTH, "로그인"),
@@ -143,10 +157,34 @@ class AuthApiControllerTest extends RestDocsSupport {
 					fieldWithPath("password").type(JsonFieldType.STRING)
 						.description(USER_PASSWORD.getDescription())
 				),
-				responseFields(
-					STATUS,
-					fieldWithPath("data.token").type(JsonFieldType.STRING).description("JWT 토큰")
-				)
+				responseFields(STATUS)
+			));
+	}
+
+	@WithMockUser
+	@DisplayName("[API][POST] 로그아웃")
+	@Test
+	void test_logout() throws Exception {
+		//Given
+		MockMvc mvc = MockMvcBuilders
+			.webAppContextSetup(context)
+			.apply(springSecurity())
+			.apply(documentationConfiguration(restDocumentation))
+			.alwaysDo(print())
+			.addFilters(new CharacterEncodingFilter("UTF-8", true))
+			.build();
+
+		//When & Then
+		mvc.perform(post("/api/logout"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andDo(document(
+				"home/auth/logout",
+				homeApiDescription(TagDescription.AUTH, "로그아웃"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				responseFields(STATUS)
 			));
 	}
 }

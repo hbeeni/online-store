@@ -1,4 +1,3 @@
-debug: false
 management.endpoints.web.exposure.include: "*"
 
 logging:
@@ -6,6 +5,7 @@ logging:
     com.been.onlinestore: debug
     org.springframework.web.servlet: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.springframework.security: debug
 
 spring:
   datasource:
@@ -22,13 +22,6 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
   sql.init.mode: always
-
-my:
-  jwt:
-    secret: ${JWT_SECRET}
-    expiration-time: 1800000 # 1000 * 60 * 30, 30분
-    token-prefix: "Bearer "
-    header-string: Authorization
 
 image:
   dir: C:/Projects/personal-project/online-store-project/image/
@@ -50,7 +43,3 @@ spring:
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
-
-my:
-  jwt:
-    secret: fd3fdb53thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2sdfesdfsdG9FDGsdbXRva2FyaW10b2thcwefsdtdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==

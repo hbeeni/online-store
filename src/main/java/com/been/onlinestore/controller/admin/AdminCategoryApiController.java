@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.controller.dto.CategoryRequest;
 import com.been.onlinestore.service.admin.AdminCategoryService;
 import com.been.onlinestore.service.dto.response.admin.AdminCategoryResponse;

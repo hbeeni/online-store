@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.controller.dto.ProductRequest;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.querydsl.product.AdminProductResponse;
