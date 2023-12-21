@@ -1,4 +1,4 @@
-package com.been.onlinestore.exception;
+package com.been.onlinestore.common;
 
 import java.util.HashMap;
 import java.util.Map;

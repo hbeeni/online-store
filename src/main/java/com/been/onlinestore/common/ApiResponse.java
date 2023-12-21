@@ -1,4 +1,4 @@
-package com.been.onlinestore.controller.dto;
+package com.been.onlinestore.common;
 
 import java.util.List;
 import java.util.Map;

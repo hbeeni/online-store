@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import com.been.onlinestore.common.ApiErrorResponse;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

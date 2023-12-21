@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.controller.dto.CartProductRequest;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.service.CartProductService;

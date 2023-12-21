@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.controller.dto.ApiResponse;
+import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.controller.dto.UserRequest;
 import com.been.onlinestore.security.jwt.util.JwtProperties;
 import com.been.onlinestore.security.jwt.util.JwtTokenProvider;
