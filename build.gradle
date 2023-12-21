@@ -42,26 +42,9 @@ openapi3 {
     format = 'yaml'
 }
 
-tasks.register("modifyOpenApiYaml") {
-    dependsOn 'openapi3'
-    doFirst {
-        def swaggerUIFile = file("${openapi3.outputDirectory}/openapi3.yaml")
-
-        def securitySchemesContent = "  securitySchemes:\n" +
-                "    bearerAuth:\n" +
-                "      type: http\n" +
-                "      scheme: bearer\n" +
-                "      bearerFormat: JWT\n" +
-                "security:\n" +
-                "  - bearerAuth: []  # Apply the security scheme here"
-
-        swaggerUIFile.append securitySchemesContent
-    }
-}
-
 tasks.register("copyOpenApiYaml", Copy) {
     dependsOn 'processResources'
-    dependsOn 'modifyOpenApiYaml'
+    dependsOn 'openapi3'
     from("${openapi3.outputDirectory}")
     into("src/main/resources/static/docs")
 }
@@ -77,10 +60,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
-
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
     implementation 'com.querydsl:querydsl-jpa'
     implementation "com.querydsl:querydsl-core"
