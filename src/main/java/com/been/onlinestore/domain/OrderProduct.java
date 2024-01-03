@@ -56,7 +56,7 @@ public class OrderProduct {
 		return price * quantity;
 	}
 
-	public void addStock() {
+	public void cancel() {
 		product.addStock(quantity);
 	}
 

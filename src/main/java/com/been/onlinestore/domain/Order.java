@@ -96,7 +96,7 @@ public class Order extends BaseTimeEntity {
 
 	public void cancel() {
 		if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
-			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER_PRODUCT.getMessage());
+			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER.getMessage());
 		}
 		orderProducts.forEach(OrderProduct::cancel);
 		this.orderStatus = OrderStatus.CANCEL;

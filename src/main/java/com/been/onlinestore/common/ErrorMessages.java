@@ -25,7 +25,7 @@ public enum ErrorMessages {
 	FAIL_TO_DELETE_DEFAULT_ADDRESS("다른 배송지를 기본 배송지로 변경해야 삭제할 수 있습니다."),
 	FAIL_TO_LOAD_IMAGE("해당 이미지를 찾을 수 없습니다."),
 
-	CANNOT_CANCEL_ORDER_PRODUCT("결제 완료 상태인 상품만 취소할 수 있습니다.");
+	CANNOT_CANCEL_ORDER("결제 완료 상태의 주문만 취소할 수 있습니다.");
 
 	private final String message;
 }
