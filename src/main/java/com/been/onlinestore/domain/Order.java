@@ -66,8 +66,9 @@ public class Order extends BaseTimeEntity {
 	protected Order() {
 	}
 
-	private Order(User orderer, DeliveryRequest deliveryRequest, Delivery delivery, String ordererPhone,
-		OrderStatus orderStatus) {
+	private Order(
+		User orderer, DeliveryRequest deliveryRequest, Delivery delivery, String ordererPhone, OrderStatus orderStatus
+	) {
 		this.orderer = orderer;
 		this.deliveryRequest = deliveryRequest;
 		this.delivery = delivery;
@@ -75,7 +76,7 @@ public class Order extends BaseTimeEntity {
 		this.orderStatus = orderStatus;
 	}
 
-	public static Order of(
+	public static Order create(
 		User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus, int deliveryFee
 	) {
 		Delivery delivery = Delivery.of(DeliveryStatus.ACCEPT, deliveryFee, null);
