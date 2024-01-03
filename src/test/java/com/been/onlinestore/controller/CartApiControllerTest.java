@@ -72,7 +72,7 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.totalPrice").value(response.totalPrice()))
 			.andExpect(jsonPath("$.data.deliveryFee").value(response.deliveryFee()))
 			.andExpect(jsonPath("$.data.cartProducts").isArray())
-			.andExpect(jsonPath("$.data.cartProducts[0].productId").value(cartProductResponse1.productId()))
+			.andExpect(jsonPath("$.data.cartProducts[0].cartProductId").value(cartProductResponse1.cartProductId()))
 			.andExpect(jsonPath("$.data.cartProducts[0].productName").value(cartProductResponse1.productName()))
 			.andExpect(jsonPath("$.data.cartProducts[0].quantity").value(cartProductResponse1.quantity()))
 			.andDo(document(
@@ -86,8 +86,8 @@ class CartApiControllerTest extends RestDocsSupport {
 						.description(CART_TOTAL_PRICE.getDescription()),
 					fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
 						.description(DELIVERY_FEE.getDescription()),
-					fieldWithPath("data.cartProducts[].productId").type(JsonFieldType.NUMBER)
-						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data.cartProducts[].cartProductId").type(JsonFieldType.NUMBER)
+						.description(CART_PRODUCT_ID.getDescription()),
 					fieldWithPath("data.cartProducts[].productName").type(JsonFieldType.STRING)
 						.description(PRODUCT_NAME.getDescription()),
 					fieldWithPath("data.cartProducts[].productPrice").type(JsonFieldType.NUMBER)
@@ -131,7 +131,7 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
-			.andExpect(jsonPath("$.data.productId").value(response.productId()))
+			.andExpect(jsonPath("$.data.cartProductId").value(response.cartProductId()))
 			.andExpect(jsonPath("$.data.quantity").value(response.quantity()))
 			.andDo(document(
 				"user/cart/addProductToCart",
@@ -146,8 +146,8 @@ class CartApiControllerTest extends RestDocsSupport {
 				),
 				responseFields(
 					STATUS,
-					fieldWithPath("data.productId").type(JsonFieldType.NUMBER)
-						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data.cartProductId").type(JsonFieldType.NUMBER)
+						.description(CART_PRODUCT_ID.getDescription()),
 					fieldWithPath("data.productName").type(JsonFieldType.STRING)
 						.description(PRODUCT_NAME.getDescription()),
 					fieldWithPath("data.productPrice").type(JsonFieldType.NUMBER)
@@ -191,7 +191,7 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
-			.andExpect(jsonPath("$.data.productId").value(response.productId()))
+			.andExpect(jsonPath("$.data.cartProductId").value(response.cartProductId()))
 			.andExpect(jsonPath("$.data.quantity").value(response.quantity()))
 			.andDo(document(
 				"user/cart/updateProductInCart",
@@ -206,8 +206,8 @@ class CartApiControllerTest extends RestDocsSupport {
 				),
 				responseFields(
 					STATUS,
-					fieldWithPath("data.productId").type(JsonFieldType.NUMBER)
-						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("data.cartProductId").type(JsonFieldType.NUMBER)
+						.description(CART_PRODUCT_ID.getDescription()),
 					fieldWithPath("data.productName").type(JsonFieldType.STRING)
 						.description(PRODUCT_NAME.getDescription()),
 					fieldWithPath("data.productPrice").type(JsonFieldType.NUMBER)

@@ -4,7 +4,7 @@ import com.been.onlinestore.domain.CartProduct;
 import com.been.onlinestore.domain.Product;
 
 public record CartProductResponse(
-	Long productId,
+	Long cartProductId,
 	String productName,
 	int productPrice,
 	int quantity,
@@ -12,9 +12,9 @@ public record CartProductResponse(
 ) {
 
 	public static CartProductResponse of(
-		Long productId, String productName, int productPrice, int quantity, int totalPrice
+		Long cartProductId, String productName, int productPrice, int quantity, int totalPrice
 	) {
-		return new CartProductResponse(productId, productName, productPrice, quantity, totalPrice);
+		return new CartProductResponse(cartProductId, productName, productPrice, quantity, totalPrice);
 	}
 
 	public static CartProductResponse from(CartProduct entity) {
