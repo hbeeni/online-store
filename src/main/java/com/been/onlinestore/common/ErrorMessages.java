@@ -1,5 +1,10 @@
 package com.been.onlinestore.common;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum ErrorMessages {
 
 	DUPLICATE_ID("중복 ID 입니다."),
@@ -23,12 +28,4 @@ public enum ErrorMessages {
 	CANNOT_CANCEL_ORDER_PRODUCT("결제 완료 상태인 상품만 취소할 수 있습니다.");
 
 	private final String message;
-
-	ErrorMessages(String message) {
-		this.message = message;
-	}
-
-	public String getMessage() {
-		return message;
-	}
 }
