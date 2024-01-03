@@ -98,12 +98,13 @@ public class Order extends BaseTimeEntity {
 		if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
 			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER_PRODUCT.getMessage());
 		}
-		orderProducts.forEach(OrderProduct::addStock);
+		orderProducts.forEach(OrderProduct::cancel);
 		this.orderStatus = OrderStatus.CANCEL;
 	}
 
 	public void startPreparing() {
 		this.getDelivery().startPreparing();
+		orderProducts.forEach(OrderProduct::startPreparing);
 	}
 
 	public void startDelivery() {

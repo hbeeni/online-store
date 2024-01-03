@@ -112,6 +112,13 @@ public class Product extends BaseEntity {
 		this.stockQuantity = restStock;
 	}
 
+	public void increaseSalesVolume(int salesVolume) {
+		if (salesVolume < 0) {
+			return;
+		}
+		this.salesVolume += salesVolume;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

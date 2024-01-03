@@ -60,6 +60,10 @@ public class OrderProduct {
 		product.addStock(quantity);
 	}
 
+	public void startPreparing() {
+		product.increaseSalesVolume(quantity);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
