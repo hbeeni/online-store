@@ -40,8 +40,7 @@ class UserServiceTest {
 			user.getName(),
 			user.getEmail(),
 			user.getNickname(),
-			user.getPhone(),
-			user.getRoleType()
+			user.getPhone()
 		);
 		given(userRepository.save(any())).willReturn(user);
 
@@ -64,8 +63,7 @@ class UserServiceTest {
 			admin.getName(),
 			admin.getEmail(),
 			admin.getNickname(),
-			admin.getPhone(),
-			admin.getRoleType()
+			admin.getPhone()
 		);
 		given(userRepository.save(any())).willReturn(admin);
 

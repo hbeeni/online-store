@@ -54,8 +54,9 @@ public class User extends BaseTimeEntity {
 	protected User() {
 	}
 
-	private User(String uid, String password, String name, String email, String nickname, String phone,
-		RoleType roleType) {
+	private User(
+		String uid, String password, String name, String email, String nickname, String phone, RoleType roleType
+	) {
 		this.uid = uid;
 		this.password = password;
 		this.name = name;
@@ -65,8 +66,9 @@ public class User extends BaseTimeEntity {
 		this.roleType = roleType != null ? roleType : RoleType.USER;
 	}
 
-	public static User of(String uid, String password, String name, String email, String nickname, String phone,
-		RoleType roleType) {
+	public static User of(
+		String uid, String password, String name, String email, String nickname, String phone, RoleType roleType
+	) {
 		return new User(uid, password, name, email, nickname, phone, roleType);
 	}
 

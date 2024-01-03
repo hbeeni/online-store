@@ -4,7 +4,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.been.onlinestore.domain.constant.RoleType;
 import com.been.onlinestore.service.dto.request.UserServiceRequest;
 
 import lombok.Builder;
@@ -41,14 +40,11 @@ public record UserRequest() {
 
 		@NotBlank @Size(max = 20)
 		@Pattern(regexp = PHONE_PATTERN_REGEX, message = PHONE_PATTERN_MESSAGE)
-		String phone,
-
-		RoleType roleType
+		String phone
 	) {
 
-		public static SignUp of(String uid, String password, String name, String email, String nickname, String phone,
-			RoleType roleType) {
-			return new SignUp(uid, password, name, email, nickname, phone, roleType);
+		public static SignUp of(String uid, String password, String name, String email, String nickname, String phone) {
+			return new SignUp(uid, password, name, email, nickname, phone);
 		}
 
 		public UserServiceRequest.SignUp toServiceRequest() {
@@ -58,8 +54,7 @@ public record UserRequest() {
 				name,
 				email,
 				nickname,
-				phone,
-				roleType
+				phone
 			);
 		}
 	}
