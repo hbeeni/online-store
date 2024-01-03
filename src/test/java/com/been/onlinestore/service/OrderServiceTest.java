@@ -104,7 +104,7 @@ class OrderServiceTest {
 			new OrderServiceRequest(orderProductServiceRequests, "address", "name", "01011112222");
 
 		given(productRepository.findAllOnSaleById(Set.of(productId))).willReturn(List.of(createProduct(productId)));
-		given(userRepository.getReferenceById(ordererId)).willReturn(createUser(ordererId));
+		given(userRepository.findById(ordererId)).willReturn(Optional.of(createUser(ordererId)));
 		given(orderRepository.save(any())).willReturn(createOrder(orderId));
 
 		//When
@@ -113,7 +113,7 @@ class OrderServiceTest {
 		//Then
 		assertThat(result).isEqualTo(orderId);
 		then(productRepository).should().findAllOnSaleById(Set.of(productId));
-		then(userRepository).should().getReferenceById(ordererId);
+		then(userRepository).should().findById(ordererId);
 		then(orderRepository).should().save(any());
 	}
 

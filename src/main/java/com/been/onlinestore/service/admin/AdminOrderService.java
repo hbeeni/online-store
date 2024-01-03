@@ -26,7 +26,7 @@ public class AdminOrderService {
 
 	@Transactional(readOnly = true)
 	public Page<OrderResponse> findOrders(OrderSearchCondition cond, Pageable pageable) {
-		return orderRepository.searchOrders(cond, pageable)
+		return orderRepository.findOrdersForAdmin(cond, pageable)
 			.map(order -> OrderResponse.from(order, imageStore));
 	}
 

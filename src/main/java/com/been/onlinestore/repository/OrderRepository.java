@@ -12,6 +12,7 @@ import com.been.onlinestore.repository.querydsl.order.OrderRepositoryCustom;
 public interface OrderRepository extends JpaRepository<Order, Long>, OrderRepositoryCustom {
 
 	@Query("select o from Order o "
+		+ "join fetch o.delivery d "
 		+ "join fetch o.orderProducts op "
 		+ "join fetch op.product p "
 		+ "where o.id = :orderId and o.orderer.id = :ordererId")

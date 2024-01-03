@@ -1,5 +1,10 @@
 package com.been.onlinestore.domain.constant;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum SaleStatus {
 
 	WAIT("판매 대기"),
@@ -8,12 +13,4 @@ public enum SaleStatus {
 	CLOSE("판매 종료");
 
 	private final String description;
-
-	SaleStatus(String description) {
-		this.description = description;
-	}
-
-	public String getDescription() {
-		return description;
-	}
 }

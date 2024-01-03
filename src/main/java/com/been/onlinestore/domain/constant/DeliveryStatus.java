@@ -1,5 +1,10 @@
 package com.been.onlinestore.domain.constant;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum DeliveryStatus {
 
 	ACCEPT("결제 완료"),
@@ -8,12 +13,4 @@ public enum DeliveryStatus {
 	FINAL_DELIVERY("배송 완료");
 
 	private final String description;
-
-	DeliveryStatus(String description) {
-		this.description = description;
-	}
-
-	public String getDescription() {
-		return description;
-	}
 }

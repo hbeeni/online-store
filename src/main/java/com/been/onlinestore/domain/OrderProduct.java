@@ -47,7 +47,7 @@ public class OrderProduct {
 		this.quantity = quantity;
 	}
 
-	public static OrderProduct of(Product product, int quantity) {
+	public static OrderProduct create(Product product, int quantity) {
 		product.removeStock(quantity);
 		return new OrderProduct(product, product.getPrice(), quantity);
 	}
@@ -56,8 +56,12 @@ public class OrderProduct {
 		return price * quantity;
 	}
 
-	public void addStock() {
+	public void cancel() {
 		product.addStock(quantity);
+	}
+
+	public void startPreparing() {
+		product.increaseSalesVolume(quantity);
 	}
 
 	@Override

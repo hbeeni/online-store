@@ -41,14 +41,14 @@ class AdminOrderServiceTest {
 		OrderSearchCondition cond = OrderSearchCondition.of(null, null, DeliveryStatus.ACCEPT, OrderStatus.ORDER);
 		Pageable pageable = PageRequest.of(0, 10);
 
-		given(orderRepository.searchOrders(cond, pageable)).willReturn(Page.empty());
+		given(orderRepository.findOrdersForAdmin(cond, pageable)).willReturn(Page.empty());
 
 		//When
 		Page<OrderResponse> result = sut.findOrders(cond, pageable);
 
 		//Then
 		assertThat(result).isNotNull();
-		then(orderRepository).should().searchOrders(cond, pageable);
+		then(orderRepository).should().findOrdersForAdmin(cond, pageable);
 	}
 
 	@DisplayName("주문을 조회하면, 주문 정보를 반환한다.")

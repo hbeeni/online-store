@@ -5,6 +5,7 @@ import static com.been.onlinestore.service.dto.request.OrderServiceRequest.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -54,34 +55,13 @@ public class OrderService {
 	}
 
 	public Long order(Long ordererId, OrderServiceRequest serviceRequest) {
-		List<OrderProductServiceRequest> orderProductServiceRequests = serviceRequest.orderProducts();
 		Map<Long, OrderProductServiceRequest> orderProductServiceRequestMap =
-			createIdToOrderProductServiceRequestMap(orderProductServiceRequests);
+			createOrderProductServiceRequestMap(serviceRequest.orderProducts());
 
-		List<Product> products = productRepository.findAllOnSaleById(orderProductServiceRequestMap.keySet());
-		if (orderProductServiceRequestMap.keySet().size() != products.size()) {
-			throw new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage());
-		}
+		List<Product> products = findProductsOnSale(orderProductServiceRequestMap.keySet());
 
-		int deliveryFee = products.stream()
-			.map(Product::getDeliveryFee)
-			.min(Comparator.naturalOrder())
-			.orElseGet(() -> 3000);
-		List<OrderProduct> orderProducts = createOrderProducts(products, orderProductServiceRequestMap);
+		Order order = createOrder(ordererId, serviceRequest, products, orderProductServiceRequestMap);
 
-		User orderer = userRepository.getReferenceById(ordererId);
-		Order order = Order.of(
-			orderer,
-			DeliveryRequest.of(
-				serviceRequest.deliveryAddress(),
-				serviceRequest.receiverName(),
-				serviceRequest.receiverPhone()
-			),
-			orderer.getPhone(),
-			OrderStatus.ORDER,
-			deliveryFee
-		);
-		order.addOrderProducts(orderProducts);
 		return orderRepository.save(order).getId();
 	}
 
@@ -94,7 +74,40 @@ public class OrderService {
 		return order.getId();
 	}
 
-	private static Map<Long, OrderProductServiceRequest> createIdToOrderProductServiceRequestMap(
+	private Order createOrder(
+		Long ordererId, OrderServiceRequest serviceRequest,
+		List<Product> products, Map<Long, OrderProductServiceRequest> orderProductServiceRequestMap
+	) {
+		User orderer = userRepository.findById(ordererId)
+			.orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_USER.getMessage()));
+
+		Order order = Order.create(
+			orderer,
+			DeliveryRequest.of(
+				serviceRequest.deliveryAddress(),
+				serviceRequest.receiverName(),
+				serviceRequest.receiverPhone()
+			),
+			orderer.getPhone(),
+			OrderStatus.ORDER,
+			getDeliveryFee(products)
+		);
+		order.addOrderProducts(createOrderProducts(products, orderProductServiceRequestMap));
+
+		return order;
+	}
+
+	private List<Product> findProductsOnSale(Set<Long> orderProductServiceRequestIds) {
+		List<Product> products = productRepository.findAllOnSaleById(orderProductServiceRequestIds);
+
+		if (orderProductServiceRequestIds.size() != products.size()) {
+			throw new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage());
+		}
+
+		return products;
+	}
+
+	private static Map<Long, OrderProductServiceRequest> createOrderProductServiceRequestMap(
 		List<OrderProductServiceRequest> orderProductServiceRequests
 	) {
 		return orderProductServiceRequests.stream()
@@ -104,15 +117,22 @@ public class OrderService {
 			);
 	}
 
-	private List<OrderProduct> createOrderProducts(
+	private static List<OrderProduct> createOrderProducts(
 		List<Product> products,
 		Map<Long, OrderProductServiceRequest> orderProductServiceRequestMap
 	) {
 		return products.stream()
-			.map(product -> OrderProduct.of(
+			.map(product -> OrderProduct.create(
 				product,
-				orderProductServiceRequestMap.get(product.getId()).quantity())
-			)
+				orderProductServiceRequestMap.get(product.getId()).quantity()
+			))
 			.toList();
+	}
+
+	private static Integer getDeliveryFee(List<Product> products) {
+		return products.stream()
+			.map(Product::getDeliveryFee)
+			.min(Comparator.naturalOrder())
+			.orElse(3000);
 	}
 }

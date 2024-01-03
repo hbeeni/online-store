@@ -11,7 +11,7 @@ import com.been.onlinestore.domain.constant.OrderStatus;
 public class OrderTestDataUtil {
 
 	public static Order createOrder(Long id) {
-		Order order = Order.of(
+		Order order = Order.create(
 			createUser(),
 			DeliveryRequest.of("delivery address", "receiver name", "01012341234"),
 			"01012341234",

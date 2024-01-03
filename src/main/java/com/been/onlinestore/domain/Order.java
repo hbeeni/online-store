@@ -66,8 +66,9 @@ public class Order extends BaseTimeEntity {
 	protected Order() {
 	}
 
-	private Order(User orderer, DeliveryRequest deliveryRequest, Delivery delivery, String ordererPhone,
-		OrderStatus orderStatus) {
+	private Order(
+		User orderer, DeliveryRequest deliveryRequest, Delivery delivery, String ordererPhone, OrderStatus orderStatus
+	) {
 		this.orderer = orderer;
 		this.deliveryRequest = deliveryRequest;
 		this.delivery = delivery;
@@ -75,7 +76,7 @@ public class Order extends BaseTimeEntity {
 		this.orderStatus = orderStatus;
 	}
 
-	public static Order of(
+	public static Order create(
 		User orderer, DeliveryRequest deliveryRequest, String ordererPhone, OrderStatus orderStatus, int deliveryFee
 	) {
 		Delivery delivery = Delivery.of(DeliveryStatus.ACCEPT, deliveryFee, null);
@@ -95,14 +96,15 @@ public class Order extends BaseTimeEntity {
 
 	public void cancel() {
 		if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
-			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER_PRODUCT.getMessage());
+			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER.getMessage());
 		}
-		orderProducts.forEach(OrderProduct::addStock);
+		orderProducts.forEach(OrderProduct::cancel);
 		this.orderStatus = OrderStatus.CANCEL;
 	}
 
 	public void startPreparing() {
 		this.getDelivery().startPreparing();
+		orderProducts.forEach(OrderProduct::startPreparing);
 	}
 
 	public void startDelivery() {
