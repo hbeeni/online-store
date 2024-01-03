@@ -98,10 +98,7 @@ class AuthApiControllerTest extends RestDocsSupport {
 					fieldWithPath("nickname").type(JsonFieldType.STRING)
 						.description(USER_NICKNAME.getDescription()),
 					fieldWithPath("phone").type(JsonFieldType.STRING)
-						.description(USER_PHONE.getDescription()),
-					fieldWithPath("roleType").type(JsonFieldType.STRING)
-						.description(USER_ROLE_TYPE.getDescription())
-						.optional()
+						.description(USER_PHONE.getDescription())
 				),
 				responseFields(
 					STATUS,

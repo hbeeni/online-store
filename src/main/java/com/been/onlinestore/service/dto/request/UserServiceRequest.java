@@ -11,14 +11,11 @@ public record UserServiceRequest() {
 		String name,
 		String email,
 		String nickname,
-		String phone,
-		RoleType roleType
+		String phone
 	) {
 
-		public static SignUp of(
-			String uid, String password, String name, String email, String nickname, String phone, RoleType roleType
-		) {
-			return new SignUp(uid, password, name, email, nickname, phone, roleType);
+		public static SignUp of(String uid, String password, String name, String email, String nickname, String phone) {
+			return new SignUp(uid, password, name, email, nickname, phone);
 		}
 
 		public User toEntity(String encodedPassword) {
@@ -29,7 +26,7 @@ public record UserServiceRequest() {
 				email,
 				nickname,
 				phone,
-				roleType
+				RoleType.USER
 			);
 		}
 	}
