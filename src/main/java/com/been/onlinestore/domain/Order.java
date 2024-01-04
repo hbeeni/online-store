@@ -25,7 +25,6 @@ import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 @Getter
@@ -51,7 +50,6 @@ public class Order extends BaseTimeEntity {
 	private Delivery delivery;
 
 	@ToString.Exclude
-	@Setter
 	@OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
 	private List<OrderProduct> orderProducts = new ArrayList<>();
 
@@ -83,7 +81,7 @@ public class Order extends BaseTimeEntity {
 		return new Order(orderer, deliveryRequest, delivery, ordererPhone, orderStatus);
 	}
 
-	public void addOrderProducts(List<OrderProduct> orderProducts) {
+	public void setOrderProducts(List<OrderProduct> orderProducts) {
 		this.orderProducts = orderProducts;
 		orderProducts.forEach(orderProduct -> orderProduct.setOrder(this));
 	}

@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -39,6 +40,8 @@ class CartProductServiceTest {
 	private UserRepository userRepository;
 	@Mock
 	private ProductRepository productRepository;
+	@Mock
+	private OrderService orderService;
 
 	@InjectMocks
 	private CartProductService sut;
@@ -124,6 +127,55 @@ class CartProductServiceTest {
 		then(productRepository).should().findOnSaleById(productId);
 		then(cartProductRepository).shouldHaveNoInteractions();
 		then(userRepository).shouldHaveNoInteractions();
+	}
+
+	@DisplayName("장바구니에서 상품을 주문하면, 주문 상품과 배송 정보를 함께 저장하고 장바구니에서 주문한 상품을 삭제한 후, 저장된 주문의 id를 반환한다.")
+	@Test
+	void test_order() {
+		//Given
+		long orderId = 1L;
+		long productId1 = 1L;
+		int quantity1 = 1;
+		long productId2 = 2L;
+		int quantity2 = 2;
+
+		List<Long> cartProductIds = List.of(1L, 2L);
+		CartProductServiceRequest.Order serviceRequest =
+			new CartProductServiceRequest.Order(cartProductIds, "address", "name", "01011112222");
+		Map<Long, Integer> orderProductMap = Map.of(productId1, quantity1, productId2, quantity2);
+
+		given(cartProductRepository.findCartProducts(userId, cartProductIds))
+			.willReturn(List.of(createCartProduct(productId1, quantity1), createCartProduct(productId2, quantity2)));
+		given(orderService.order(userId, serviceRequest, orderProductMap)).willReturn(orderId);
+		willDoNothing().given(cartProductRepository).deleteCartProducts(userId, cartProductIds);
+
+		//When
+		Long result = sut.order(userId, serviceRequest);
+
+		//Then
+		assertThat(result).isEqualTo(orderId);
+		then(cartProductRepository).should().findCartProducts(userId, cartProductIds);
+		then(orderService).should().order(userId, serviceRequest, orderProductMap);
+		then(cartProductRepository).should().deleteCartProducts(userId, cartProductIds);
+	}
+
+	@DisplayName("장바구니에서 상품을 주문할 때, 장바구니 상품을 찾지 못하면 예외를 던진다.")
+	@Test
+	void test_order_throwsEntityNotFoundException() {
+		//Given
+		List<Long> cartProductIds = List.of(1L, 2L);
+		CartProductServiceRequest.Order serviceRequest =
+			new CartProductServiceRequest.Order(cartProductIds, "address", "name", "01011112222");
+
+		given(cartProductRepository.findCartProducts(userId, cartProductIds))
+			.willReturn(List.of(createCartProduct(1L, 1)));
+
+		//When & Then
+		assertThatThrownBy(() -> sut.order(userId, serviceRequest))
+			.isInstanceOf(EntityNotFoundException.class);
+		then(cartProductRepository).should().findCartProducts(userId, cartProductIds);
+		then(orderService).shouldHaveNoInteractions();
+		then(cartProductRepository).shouldHaveNoMoreInteractions();
 	}
 
 	@DisplayName("장바구니에 담긴 상품의 수량을 변경한다.")

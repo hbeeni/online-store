@@ -162,6 +162,59 @@ class CartApiControllerTest extends RestDocsSupport {
 	}
 
 	@WithUserDetails
+	@DisplayName("[API][POST] 장바구니에 있는 상품 주문")
+	@Test
+	void test_orderCartProducts() throws Exception {
+		//Given
+		List<Long> cartProductIds = List.of(1L, 2L);
+		String deliveryAddress = "서울 종로구 청와대로 1";
+		String receiverName = "user";
+		String receiverPhone = "01011112222";
+		CartProductRequest.Order request =
+			new CartProductRequest.Order(cartProductIds, deliveryAddress, receiverName, receiverPhone);
+		CartProductServiceRequest.Order serviceRequest =
+			new CartProductServiceRequest.Order(cartProductIds, deliveryAddress, receiverName, receiverPhone);
+		long orderId = 1L;
+
+		given(cartProductService.order(userId, serviceRequest)).willReturn(orderId);
+
+		//When & Then
+		mvc.perform(
+				post("/api/carts/order")
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.characterEncoding("UTF-8")
+					.content(mapper.writeValueAsString(request))
+			)
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(orderId))
+			.andDo(document(
+				"user/cart/orderCartProducts",
+				userApiDescription(TagDescription.CART, "장바구니에 있는 상품 주문"),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("cartProductIds").type(JsonFieldType.ARRAY)
+						.description(CART_PRODUCT_ID.getDescription()),
+					fieldWithPath("deliveryAddress").type(JsonFieldType.STRING)
+						.description(DELIVERY_REQUEST_ADDRESS.getDescription()),
+					fieldWithPath("receiverName").type(JsonFieldType.STRING)
+						.description(DELIVERY_REQUEST_RECEIVER_NAME.getDescription()),
+					fieldWithPath("receiverPhone").type(JsonFieldType.STRING)
+						.description(DELIVERY_REQUEST_RECEIVER_PHONE.getDescription())
+				),
+				responseFields(
+					STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+						.description(ADD.getDescription() + ORDER_ID.getDescription())
+				)
+			));
+		then(cartProductService).should().order(userId, serviceRequest);
+	}
+
+	@WithUserDetails
 	@DisplayName("[API][PUT] 장바구니 상품 수량 변경")
 	@Test
 	void test_updateProductInCart() throws Exception {

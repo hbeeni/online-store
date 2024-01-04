@@ -1,8 +1,11 @@
 package com.been.onlinestore.service;
 
+import static java.util.stream.Collectors.*;
+
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -34,6 +37,7 @@ public class CartProductService {
 	private final CartProductRepository cartProductRepository;
 	private final UserRepository userRepository;
 	private final ProductRepository productRepository;
+	private final OrderService orderService;
 
 	@Transactional(readOnly = true)
 	public CartResponse findCartProducts(Long userId) {
@@ -63,6 +67,17 @@ public class CartProductService {
 		return CartProductResponse.from(cartProduct);
 	}
 
+	public Long order(Long userId, CartProductServiceRequest.Order serviceRequest) {
+		List<Long> cartProductIds = serviceRequest.cartProductIds();
+
+		Long orderId = orderService.order(userId, serviceRequest, createOrderProductMap(userId, cartProductIds));
+
+		//장바구니에서 주문한 장바구니 상품 삭제
+		deleteCartProducts(userId, cartProductIds);
+
+		return orderId;
+	}
+
 	public CartProductResponse updateCartProductQuantity(Long userId, Long cartProductId, int updateProductQuantity) {
 		CartProduct cartProduct = cartProductRepository.findCartProduct(userId, cartProductId)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_CART_PRODUCT.getMessage()));
@@ -85,6 +100,19 @@ public class CartProductService {
 			.toList();
 
 		cartProductRepository.deleteAllByIdInBatch(expiredCartProductIds);
+	}
+
+	private Map<Long, Integer> createOrderProductMap(Long userId, List<Long> cartProductIds) {
+		List<CartProduct> cartProducts = cartProductRepository.findCartProducts(userId, cartProductIds);
+		if (cartProducts.size() != cartProductIds.size()) {
+			throw new EntityNotFoundException(ErrorMessages.NOT_FOUND_CART_PRODUCT.getMessage());
+		}
+
+		return cartProducts.stream()
+			.collect(toMap(
+				cartProduct -> cartProduct.getProduct().getId(),
+				CartProduct::getQuantity
+			));
 	}
 
 	private static int getDeliveryFee(List<CartProduct> cartProducts) {

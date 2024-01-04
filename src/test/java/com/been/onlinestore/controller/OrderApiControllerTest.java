@@ -1,6 +1,5 @@
 package com.been.onlinestore.controller;
 
-import static com.been.onlinestore.controller.dto.OrderRequest.*;
 import static com.been.onlinestore.controller.restdocs.FieldDescription.*;
 import static com.been.onlinestore.controller.restdocs.RestDocsUtils.*;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
@@ -278,8 +277,7 @@ class OrderApiControllerTest extends RestDocsSupport {
 		//Given
 		long orderId = 1L;
 		long userId = TestSecurityConfig.USER_ID;
-		OrderProductRequest orderProductRequest = new OrderProductRequest(1L, 10);
-		OrderRequest request = new OrderRequest(List.of(orderProductRequest), "서울 종로구 청와대로 1", "user", "01011112222");
+		OrderRequest request = new OrderRequest(1L, 10, "서울 종로구 청와대로 1", "user", "01011112222");
 
 		given(orderService.order(userId, request.toServiceRequest())).willReturn(orderId);
 
@@ -297,12 +295,14 @@ class OrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(orderId))
 			.andDo(document(
 				"user/order/order",
-				userApiDescription(TagDescription.ORDER, "주문하기"),
+				userApiDescription(TagDescription.ORDER, "주문하기 (바로 구매)"),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
-					subsectionWithPath("orderProducts").type(JsonFieldType.ARRAY)
-						.description("주문 상품"),
+					fieldWithPath("productId").type(JsonFieldType.NUMBER)
+						.description(PRODUCT_ID.getDescription()),
+					fieldWithPath("quantity").type(JsonFieldType.NUMBER)
+						.description(ORDER_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("deliveryAddress").type(JsonFieldType.STRING)
 						.description(DELIVERY_REQUEST_ADDRESS.getDescription()),
 					fieldWithPath("receiverName").type(JsonFieldType.STRING)
