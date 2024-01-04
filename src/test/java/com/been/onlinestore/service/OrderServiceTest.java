@@ -1,6 +1,5 @@
 package com.been.onlinestore.service;
 
-import static com.been.onlinestore.service.dto.request.OrderServiceRequest.*;
 import static com.been.onlinestore.util.OrderTestDataUtil.*;
 import static com.been.onlinestore.util.ProductTestDataUtil.*;
 import static com.been.onlinestore.util.UserTestDataUtil.*;
@@ -8,9 +7,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -90,20 +87,16 @@ class OrderServiceTest {
 		then(orderRepository).should().findOrderByOrderer(orderId, ordererId);
 	}
 
-	@DisplayName("주문을 하면, 주문 상품과 배송 정보를 함께 저장한 후, 저장된 주문의 id를 반환한다.")
+	@DisplayName("주문(바로 구매)을 하면, 주문 상품과 배송 정보를 함께 저장한 후, 저장된 주문의 id를 반환한다.")
 	@Test
 	void test_order() {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
 		long productId = 1L;
-		List<OrderProductServiceRequest> orderProductServiceRequests = List.of(
-			OrderProductServiceRequest.of(productId, 1)
-		);
-		OrderServiceRequest serviceRequest =
-			new OrderServiceRequest(orderProductServiceRequests, "address", "name", "01011112222");
+		OrderServiceRequest serviceRequest = new OrderServiceRequest(productId, 10, "address", "name", "01011112222");
 
-		given(productRepository.findAllOnSaleById(Set.of(productId))).willReturn(List.of(createProduct(productId)));
+		given(productRepository.findOnSaleById(productId)).willReturn(Optional.of(createProduct(productId)));
 		given(userRepository.findById(ordererId)).willReturn(Optional.of(createUser(ordererId)));
 		given(orderRepository.save(any())).willReturn(createOrder(orderId));
 
@@ -112,9 +105,27 @@ class OrderServiceTest {
 
 		//Then
 		assertThat(result).isEqualTo(orderId);
-		then(productRepository).should().findAllOnSaleById(Set.of(productId));
+		then(productRepository).should().findOnSaleById(productId);
 		then(userRepository).should().findById(ordererId);
 		then(orderRepository).should().save(any());
+	}
+
+	@DisplayName("주문(바로 구매)을 할 때, 판매하지 않는 상품을 주문하면 예외를 던진다.")
+	@Test
+	void test_order_throwsEntityNotFoundException() {
+		//Given
+		long ordererId = 1L;
+		long productId = 1L;
+		OrderServiceRequest serviceRequest = new OrderServiceRequest(productId, 10, "address", "name", "01011112222");
+
+		given(productRepository.findOnSaleById(productId)).willReturn(Optional.empty());
+
+		//When & Then
+		assertThatThrownBy(() -> sut.order(ordererId, serviceRequest))
+			.isInstanceOf(EntityNotFoundException.class);
+		then(productRepository).should().findOnSaleById(productId);
+		then(userRepository).shouldHaveNoInteractions();
+		then(orderRepository).shouldHaveNoInteractions();
 	}
 
 	@DisplayName("주문을 취소하면, 취소된 주문의 id를 반환한다.")

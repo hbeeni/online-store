@@ -31,6 +31,14 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Long> 
 	@Query("select cp from CartProduct cp "
 		+ "join fetch cp.product p "
 		+ "join fetch cp.user u "
+		+ "where cp.id in :cartProductIds and u.id = :userId")
+	List<CartProduct> findCartProducts(
+		@Param("userId") Long userId, @Param("cartProductIds") List<Long> cartProductIds
+	);
+
+	@Query("select cp from CartProduct cp "
+		+ "join fetch cp.product p "
+		+ "join fetch cp.user u "
 		+ "where cp.id = :cartProductId and u.id = :userId")
 	Optional<CartProduct> findCartProduct(@Param("userId") Long userId, @Param("cartProductId") Long cartProductId);
 

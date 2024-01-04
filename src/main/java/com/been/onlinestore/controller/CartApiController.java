@@ -1,6 +1,7 @@
 package com.been.onlinestore.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,6 +46,16 @@ public class CartApiController {
 	) {
 		return ResponseEntity.ok(ApiResponse.success(
 			cartProductService.addCartProduct(principalDetails.id(), request.toServiceRequest())
+		));
+	}
+
+	@PostMapping("/order")
+	public ResponseEntity<ApiResponse<Map<String, Long>>> orderCartProducts(
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
+		@RequestBody @Validated CartProductRequest.Order request
+	) {
+		return ResponseEntity.ok(ApiResponse.successId(
+			cartProductService.order(principalDetails.id(), request.toServiceRequest())
 		));
 	}
 

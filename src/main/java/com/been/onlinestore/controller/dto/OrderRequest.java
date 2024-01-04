@@ -1,9 +1,5 @@
 package com.been.onlinestore.controller.dto;
 
-import static com.been.onlinestore.service.dto.request.OrderServiceRequest.*;
-
-import java.util.List;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -14,7 +10,12 @@ import com.been.onlinestore.service.dto.request.OrderServiceRequest;
 
 public record OrderRequest(
 	@NotNull
-	List<OrderProductRequest> orderProducts,
+	@Positive
+	Long productId,
+
+	@NotNull
+	@Positive(message = "한 개 이상의 상품을 주문해주세요.")
+	Integer quantity,
 
 	@NotEmpty
 	@Size(max = 50)
@@ -32,27 +33,11 @@ public record OrderRequest(
 
 	public OrderServiceRequest toServiceRequest() {
 		return OrderServiceRequest.of(
-			orderProducts.stream()
-				.map(OrderProductRequest::toServiceRequest)
-				.toList(),
+			productId,
+			quantity,
 			deliveryAddress,
 			receiverName,
 			receiverPhone
 		);
-	}
-
-	public record OrderProductRequest(
-		@NotNull
-		@Positive
-		Long id,
-
-		@NotNull
-		@Positive(message = "한 개 이상의 상품을 주문해주세요.")
-		Integer quantity
-	) {
-
-		public OrderProductServiceRequest toServiceRequest() {
-			return OrderProductServiceRequest.of(id, quantity);
-		}
 	}
 }
