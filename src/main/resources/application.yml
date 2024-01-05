@@ -33,6 +33,7 @@ springdoc:
   swagger-ui:
     url: /docs/openapi3.yaml
     path: /swagger
+    use-root-path: true
     tags-sorter: alpha
     operations-sorter: alpha
 
