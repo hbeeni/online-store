@@ -45,7 +45,8 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 			.select(getAdminProductResponseProjection())
 			.from(product)
 			.leftJoin(product.category, category)
-			.where(categoryIdEq(cond.categoryId()),
+			.where(
+				categoryIdEq(cond.categoryId()),
 				productNameContains(cond.name()),
 				saleStatusEq(cond.saleStatus())
 			)
@@ -58,7 +59,8 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
 			.select(product.count())
 			.from(product)
 			.leftJoin(product.category, category)
-			.where(categoryIdEq(cond.categoryId()),
+			.where(
+				categoryIdEq(cond.categoryId()),
 				productNameContains(cond.name()),
 				saleStatusEq(cond.saleStatus())
 			);

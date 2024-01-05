@@ -85,8 +85,10 @@ public class Product extends BaseEntity {
 		);
 	}
 
-	public void updateInfo(Category category, String name, int price, String description, int stockQuantity,
-		SaleStatus saleStatus, int deliveryFee) {
+	public void updateInfo(
+		Category category, String name, int price, String description, int stockQuantity,
+		SaleStatus saleStatus, int deliveryFee
+	) {
 		this.category = category;
 		this.name = name;
 		this.price = price;

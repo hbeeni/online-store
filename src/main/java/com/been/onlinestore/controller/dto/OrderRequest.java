@@ -9,24 +9,19 @@ import javax.validation.constraints.Size;
 import com.been.onlinestore.service.dto.request.OrderServiceRequest;
 
 public record OrderRequest(
-	@NotNull
-	@Positive
+	@NotNull @Positive
 	Long productId,
 
-	@NotNull
-	@Positive(message = "한 개 이상의 상품을 주문해주세요.")
+	@NotNull @Positive(message = "한 개 이상의 상품을 주문해주세요.")
 	Integer quantity,
 
-	@NotEmpty
-	@Size(max = 50)
+	@NotEmpty @Size(max = 50)
 	String deliveryAddress,
 
-	@NotEmpty
-	@Size(max = 20)
+	@NotEmpty @Size(max = 20)
 	String receiverName,
 
-	@NotEmpty
-	@Size(max = 20)
+	@NotEmpty @Size(max = 20)
 	@Pattern(regexp = "^010([0-9]{7,8})+$", message = "'-'(하이픈) 없이 10 ~ 11 자리의 숫자만 입력 가능합니다.")
 	String receiverPhone
 ) {

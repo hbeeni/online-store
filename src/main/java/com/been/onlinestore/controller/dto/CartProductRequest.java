@@ -33,16 +33,13 @@ public record CartProductRequest() {
 		@NotNull
 		List<@Positive Long> cartProductIds,
 
-		@NotEmpty
-		@Size(max = 50)
+		@NotEmpty @Size(max = 50)
 		String deliveryAddress,
 
-		@NotEmpty
-		@Size(max = 20)
+		@NotEmpty @Size(max = 20)
 		String receiverName,
 
-		@NotEmpty
-		@Size(max = 20)
+		@NotEmpty @Size(max = 20)
 		@Pattern(regexp = "^010([0-9]{7,8})+$", message = "'-'(하이픈) 없이 10 ~ 11 자리의 숫자만 입력 가능합니다.")
 		String receiverPhone
 	) {

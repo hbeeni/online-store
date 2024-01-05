@@ -64,8 +64,10 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 				.join(order.delivery, delivery).fetchJoin()
 				.join(order.orderProducts, orderProduct).fetchJoin()
 				.join(orderProduct.product, product).fetchJoin()
-				.where(order.id.eq(orderId),
-					order.orderer.id.eq(ordererId))
+				.where(
+					order.id.eq(orderId),
+					order.orderer.id.eq(ordererId)
+				)
 				.fetchOne()
 		);
 	}

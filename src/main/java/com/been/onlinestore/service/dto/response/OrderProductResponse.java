@@ -12,8 +12,9 @@ public record OrderProductResponse(
 	String imageUrl
 ) {
 
-	public static OrderProductResponse of(Long id, String productName, int price, int quantity, int totalPrice,
-		String imageUrl) {
+	public static OrderProductResponse of(
+		Long id, String productName, int price, int quantity, int totalPrice, String imageUrl
+	) {
 		return new OrderProductResponse(id, productName, price, quantity, totalPrice, imageUrl);
 	}
 

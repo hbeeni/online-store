@@ -2,8 +2,7 @@ package com.been.onlinestore.service.dto.request;
 
 import com.been.onlinestore.domain.Category;
 
-public record CategoryServiceRequest(
-) {
+public record CategoryServiceRequest() {
 
 	public record Create(
 		String name,

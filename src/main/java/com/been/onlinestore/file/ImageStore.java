@@ -22,23 +22,29 @@ public class ImageStore {
 	@Value("${image.dir}")
 	private String imageDir;
 
+	@Getter
 	@Value("${image.path}")
 	private String imagePath;
 
+	/**
+	 * @param imageName 이미지 이름
+	 * @return 이미지가 저장된 디렉토리
+	 */
 	public String getFullPath(String imageName) {
 		return imageDir + imageName;
 	}
 
+	/**
+	 * @param imageName 이미지 이름
+	 * @return 이미지에 접근할 수 있는 URL
+	 */
 	public String getImageUrl(String imageName) {
 		return imagePath + imageName;
 	}
 
-	public String getImagePath() {
-		return imagePath;
-	}
-
 	public byte[] getProductImage(String imageName) {
 		byte[] imageByteArray;
+
 		try (FileInputStream imageStream = new FileInputStream(getFullPath(imageName))) {
 			imageByteArray = imageStream.readAllBytes();
 		} catch (IOException e) {

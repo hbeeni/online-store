@@ -22,8 +22,10 @@ public record UserResponse(
 	@JsonFormat(pattern = DATE_TIME_PATTERN) LocalDateTime modifiedAt
 ) {
 
-	public static UserResponse of(Long id, String uid, String password, String name, String email, String nickname,
-		String phone, RoleType roleType, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+	public static UserResponse of(
+		Long id, String uid, String password, String name, String email, String nickname, String phone,
+		RoleType roleType, LocalDateTime createdAt, LocalDateTime modifiedAt
+	) {
 		return new UserResponse(id, uid, password, name, email, nickname, phone, roleType, createdAt, modifiedAt);
 	}
 

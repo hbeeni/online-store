@@ -12,8 +12,9 @@ public record CategoryProductResponse(
 	String imageUrl
 ) {
 
-	public static CategoryProductResponse of(Long id, String category, String name, int price, String description,
-		int deliveryFee, String imageUrl) {
+	public static CategoryProductResponse of(
+		Long id, String category, String name, int price, String description, int deliveryFee, String imageUrl
+	) {
 		return new CategoryProductResponse(id, category, name, price, description, deliveryFee, imageUrl);
 	}
 

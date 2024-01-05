@@ -60,7 +60,6 @@ public class CartProductService {
 			cartProduct.addQuantity(serviceRequest.productQuantity());
 		} else {
 			User user = userRepository.getReferenceById(userId);
-
 			cartProduct = cartProductRepository.save(serviceRequest.toEntity(user, product));
 		}
 
@@ -89,6 +88,9 @@ public class CartProductService {
 		cartProductRepository.deleteCartProducts(userId, cartProductIds);
 	}
 
+	/**
+	 * 매일 자정에 30일이 지난 장바구니 상품 삭제
+	 */
 	@Scheduled(cron = "0 0 0 * * *")
 	public void cleanUpExpiredCartProducts() {
 		log.info("CartProductService.cleanUpExpiredCartProducts 실행");
