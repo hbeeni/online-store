@@ -18,10 +18,13 @@ public record AdminCategoryResponse(
 	String modifiedBy
 ) {
 
-	public static AdminCategoryResponse of(Long id, String name, String description, int productCount,
-		LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-		return new AdminCategoryResponse(id, name, description, productCount, createdAt, createdBy, modifiedAt,
-			modifiedBy);
+	public static AdminCategoryResponse of(
+		Long id, String name, String description, int productCount,
+		LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy
+	) {
+		return new AdminCategoryResponse(
+			id, name, description, productCount, createdAt, createdBy, modifiedAt, modifiedBy
+		);
 	}
 
 	public static AdminCategoryResponse from(Category entity) {

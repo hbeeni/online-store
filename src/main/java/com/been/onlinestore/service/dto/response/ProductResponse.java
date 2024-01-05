@@ -11,8 +11,9 @@ public record ProductResponse(
 	String imageUrl
 ) {
 
-	public static ProductResponse of(Long id, String name, int price, String description, int deliveryFee,
-		String imageUrl) {
+	public static ProductResponse of(
+		Long id, String name, int price, String description, int deliveryFee, String imageUrl
+	) {
 		return new ProductResponse(id, name, price, description, deliveryFee, imageUrl);
 	}
 

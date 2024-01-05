@@ -21,14 +21,13 @@ public abstract class ApiResponseUtils {
 	private ApiResponseUtils() {
 	}
 
-	public static void setSuccessResponse(HttpServletResponse response, HttpStatus status) throws
-		IOException {
+	public static void setSuccessResponse(HttpServletResponse response, HttpStatus status) throws IOException {
 		initResponse(response, status);
 		response.getWriter().write(mapper.writeValueAsString(ApiResponse.success()));
 	}
 
-	public static void setErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws
-		IOException {
+	public static void setErrorResponse(HttpServletResponse response, HttpStatus status, String message)
+		throws IOException {
 		initResponse(response, status);
 		response.getWriter().write(mapper.writeValueAsString(ApiErrorResponse.fail(message)));
 	}

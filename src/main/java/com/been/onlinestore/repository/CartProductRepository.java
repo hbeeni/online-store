@@ -43,7 +43,6 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Long> 
 	Optional<CartProduct> findCartProduct(@Param("userId") Long userId, @Param("cartProductId") Long cartProductId);
 
 	@Modifying
-	@Query("delete from CartProduct cp "
-		+ "where cp.id in :cartProductIds and cp.user.id = :userId")
+	@Query("delete from CartProduct cp where cp.id in :cartProductIds and cp.user.id = :userId")
 	void deleteCartProducts(@Param("userId") Long userId, @Param("cartProductIds") Collection<Long> cartProductIds);
 }

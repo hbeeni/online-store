@@ -20,7 +20,8 @@ public record CartResponse(
 			.toList();
 
 		return CartResponse.of(
-			cartProducts.stream().mapToInt(CartProductResponse::totalPrice).sum(),
+			cartProducts.stream()
+				.mapToInt(CartProductResponse::totalPrice).sum(),
 			deliveryFee,
 			cartProducts
 		);

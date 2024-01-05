@@ -78,7 +78,7 @@ public class ApiErrorResponse<T> {
 	 * }
 	 * </pre>
 	 */
-	public static ApiErrorResponse<Void> error(Exception e) {
-		return new ApiErrorResponse<>(STATUS_ERROR, null, e.getLocalizedMessage());
+	public static ApiErrorResponse<Void> error(Exception ex) {
+		return new ApiErrorResponse<>(STATUS_ERROR, null, ex.getLocalizedMessage());
 	}
 }

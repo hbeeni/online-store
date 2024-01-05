@@ -21,8 +21,9 @@ public class JpaConfig {
 	public AuditorAware<String> auditorAware() {
 		return () -> Optional.ofNullable(SecurityContextHolder.getContext())
 			.map(SecurityContext::getAuthentication)
-			.filter(Authentication::isAuthenticated)
-			.filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken))
+			.filter(authentication ->
+				authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)
+			)
 			.map(Authentication::getPrincipal)
 			.map(PrincipalDetails.class::cast)
 			.map(PrincipalDetails::getUsername);

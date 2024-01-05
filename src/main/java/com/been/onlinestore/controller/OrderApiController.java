@@ -43,7 +43,8 @@ public class OrderApiController {
 
 	@GetMapping("/{orderId}")
 	public ResponseEntity<ApiResponse<OrderResponse>> getOrder(
-		@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long orderId) {
+		@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long orderId
+	) {
 		return ResponseEntity.ok(ApiResponse.success(orderService.findOrderByOrderer(orderId, principalDetails.id())));
 	}
 

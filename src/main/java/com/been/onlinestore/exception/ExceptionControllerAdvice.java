@@ -24,11 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice(annotations = RestController.class)
 public class ExceptionControllerAdvice {
 
-	@ExceptionHandler({EntityNotFoundException.class, IllegalArgumentException.class})
+	@ExceptionHandler({EntityNotFoundException.class, IllegalArgumentException.class, IllegalStateException.class})
 	public ResponseEntity<ApiErrorResponse<Void>> badRequest(Exception ex) {
 		return ResponseEntity.badRequest().body(ApiErrorResponse.fail(ex));
 	}
 
+	/**
+	 * 로그인 실패 시 발생하는 예외를 처리한다.
+	 */
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ApiErrorResponse<Void>> failAuthentication(Exception ex) {
 		Throwable throwable = ex.getCause() == null ? ex : ex.getCause();

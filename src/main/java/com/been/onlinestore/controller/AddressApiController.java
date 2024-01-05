@@ -32,13 +32,15 @@ public class AddressApiController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<AddressResponse>>> getAddresses(
-		@AuthenticationPrincipal PrincipalDetails principalDetails) {
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
 		return ResponseEntity.ok(ApiResponse.success(addressService.findAddresses(principalDetails.id())));
 	}
 
 	@GetMapping("/{addressId}")
 	public ResponseEntity<ApiResponse<AddressResponse>> getAddress(
-		@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long addressId) {
+		@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long addressId
+	) {
 		return ResponseEntity.ok(ApiResponse.success(addressService.findAddress(addressId, principalDetails.id())));
 	}
 
@@ -63,7 +65,8 @@ public class AddressApiController {
 
 	@DeleteMapping("/{addressId}")
 	public ResponseEntity<ApiResponse<Map<String, Long>>> deleteAddress(
-		@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long addressId) {
+		@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long addressId
+	) {
 		return ResponseEntity.ok(ApiResponse.successId(addressService.deleteAddress(addressId, principalDetails.id())));
 	}
 }
