@@ -17,13 +17,13 @@ public enum ErrorMessages {
 	NOT_FOUND_CART("존재하지 않는 장바구니입니다."),
 	NOT_FOUND_CART_PRODUCT("존재하지 않는 장바구니 상품입니다."),
 	NOT_FOUND_ORDER("존재하지 않는 주문입니다."),
+	NOT_FOUND_IMAGE("해당 이미지를 찾을 수 없습니다."),
 
 	NOT_ENOUGH_STOCK("재고가 부족합니다."),
 
-	FAIL_TO_UPDATE_CATEGORY("카테고리 수정 실패. 카테고리를 수정하는데 필요한 정보를 찾을 수 없습니다."),
-	FAIL_TO_UPDATE_PRODUCT("상품 수정 실패. 상품을 수정하는데 필요한 정보를 찾을 수 없습니다."),
-	FAIL_TO_DELETE_DEFAULT_ADDRESS("다른 배송지를 기본 배송지로 변경해야 삭제할 수 있습니다."),
-	FAIL_TO_LOAD_IMAGE("해당 이미지를 찾을 수 없습니다."),
+	FAIL_TO_UPDATE_CATEGORY("카테고리를 수정하는데 필요한 정보를 찾을 수 없습니다."),
+	FAIL_TO_UPDATE_PRODUCT("상품을 수정하는데 필요한 정보를 찾을 수 없습니다."),
+	FAIL_TO_DELETE_DEFAULT_ADDRESS("먼저 다른 배송지를 기본 배송지로 변경해야 합니다."),
 
 	CANNOT_CANCEL_ORDER("결제 완료 상태의 주문만 취소할 수 있습니다.");
 

@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.been.onlinestore.common.ErrorMessages;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -48,7 +49,7 @@ public class ImageStore {
 		try (FileInputStream imageStream = new FileInputStream(getFullPath(imageName))) {
 			imageByteArray = imageStream.readAllBytes();
 		} catch (IOException e) {
-			throw new IllegalArgumentException(ErrorMessages.FAIL_TO_LOAD_IMAGE.getMessage());
+			throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_IMAGE.getMessage());
 		}
 
 		return imageByteArray;
