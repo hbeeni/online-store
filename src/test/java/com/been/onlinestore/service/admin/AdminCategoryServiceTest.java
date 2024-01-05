@@ -61,6 +61,7 @@ class AdminCategoryServiceTest {
 		//Given
 		long id = 1L;
 		Category category = createCategory("카테고리");
+
 		given(categoryRepository.findById(id)).willReturn(Optional.of(category));
 
 		//When
@@ -80,6 +81,7 @@ class AdminCategoryServiceTest {
 	void test_addCategory() {
 		//Given
 		String name = "category";
+
 		given(categoryRepository.save(any())).willReturn(createCategory(name));
 
 		//When
@@ -96,8 +98,9 @@ class AdminCategoryServiceTest {
 		//Given
 		long id = 1L;
 		Category category = createCategory(id, "category");
-		CategoryServiceRequest.Update serviceRequest = CategoryServiceRequest.Update.of("update category",
-			"update cateogory");
+		CategoryServiceRequest.Update serviceRequest =
+			CategoryServiceRequest.Update.of("update category", "update cateogory");
+
 		given(categoryRepository.findById(id)).willReturn(Optional.of(category));
 
 		//When
@@ -114,8 +117,9 @@ class AdminCategoryServiceTest {
 	void test_updateCategory_withNonexistentId_throwsIllegalException() {
 		//Given
 		long id = 1L;
-		CategoryServiceRequest.Update serviceRequest = CategoryServiceRequest.Update.of("update category",
-			"update cateogory");
+		CategoryServiceRequest.Update serviceRequest =
+			CategoryServiceRequest.Update.of("update category", "update category");
+
 		given(categoryRepository.findById(id)).willReturn(Optional.empty());
 
 		//When & Then
@@ -129,6 +133,7 @@ class AdminCategoryServiceTest {
 	void test_deleteCategory() {
 		//Given
 		long id = 1L;
+
 		given(productRepository.bulkCategoryNull(id)).willReturn(0);
 		willDoNothing().given(categoryRepository).deleteById(id);
 

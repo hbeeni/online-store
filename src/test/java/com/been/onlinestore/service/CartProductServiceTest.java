@@ -184,6 +184,7 @@ class CartProductServiceTest {
 		//Given
 		Long cartProductId = 1L;
 		int updateQuantity = 1;
+
 		given(cartProductRepository.findCartProduct(userId, cartProductId))
 			.willReturn(Optional.of(createCartProduct(1L, updateQuantity)));
 
@@ -201,6 +202,7 @@ class CartProductServiceTest {
 		//Given
 		Long cartProductId = 1L;
 		int updateQuantity = 1;
+
 		given(cartProductRepository.findCartProduct(userId, cartProductId)).willReturn(Optional.empty());
 
 		//When & Then
@@ -215,6 +217,7 @@ class CartProductServiceTest {
 	void test_deleteCartProducts() {
 		//Given
 		List<Long> cartProductIds = List.of(1L);
+
 		willDoNothing().given(cartProductRepository).deleteCartProducts(userId, cartProductIds);
 
 		//When

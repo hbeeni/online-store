@@ -36,6 +36,7 @@ class AdminUserServiceTest {
 	void test_searchExistentUser() {
 		//Given
 		String uid = "user";
+
 		given(userRepository.findByUid(uid)).willReturn(Optional.of(createUser(uid)));
 
 		//When
@@ -51,6 +52,7 @@ class AdminUserServiceTest {
 	void test_searchNonExistentUser() {
 		//Given
 		String uid = "wrong-user";
+
 		given(userRepository.findByUid(uid)).willReturn(Optional.empty());
 
 		//When
@@ -66,6 +68,7 @@ class AdminUserServiceTest {
 	void test_findUsers() {
 		//Given
 		Pageable pageable = PageRequest.of(0, 10);
+
 		given(userRepository.findAll(pageable)).willReturn(Page.empty());
 
 		//When
@@ -81,6 +84,7 @@ class AdminUserServiceTest {
 	void test_findUser() {
 		//Given
 		long id = 1L;
+
 		given(userRepository.findById(id)).willReturn(Optional.of(createUser()));
 
 		//When
@@ -96,6 +100,7 @@ class AdminUserServiceTest {
 	void test_findUser_throwsEntityNotFoundException() {
 		//Given
 		long id = 1L;
+
 		given(userRepository.findById(id)).willReturn(Optional.empty());
 
 		//When & Then

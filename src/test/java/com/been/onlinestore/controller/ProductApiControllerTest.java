@@ -174,6 +174,7 @@ class ProductApiControllerTest extends RestDocsSupport {
 			3000,
 			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
+
 		given(productService.findProductOnSale(response.id())).willReturn(response);
 
 		//When & Then

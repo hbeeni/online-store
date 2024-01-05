@@ -38,7 +38,8 @@ class AdminOrderServiceTest {
 	@Test
 	void test_findOrders_withSearchCondition() {
 		//Given
-		OrderSearchCondition cond = OrderSearchCondition.of(null, null, DeliveryStatus.ACCEPT, OrderStatus.ORDER);
+		OrderSearchCondition cond =
+			OrderSearchCondition.of(null, null, DeliveryStatus.ACCEPT, OrderStatus.ORDER);
 		Pageable pageable = PageRequest.of(0, 10);
 
 		given(orderRepository.findOrdersForAdmin(cond, pageable)).willReturn(Page.empty());
@@ -56,6 +57,7 @@ class AdminOrderServiceTest {
 	void test_findOrder() {
 		//Given
 		long orderId = 1L;
+
 		given(orderRepository.findOrderByIdForAdmin(orderId)).willReturn(Optional.of(createOrder(orderId)));
 
 		//When
@@ -71,6 +73,7 @@ class AdminOrderServiceTest {
 	void test_findOrder_throwEntityNotFoundException() {
 		//Given
 		long orderId = 1L;
+
 		given(orderRepository.findOrderByIdForAdmin(orderId)).willReturn(Optional.empty());
 
 		//When & Then

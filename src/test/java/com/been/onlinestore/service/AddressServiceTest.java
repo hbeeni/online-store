@@ -42,6 +42,7 @@ class AddressServiceTest {
 	void test_findAddresses() {
 		//Given
 		long userId = 1L;
+
 		given(addressRepository.findAllByUser_IdOrderByDefaultAddressDesc(userId)).willReturn(List.of(createAddress()));
 
 		//When
@@ -58,8 +59,9 @@ class AddressServiceTest {
 		//Given
 		long addressId = 1L;
 		long userId = 1L;
-		given(addressRepository.findByIdAndUser_Id(addressId, userId)).willReturn(
-			Optional.of(createAddress(addressId)));
+
+		given(addressRepository.findByIdAndUser_Id(addressId, userId))
+			.willReturn(Optional.of(createAddress(addressId)));
 
 		//When
 		AddressResponse result = sut.findAddress(addressId, userId);
@@ -75,6 +77,7 @@ class AddressServiceTest {
 		//Given
 		long addressId = 1L;
 		long userId = 1L;
+
 		given(addressRepository.findByIdAndUser_Id(addressId, userId)).willReturn(Optional.empty());
 
 		//When & Then
@@ -256,8 +259,8 @@ class AddressServiceTest {
 
 		AddressServiceRequest serviceRequest = createAddressServiceRequest(true);
 
-		given(addressRepository.findByIdAndUser_Id(newDefaultAddressId, userId)).willReturn(
-			Optional.of(newDefaultAddress));
+		given(addressRepository.findByIdAndUser_Id(newDefaultAddressId, userId))
+			.willReturn(Optional.of(newDefaultAddress));
 		given(addressRepository.findDefaultAddressByUserId(userId)).willReturn(Optional.of(existingDefaultAddress));
 
 		//When

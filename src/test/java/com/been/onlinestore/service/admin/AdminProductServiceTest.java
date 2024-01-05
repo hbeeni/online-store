@@ -48,6 +48,7 @@ class AdminProductServiceTest {
 	void test_findProducts() {
 		//Given
 		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
+
 		given(productRepository.searchProducts(null, pageable)).willReturn(Page.empty());
 
 		//When
@@ -64,6 +65,7 @@ class AdminProductServiceTest {
 		//Given
 		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
 		ProductSearchCondition searchCondition = ProductSearchCondition.of(null, "product", null);
+
 		given(productRepository.searchProducts(searchCondition, pageable)).willReturn(Page.empty());
 
 		//When
@@ -79,6 +81,7 @@ class AdminProductServiceTest {
 	void test_findProductInfo() {
 		//Given
 		long id = 1L;
+
 		given(productRepository.searchProduct(id)).willReturn(Optional.of(createAdminProductResponse(id)));
 
 		//When
@@ -94,6 +97,7 @@ class AdminProductServiceTest {
 	void test_findProductInfo_throwsEntityNotFoundException() {
 		//Given
 		long id = 1L;
+
 		given(productRepository.searchProduct(id)).willReturn(Optional.empty());
 
 		//When & Then
