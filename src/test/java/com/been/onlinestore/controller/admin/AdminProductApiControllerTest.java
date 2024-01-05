@@ -308,7 +308,7 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 			"image", imageName, MediaType.IMAGE_PNG_VALUE, "image".getBytes(StandardCharsets.UTF_8)
 		);
 		MockMultipartFile request = new MockMultipartFile(
-			"request", "request", MediaType.APPLICATION_JSON_VALUE,
+			"detail", "detail", MediaType.APPLICATION_JSON_VALUE,
 			mapper.writeValueAsString(data).getBytes(StandardCharsets.UTF_8)
 		);
 
@@ -331,11 +331,11 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParts(
-					partWithName("request").description("상품 데이터"),
+					partWithName("detail").description("상품 데이터"),
 					partWithName("image").description(PRODUCT_IMAGE.getDescription())
 				),
 				requestPartFields(
-					"request",
+					"detail",
 					fieldWithPath("categoryId").type(JsonFieldType.NUMBER)
 						.description(CATEGORY_ID.getDescription()),
 					fieldWithPath("name").type(JsonFieldType.STRING)
