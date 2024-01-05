@@ -40,13 +40,13 @@ import com.been.onlinestore.service.dto.response.ProductResponse;
 @WebMvcTest(CategoryApiController.class)
 class CategoryApiControllerTest extends RestDocsSupport {
 
+	@Value("${image.path}")
+	private String imagePath;
+
 	@MockBean
 	private CategoryService categoryService;
 	@MockBean
 	private ProductService productService;
-
-	@Value("${image.path}")
-	private String imagePath;
 
 	@DisplayName("[API][GET] 카테고리 리스트 조회")
 	@Test

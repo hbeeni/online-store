@@ -47,6 +47,7 @@ class OrderServiceTest {
 		//Given
 		long ordererId = 1L;
 		Pageable pageable = PageRequest.of(1, 2);
+
 		given(orderRepository.findAllOrdersByOrderer(ordererId, pageable)).willReturn(Page.empty());
 
 		//When
@@ -63,6 +64,7 @@ class OrderServiceTest {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
+
 		given(orderRepository.findOrderByOrderer(orderId, ordererId)).willReturn(Optional.of(createOrder(orderId)));
 
 		//When
@@ -79,6 +81,7 @@ class OrderServiceTest {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
+
 		given(orderRepository.findOrderByOrderer(orderId, ordererId)).willReturn(Optional.empty());
 
 		//When & Then
@@ -134,6 +137,7 @@ class OrderServiceTest {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
+
 		given(orderRepository.findByIdAndOrdererId(orderId, ordererId)).willReturn(Optional.of(createOrder(ordererId)));
 
 		//When
@@ -150,6 +154,7 @@ class OrderServiceTest {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
+
 		given(orderRepository.findByIdAndOrdererId(orderId, ordererId)).willReturn(Optional.empty());
 
 		//When & Then

@@ -43,6 +43,7 @@ class ProductServiceTest {
 		//Given
 		Long categoryId = 1L;
 		Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "createdAt");
+
 		given(productRepository.findAllOnSaleByCategory(categoryId, pageable)).willReturn(Page.empty());
 
 		//When
@@ -58,6 +59,7 @@ class ProductServiceTest {
 	void test_findProductsOnSale() {
 		//Given
 		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
+
 		given(productRepository.findAllOnSale(pageable)).willReturn(Page.empty());
 
 		//When
@@ -74,6 +76,7 @@ class ProductServiceTest {
 		//Given
 		Pageable pageable = PageRequest.of(0, 9, Sort.Direction.DESC, "createdAt");
 		String name = "keyword";
+
 		given(productRepository.findAllOnSaleByName(name, pageable)).willReturn(Page.empty());
 
 		//When
@@ -89,6 +92,7 @@ class ProductServiceTest {
 	void test_findProductOnSale() {
 		//Given
 		long id = 1L;
+
 		given(productRepository.findOnSaleById(id)).willReturn(Optional.of(createProduct(id)));
 		given(imageStore.getImageUrl(anyString())).willReturn("image url");
 
@@ -105,6 +109,7 @@ class ProductServiceTest {
 	void test_findProductOnSale_throwsEntityNotFoundException() {
 		//Given
 		long id = 1L;
+
 		given(productRepository.findOnSaleById(id)).willReturn(Optional.empty());
 
 		//When & Then

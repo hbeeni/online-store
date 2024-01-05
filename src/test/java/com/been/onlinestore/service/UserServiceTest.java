@@ -42,6 +42,7 @@ class UserServiceTest {
 			user.getNickname(),
 			user.getPhone()
 		);
+
 		given(userRepository.save(any())).willReturn(user);
 
 		//When
@@ -65,6 +66,7 @@ class UserServiceTest {
 			admin.getNickname(),
 			admin.getPhone()
 		);
+
 		given(userRepository.save(any())).willReturn(admin);
 
 		//When
@@ -80,6 +82,7 @@ class UserServiceTest {
 	void test_findUser() {
 		//Given
 		long id = 1L;
+
 		given(userRepository.findById(id)).willReturn(Optional.of(createUser()));
 
 		//When
@@ -95,6 +98,7 @@ class UserServiceTest {
 	void test_updateInfo() {
 		//Given
 		long id = 1L;
+
 		given(userRepository.findById(id)).willReturn(Optional.of(createUser(id)));
 
 		//When

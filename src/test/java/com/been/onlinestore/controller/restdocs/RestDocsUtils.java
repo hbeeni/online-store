@@ -17,8 +17,10 @@ public abstract class RestDocsUtils {
 		parameterWithName("size").description("한 페이지 당 사이즈").optional(),
 		parameterWithName("sort").description("정렬 기준").optional()
 	};
+
 	public static final FieldDescriptor STATUS =
 		fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태 코드");
+	
 	public static final FieldDescriptor[] PAGE_INFO = {
 		fieldWithPath("page.number").type(JsonFieldType.NUMBER).description("현재 페이지"),
 		fieldWithPath("page.size").type(JsonFieldType.NUMBER).description("한 페이지당 사이즈"),

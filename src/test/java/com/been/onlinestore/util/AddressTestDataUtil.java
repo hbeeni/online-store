@@ -32,8 +32,9 @@ public class AddressTestDataUtil {
 		return createAddressServiceRequest("update detail", "update zipcode", defaultAddress);
 	}
 
-	public static AddressServiceRequest createAddressServiceRequest(String detail, String zipcode,
-		boolean defaultAddress) {
+	public static AddressServiceRequest createAddressServiceRequest(
+		String detail, String zipcode, boolean defaultAddress
+	) {
 		return AddressServiceRequest.of(detail, zipcode, defaultAddress);
 	}
 }

@@ -205,6 +205,7 @@ class OrderApiControllerTest extends RestDocsSupport {
 			now(),
 			null
 		);
+
 		given(orderService.findOrderByOrderer(response.id(), userId)).willReturn(response);
 
 		//When & Then
