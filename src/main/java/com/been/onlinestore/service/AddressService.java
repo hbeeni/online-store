@@ -60,7 +60,7 @@ public class AddressService {
 		Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 
-		if (serviceRequest.defaultAddress()) {
+		if (Boolean.TRUE.equals(serviceRequest.defaultAddress())) {
 			addressRepository.findDefaultAddressByUserId(userId)
 				.ifPresent(originalDefaultAddress -> originalDefaultAddress.updateDefaultAddress(false));
 		}
@@ -73,7 +73,7 @@ public class AddressService {
 		Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
 
-		if (address.getDefaultAddress()) {
+		if (Boolean.TRUE.equals(address.getDefaultAddress())) {
 			throw new IllegalArgumentException(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS.getMessage());
 		}
 
