@@ -18,7 +18,7 @@ public record AddressResponse(
 			entity.getId(),
 			entity.getDetail(),
 			entity.getZipcode(),
-			entity.getDefaultAddress() ? "Y" : "N"
+			Boolean.TRUE.equals(entity.getDefaultAddress()) ? "Y" : "N"
 		);
 	}
 }
