@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Entity
 public class CartProduct extends BaseTimeEntity {
 
