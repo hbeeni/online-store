@@ -296,30 +296,30 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 		long productId = 1L;
 		ProductRequest.Create data = new ProductRequest.Create(
 			1L,
-			"통밀 도너츠",
-			3900,
-			"부드럽고 푹신푹신한 통밀 도너츠!",
-			1000,
+			"깐 대파",
+			4500,
+			"시원한 국물 맛의 비밀",
+			10000,
 			SaleStatus.SALE,
 			3000
 		);
 		String imageName = "d2b5da20-a5d6-4e5f-85dc-003b3292d166.jpg";
 		MockMultipartFile image = new MockMultipartFile(
-			"image", imageName, MediaType.IMAGE_PNG_VALUE, "image".getBytes(StandardCharsets.UTF_8)
+			"image", imageName, MediaType.IMAGE_PNG_VALUE, "<<png data>>".getBytes()
 		);
 		MockMultipartFile request = new MockMultipartFile(
-			"request", "request", MediaType.APPLICATION_JSON_VALUE,
+			"detail", "detail", MediaType.APPLICATION_JSON_VALUE,
 			mapper.writeValueAsString(data).getBytes(StandardCharsets.UTF_8)
 		);
 
 		given(imageStore.saveImage(image)).willReturn(imageName);
 		given(adminProductService.addProduct(data.toServiceRequest(), imageName)).willReturn(productId);
 
-		//When & Then
 		mvc.perform(
 				multipart("/api/admin/products")
 					.file(request)
 					.file(image)
+					.contentType(MediaType.MULTIPART_FORM_DATA)
 			)
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -331,11 +331,11 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParts(
-					partWithName("request").description("상품 데이터"),
+					partWithName("detail").description("상품 데이터"),
 					partWithName("image").description(PRODUCT_IMAGE.getDescription())
 				),
 				requestPartFields(
-					"request",
+					"detail",
 					fieldWithPath("categoryId").type(JsonFieldType.NUMBER)
 						.description(CATEGORY_ID.getDescription()),
 					fieldWithPath("name").type(JsonFieldType.STRING)

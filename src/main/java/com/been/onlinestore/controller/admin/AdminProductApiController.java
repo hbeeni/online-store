@@ -51,9 +51,9 @@ public class AdminProductApiController {
 		return ResponseEntity.ok(ApiResponse.success(adminProductService.findProduct(productId)));
 	}
 
-	@PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<Map<String, Long>>> addProduct(
-		@RequestPart @Validated ProductRequest.Create request,
+		@RequestPart("detail") @Validated ProductRequest.Create request,
 		@RequestPart MultipartFile image
 	) throws IOException {
 		String savedImageName = imageStore.saveImage(image);
