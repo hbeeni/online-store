@@ -167,10 +167,7 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 	void test_addCategory() throws Exception {
 		//Given
 		long id = 1L;
-		CategoryRequest.Create request = CategoryRequest.Create.builder()
-			.name("건강식품")
-			.description("건강식품")
-			.build();
+		CategoryRequest.Create request = new CategoryRequest.Create("건강식품", "건강식품");
 		given(adminCategoryService.addCategory(request.toServiceRequest())).willReturn(id);
 
 		//When & Then
@@ -211,9 +208,8 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 		//Given
 		long id = 1L;
 		String name = "수정할 카테고리 이름";
-		CategoryRequest.Update request = CategoryRequest.Update.builder()
-			.name(name)
-			.build();
+		CategoryRequest.Update request = new CategoryRequest.Update(name, null);
+
 		given(adminCategoryService.updateCategory(id, request.toServiceRequest())).willReturn(id);
 
 		//When & Then

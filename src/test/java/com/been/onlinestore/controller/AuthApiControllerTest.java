@@ -60,14 +60,9 @@ class AuthApiControllerTest extends RestDocsSupport {
 	void test_signUp() throws Exception {
 		//Given
 		long id = 1L;
-		UserRequest.SignUp request = UserRequest.SignUp.builder()
-			.uid("user")
-			.password("password")
-			.name("user")
-			.email("user@mail.com")
-			.nickname("user")
-			.phone("01012345678")
-			.build();
+		UserRequest.SignUp request =
+			new UserRequest.SignUp("user", "password", "user", "user@mail.com", "user", "01012345678");
+
 		given(userService.signUp(eq(request.toServiceRequest()), anyString())).willReturn(id);
 
 		//When & Then
@@ -113,10 +108,7 @@ class AuthApiControllerTest extends RestDocsSupport {
 	@Test
 	void test_login() throws Exception {
 		//Given
-		UserRequest.Login request = UserRequest.Login.builder()
-			.uid("user")
-			.password("password")
-			.build();
+		UserRequest.Login request = new UserRequest.Login("user1", "test12");
 
 		PrincipalDetails principalDetails = PrincipalDetails.of(
 			1L,

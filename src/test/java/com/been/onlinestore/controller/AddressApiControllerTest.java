@@ -141,11 +141,7 @@ class AddressApiControllerTest extends RestDocsSupport {
 		long addressId = 1L;
 		long userId = TestSecurityConfig.USER_ID;
 
-		AddressRequest request = AddressRequest.builder()
-			.detail("서울 종로구 청와대로 1")
-			.zipcode("03048")
-			.defaultAddress(true)
-			.build();
+		AddressRequest request = new AddressRequest("서울 종로구 청와대로 1", "03048", true);
 		given(addressService.addAddress(userId, request.toServiceRequest())).willReturn(addressId);
 
 		//When & Then
@@ -190,11 +186,7 @@ class AddressApiControllerTest extends RestDocsSupport {
 		long addressId = 1L;
 		long userId = TestSecurityConfig.USER_ID;
 
-		AddressRequest request = AddressRequest.builder()
-			.detail("서울 종로구 청와대로 1")
-			.zipcode("03048")
-			.defaultAddress(true)
-			.build();
+		AddressRequest request = new AddressRequest("서울 종로구 청와대로 1", "03048", true);
 		given(addressService.updateAddress(addressId, userId, request.toServiceRequest())).willReturn(addressId);
 
 		//When & Then

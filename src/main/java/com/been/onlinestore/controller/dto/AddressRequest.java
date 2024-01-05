@@ -6,9 +6,6 @@ import javax.validation.constraints.Size;
 
 import com.been.onlinestore.service.dto.request.AddressServiceRequest;
 
-import lombok.Builder;
-
-@Builder
 public record AddressRequest(
 	@NotBlank @Size(max = 50)
 	String detail,

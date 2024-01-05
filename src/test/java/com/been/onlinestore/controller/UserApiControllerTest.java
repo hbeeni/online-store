@@ -104,10 +104,8 @@ class UserApiControllerTest extends RestDocsSupport {
 	void test_updateUserInfo() throws Exception {
 		//Given
 		Long id = TestSecurityConfig.USER_ID;
-		UserRequest.Update request = UserRequest.Update.builder()
-			.nickname("nickname")
-			.phone("01012345678")
-			.build();
+		UserRequest.Update request = new UserRequest.Update("nickname", "01012345678");
+
 		given(userService.updateInfo(id, request.nickname(), request.phone())).willReturn(id);
 
 		//When & Then
