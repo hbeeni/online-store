@@ -6,8 +6,6 @@ import javax.validation.constraints.Size;
 
 import com.been.onlinestore.service.dto.request.UserServiceRequest;
 
-import lombok.Builder;
-
 public record UserRequest() {
 
 	private static final String UID_PATTERN_REGEX = "^[a-z]{1}[a-z0-9]{3,9}$";
@@ -19,7 +17,6 @@ public record UserRequest() {
 	private static final String EMAIL_PATTERN_REGEX = "^[a-zA-Z0-9]+@[0-9a-zA-Z]+\\.[a-z]{3}+$";
 	private static final String EMAIL_PATTERN_MESSAGE = "잘못된 이메일 형식입니다.";
 
-	@Builder
 	public record SignUp(
 		@NotBlank @Size(max = 50)
 		@Pattern(regexp = UID_PATTERN_REGEX, message = UID_PATTERN_MESSAGE)
@@ -59,7 +56,6 @@ public record UserRequest() {
 		}
 	}
 
-	@Builder
 	public record Login(
 		@NotBlank @Size(max = 50)
 		@Pattern(regexp = UID_PATTERN_REGEX, message = UID_PATTERN_MESSAGE)
@@ -70,7 +66,6 @@ public record UserRequest() {
 	) {
 	}
 
-	@Builder
 	public record Update(
 		@Size(max = 20)
 		String nickname,

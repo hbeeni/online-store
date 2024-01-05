@@ -5,11 +5,8 @@ import javax.validation.constraints.Size;
 
 import com.been.onlinestore.service.dto.request.CategoryServiceRequest;
 
-import lombok.Builder;
-
 public record CategoryRequest() {
 
-	@Builder
 	public record Create(
 		@NotBlank @Size(max = 20)
 		String name,
@@ -26,7 +23,6 @@ public record CategoryRequest() {
 		}
 	}
 
-	@Builder
 	public record Update(
 		@NotBlank @Size(max = 20)
 		String name,
