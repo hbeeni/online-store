@@ -25,6 +25,7 @@ import com.been.onlinestore.config.TestSecurityConfig;
 import com.been.onlinestore.controller.dto.CartProductRequest;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.TagDescription;
+import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.service.CartProductService;
 import com.been.onlinestore.service.dto.request.CartProductServiceRequest;
 import com.been.onlinestore.service.dto.response.CartProductResponse;
@@ -50,17 +51,19 @@ class CartApiControllerTest extends RestDocsSupport {
 			"깐대파 500g",
 			4500,
 			2,
-			9000
+			9000,
+			SaleStatus.SALE
 		);
 		CartProductResponse cartProductResponse2 = CartProductResponse.of(
 			2L,
 			"양파 1.5kg",
 			4290,
 			1,
-			4290
+			4290,
+			SaleStatus.OUT_OF_STOCK
 		);
 		List<CartProductResponse> cartProducts = List.of(cartProductResponse1, cartProductResponse2);
-		CartResponse response = CartResponse.of(13290, 3000, cartProducts);
+		CartResponse response = CartResponse.of(9000, 3000, cartProducts);
 
 		given(cartProductService.findCartProducts(userId)).willReturn(response);
 
@@ -77,7 +80,14 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.cartProducts[0].quantity").value(cartProductResponse1.quantity()))
 			.andDo(document(
 				"user/cart/getCart",
-				userApiDescription(TagDescription.CART, "장바구니 조회"),
+				userApiDescription(
+					TagDescription.CART,
+					"장바구니 조회",
+					"""
+						장바구니에 담긴 상품 중 판매 상태가 'SALE' 이거나 'OUT_OF_STOCK'인 상품을 조회합니다.<br>
+						총합은 판매 상태가 'SALE'인 상품들의 가격을 토대로 계산합니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				responseFields(
@@ -95,7 +105,9 @@ class CartApiControllerTest extends RestDocsSupport {
 					fieldWithPath("data.cartProducts[].quantity").type(JsonFieldType.NUMBER)
 						.description(CART_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("data.cartProducts[].totalPrice").type(JsonFieldType.NUMBER)
-						.description(CART_PRODUCT_TOTAL_PRICE.getDescription())
+						.description(CART_PRODUCT_TOTAL_PRICE.getDescription()),
+					fieldWithPath("data.cartProducts[].saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription())
 				)
 			));
 		then(cartProductService).should().findCartProducts(userId);
@@ -115,7 +127,8 @@ class CartApiControllerTest extends RestDocsSupport {
 			"깐대파 500g",
 			4500,
 			quantity,
-			9000
+			9000,
+			SaleStatus.SALE
 		);
 
 		given(cartProductService.addCartProduct(userId, serviceRequest)).willReturn(response);
@@ -135,7 +148,14 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.quantity").value(response.quantity()))
 			.andDo(document(
 				"user/cart/addProductToCart",
-				userApiDescription(TagDescription.CART, "장바구니에 상품 추가"),
+				userApiDescription(
+					TagDescription.CART,
+					"장바구니에 상품 추가",
+					"""
+						장바구니에 상품을 담습니다.<br>
+						장바구니에 상품이 이미 담겨 있으면 수량을 추가합니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -155,7 +175,9 @@ class CartApiControllerTest extends RestDocsSupport {
 					fieldWithPath("data.quantity").type(JsonFieldType.NUMBER)
 						.description(CART_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER)
-						.description(CART_PRODUCT_TOTAL_PRICE.getDescription())
+						.description(CART_PRODUCT_TOTAL_PRICE.getDescription()),
+					fieldWithPath("data.saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription())
 				)
 			));
 		then(cartProductService).should().addCartProduct(userId, serviceRequest);
@@ -192,7 +214,14 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(orderId))
 			.andDo(document(
 				"user/cart/orderCartProducts",
-				userApiDescription(TagDescription.CART, "장바구니에 있는 상품 주문"),
+				userApiDescription(
+					TagDescription.CART,
+					"장바구니에 담긴 상품 주문",
+					"""
+						장바구니에 담긴 상품을 주문합니다.<br>
+						판매 상태가 'SALE'이 아니거나 장바구니에 담겨있지 않은 상품은 주문할 수 없습니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -227,7 +256,8 @@ class CartApiControllerTest extends RestDocsSupport {
 			"깐대파 500g",
 			4500,
 			updateQuantity,
-			4500 * updateQuantity
+			4500 * updateQuantity,
+			SaleStatus.SALE
 		);
 
 		given(cartProductService.updateCartProductQuantity(userId, cartProductId, request.productQuantity()))
@@ -248,7 +278,11 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.quantity").value(response.quantity()))
 			.andDo(document(
 				"user/cart/updateProductInCart",
-				userApiDescription(TagDescription.CART, "장바구니 상품 수량 변경"),
+				userApiDescription(
+					TagDescription.CART,
+					"장바구니에 담긴 상품 수량 변경",
+					"장바구니에 담긴 상품의 수량을 변경합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -268,7 +302,9 @@ class CartApiControllerTest extends RestDocsSupport {
 					fieldWithPath("data.quantity").type(JsonFieldType.NUMBER)
 						.description(CART_PRODUCT_QUANTITY.getDescription()),
 					fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER)
-						.description(CART_PRODUCT_TOTAL_PRICE.getDescription())
+						.description(CART_PRODUCT_TOTAL_PRICE.getDescription()),
+					fieldWithPath("data.saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription())
 				)
 			));
 		then(cartProductService).should().updateCartProductQuantity(userId, cartProductId, updateQuantity);
@@ -294,7 +330,13 @@ class CartApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.status").value("success"))
 			.andDo(document(
 				"user/cart/deleteCartProducts",
-				userApiDescription(TagDescription.CART, "장바구니 상품 (복수) 삭제"),
+				userApiDescription(
+					TagDescription.CART,
+					"장바구니에 담긴 상품 복수 삭제",
+					"""
+						장바구니에 담긴 상품을 삭제합니다.<br>
+						동시에 여러 상품을 삭제할 수 있습니다.
+						"""),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(parameterWithName("ids").description("삭제할 장바구니 상품 시퀀스")),

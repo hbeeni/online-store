@@ -31,6 +31,7 @@ import com.been.onlinestore.config.TestSecurityConfig;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.RestDocsUtils;
 import com.been.onlinestore.controller.restdocs.TagDescription;
+import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.service.ProductService;
 import com.been.onlinestore.service.dto.response.CategoryProductResponse;
@@ -62,6 +63,7 @@ class ProductApiControllerTest extends RestDocsSupport {
 			"깐대파 500g",
 			4500,
 			"시원한 국물 맛의 비밀",
+			SaleStatus.SALE,
 			3000,
 			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
@@ -107,6 +109,7 @@ class ProductApiControllerTest extends RestDocsSupport {
 			"깐대파 500g",
 			4500,
 			"시원한 국물 맛의 비밀",
+			SaleStatus.SALE,
 			3000,
 			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
@@ -135,7 +138,15 @@ class ProductApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
 				"home/product/getProducts-searchingProductName",
-				homeApiDescription(TagDescription.PRODUCT, "상품 페이징 조회 + 상품명 검색"),
+				homeApiDescription(
+					TagDescription.PRODUCT,
+					"상품 목록 페이징 조회 (검색: 상품명)",
+					"""
+						판매 상태가 'SALE'이거나 'OUT_OF_STOCK'인 상품을 페이지 단위로 조회합니다.<br>
+						상품명으로 검색이 가능합니다.<br>
+						기본 20개 상품이 보여집니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(PAGE_REQUEST_PARAM)
@@ -152,6 +163,8 @@ class ProductApiControllerTest extends RestDocsSupport {
 						.description(PRODUCT_PRICE.getDescription()),
 					fieldWithPath("data[].description").type(JsonFieldType.VARIES)
 						.description(PRODUCT_DESCRIPTION.getDescription()),
+					fieldWithPath("data[].saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription()),
 					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
 						.description(PRODUCT_DELIVERY_FEE.getDescription()),
 					fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)
@@ -171,6 +184,7 @@ class ProductApiControllerTest extends RestDocsSupport {
 			"깐대파 500g",
 			4500,
 			"시원한 국물 맛의 비밀",
+			SaleStatus.SALE,
 			3000,
 			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
@@ -187,7 +201,13 @@ class ProductApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.price").value(response.price()))
 			.andDo(document(
 				"home/product/getProduct",
-				homeApiDescription(TagDescription.PRODUCT, "상품 상세 조회"),
+				homeApiDescription(
+					TagDescription.PRODUCT,
+					"상품 상세 조회",
+					"""
+						상품 ID(productId)로 상품을 조회합니다.<br>
+						단, 판매 상태가 'SALE'이거나 'OUT_OF_STOCK'인 상품만 조회할 수 있습니다."""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -205,6 +225,8 @@ class ProductApiControllerTest extends RestDocsSupport {
 						.description(PRODUCT_PRICE.getDescription()),
 					fieldWithPath("data.description").type(JsonFieldType.VARIES)
 						.description(PRODUCT_DESCRIPTION.getDescription()),
+					fieldWithPath("data.saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription()),
 					fieldWithPath("data.deliveryFee").type(JsonFieldType.NUMBER)
 						.description(PRODUCT_DELIVERY_FEE.getDescription()),
 					fieldWithPath("data.imageUrl").type(JsonFieldType.STRING)
@@ -233,7 +255,11 @@ class ProductApiControllerTest extends RestDocsSupport {
 			.andExpect(content().bytes(image))
 			.andDo(document(
 				"home/product/getProductImage",
-				homeApiDescription(TagDescription.PRODUCT, "상품 이미지 조회"),
+				homeApiDescription(
+					TagDescription.PRODUCT,
+					"상품 이미지 조회",
+					"상품 이미지 파일명(imageName)으로 상품의 이미지를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -244,3 +270,4 @@ class ProductApiControllerTest extends RestDocsSupport {
 		then(imageStore).should().getProductImage(imageName);
 	}
 }
+

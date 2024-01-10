@@ -69,7 +69,11 @@ class AddressApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data[0].defaultAddress").value(response1.defaultAddress()))
 			.andDo(document(
 				"user/address/getAddresses",
-				userApiDescription(TagDescription.ADDRESS, "배송지 조회"),
+				userApiDescription(
+					TagDescription.ADDRESS,
+					"배송지 목록 조회",
+					"모든 배송지를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				responseFields(
@@ -112,7 +116,11 @@ class AddressApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.defaultAddress").value(response.defaultAddress()))
 			.andDo(document(
 				"user/address/getAddress",
-				userApiDescription(TagDescription.ADDRESS, "배송지 상세 조회"),
+				userApiDescription(
+					TagDescription.ADDRESS,
+					"배송지 상세 조회",
+					"배송지 ID(addressId)로 배송지 정보를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -158,7 +166,11 @@ class AddressApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(addressId))
 			.andDo(document(
 				"user/address/addAddress",
-				userApiDescription(TagDescription.ADDRESS, "배송지 추가"),
+				userApiDescription(
+					TagDescription.ADDRESS,
+					"배송지 추가",
+					"새로운 배송지를 등록합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -203,7 +215,13 @@ class AddressApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(addressId))
 			.andDo(document(
 				"user/address/updateAddress",
-				userApiDescription(TagDescription.ADDRESS, "배송지 정보 수정"),
+				userApiDescription(
+					TagDescription.ADDRESS,
+					"배송지 정보 수정",
+					"""
+						배송지 정보를 수정합니다.<br>
+						반드시 모든 필드를 입력해야 합니다.
+						"""),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -244,7 +262,15 @@ class AddressApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(addressId))
 			.andDo(document(
 				"user/address/deleteAddress",
-				userApiDescription(TagDescription.ADDRESS, "배송지 삭제"),
+				userApiDescription(
+					TagDescription.ADDRESS,
+					"배송지 삭제",
+					"""
+						배송지를 삭제합니다.<br>
+						기본 배송지는 삭제할 수 없습니다.<br>
+						기본 배송지를 삭제하고 싶으면 다른 배송지를 기본 배송지로 변경해야 합니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(

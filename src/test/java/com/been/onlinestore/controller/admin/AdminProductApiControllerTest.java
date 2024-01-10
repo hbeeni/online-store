@@ -169,7 +169,13 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
 				"admin/product/getProducts-searching",
-				adminApiDescription(TagDescription.PRODUCT, "상품 페이징 조회 + 검색"),
+				adminApiDescription(
+					TagDescription.PRODUCT,
+					"상품 목록 페이징 조회 (검색: 카테고리 ID, 상품명, 판매 상태)",
+					"""
+						전체 상품을 페이지 단위로 조회합니다.<br>
+						카테고리 ID, 상품명, 판매 상태로 검색이 가능합니다.
+						"""),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(PAGE_REQUEST_PARAM)
@@ -248,7 +254,11 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.price").value(response.price()))
 			.andDo(document(
 				"admin/product/getProduct",
-				adminApiDescription(TagDescription.PRODUCT, "상품 상세 조회"),
+				adminApiDescription(
+					TagDescription.PRODUCT,
+					"상품 상세 조회",
+					"상품 ID(productId)로 상품의 정보를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -327,7 +337,15 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(productId))
 			.andDo(document(
 				"admin/product/addProduct",
-				adminApiDescription(TagDescription.PRODUCT, "상품 등록"),
+				adminApiDescription(
+					TagDescription.PRODUCT,
+					"상품 등록",
+					"""
+						상품을 등록합니다.<br>
+						상품 정보와 상품 이미지를 같이 등록해야 합니다.<br>
+						판매 상태(saleStatus)를 입력하지 않으면 자동으로 판매 대기(WAIT) 상태가 됩니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParts(
@@ -367,7 +385,7 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 		//Given
 		long productId = 1L;
 		ProductRequest.Update request = new ProductRequest.Update(
-			1L,
+			9L,
 			"통밀 도너츠",
 			3900,
 			"부드럽고 푹신푹신한 통밀 도너츠!",
@@ -393,7 +411,14 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(productId))
 			.andDo(document(
 				"admin/product/updateProductInfo",
-				adminApiDescription(TagDescription.PRODUCT, "상품 정보 수정"),
+				adminApiDescription(
+					TagDescription.PRODUCT,
+					"상품 정보 수정",
+					"""
+						상품의 정보를 수정합니다.<br>
+						반드시 모든 필드를 입력해야 합니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -426,7 +451,7 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 	}
 
 	@WithUserDetails
-	@DisplayName("[API][POST] 상품 이미지 수정")
+	@DisplayName("[API][POST] 상품 이미지 변경")
 	@Test
 	void test_updateProductImage() throws Exception {
 		//Given
@@ -453,8 +478,12 @@ class AdminProductApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.status").value("success"))
 			.andExpect(jsonPath("$.data.id").value(productId))
 			.andDo(document(
-				"admin/product/updateProductInfo",
-				adminApiDescription(TagDescription.PRODUCT, "상품 이미지 수정"),
+				"admin/product/updateProductImage",
+				adminApiDescription(
+					TagDescription.PRODUCT,
+					"상품 이미지 변경",
+					"상품의 이미지를 변경합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParts(

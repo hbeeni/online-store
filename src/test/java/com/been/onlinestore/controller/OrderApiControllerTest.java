@@ -82,8 +82,8 @@ class OrderApiControllerTest extends RestDocsSupport {
 		);
 		OrderResponse response = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user", "01011111111"),
-			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
+			OrderResponse.OrdererResponse.of("soo", "01011111111"),
+			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "김철수", "01011111111"),
 			List.of(orderProductResponse1, orderProductResponse2),
 			21870,
 			OrderStatus.ORDER,
@@ -109,24 +109,28 @@ class OrderApiControllerTest extends RestDocsSupport {
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
 			.andExpect(jsonPath("$.data").isArray())
-			.andExpect(jsonPath("$.data[0].id").value(response.id()))
+			.andExpect(jsonPath("$.data[0].orderId").value(response.orderId()))
 			.andExpect(jsonPath("$.data[0].orderer.uid").value(response.orderer().uid()))
 			.andExpect(jsonPath("$.data[0].deliveryRequest.deliveryAddress").isNotEmpty())
 			.andExpect(jsonPath("$.data[0].orderProducts").isArray())
-			.andExpect(jsonPath("$.data[0].orderProducts[0].id").value(orderProductId))
+			.andExpect(jsonPath("$.data[0].orderProducts[0].orderProductId").value(orderProductId))
 			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
 			.andExpect(jsonPath("$.page.size").value(page.getSize()))
 			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
 				"user/order/getOrders",
-				userApiDescription(TagDescription.ORDER, "주문 페이징 조회"),
+				userApiDescription(
+					TagDescription.ORDER,
+					"주문 목록 페이징 조회",
+					"모든 주문 내역을 페이지 단위로 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(PAGE_REQUEST_PARAM),
 				responseFields(
 					RestDocsUtils.STATUS,
-					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data[].orderId").type(JsonFieldType.NUMBER)
 						.description(ORDER_ID.getDescription()),
 					fieldWithPath("data[].orderer.uid").type(JsonFieldType.STRING)
 						.description(ORDERER_UID.getDescription()),
@@ -138,7 +142,7 @@ class OrderApiControllerTest extends RestDocsSupport {
 						.description(DELIVERY_REQUEST_RECEIVER_NAME.getDescription()),
 					fieldWithPath("data[].deliveryRequest.receiverPhone").type(JsonFieldType.STRING)
 						.description(DELIVERY_REQUEST_RECEIVER_PHONE.getDescription()),
-					fieldWithPath("data[].orderProducts[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data[].orderProducts[].orderProductId").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_ID.getDescription()),
 					fieldWithPath("data[].orderProducts[].productName").type(JsonFieldType.STRING)
 						.description(ORDER_PRODUCT_NAME.getDescription()),
@@ -194,8 +198,8 @@ class OrderApiControllerTest extends RestDocsSupport {
 		);
 		OrderResponse response = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user", "01011111111"),
-			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
+			OrderResponse.OrdererResponse.of("soo", "01011111111"),
+			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "김철수", "01011111111"),
 			List.of(orderProductResponse1, orderProductResponse2),
 			21870,
 			OrderStatus.ORDER,
@@ -206,21 +210,25 @@ class OrderApiControllerTest extends RestDocsSupport {
 			null
 		);
 
-		given(orderService.findOrderByOrderer(response.id(), userId)).willReturn(response);
+		given(orderService.findOrderByOrderer(response.orderId(), userId)).willReturn(response);
 
 		//When & Then
-		mvc.perform(get("/api/orders/{orderId}", response.id()))
+		mvc.perform(get("/api/orders/{orderId}", response.orderId()))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
-			.andExpect(jsonPath("$.data.id").value(response.id()))
+			.andExpect(jsonPath("$.data.orderId").value(response.orderId()))
 			.andExpect(jsonPath("$.data.orderer.uid").value(response.orderer().uid()))
 			.andExpect(jsonPath("$.data.deliveryRequest.deliveryAddress").isNotEmpty())
 			.andExpect(jsonPath("$.data.orderProducts").isArray())
-			.andExpect(jsonPath("$.data.orderProducts[0].id").value(response.orderProducts().get(0).id()))
+			.andExpect(jsonPath("$.data.orderProducts[0].orderProductId")
+				.value(response.orderProducts().get(0).orderProductId()))
 			.andDo(document(
 				"user/order/getOrder",
-				userApiDescription(TagDescription.ORDER, "주문 상세 조회"),
+				userApiDescription(
+					TagDescription.ORDER,
+					"주문 상세 조회",
+					"주문 ID(orderId)로 주문 정보를 조회합니다."),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -228,7 +236,7 @@ class OrderApiControllerTest extends RestDocsSupport {
 				),
 				responseFields(
 					RestDocsUtils.STATUS,
-					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.orderId").type(JsonFieldType.NUMBER)
 						.description(ORDER_ID.getDescription()),
 					fieldWithPath("data.orderer.uid").type(JsonFieldType.STRING)
 						.description(ORDERER_UID.getDescription()),
@@ -240,7 +248,7 @@ class OrderApiControllerTest extends RestDocsSupport {
 						.description(DELIVERY_REQUEST_RECEIVER_NAME.getDescription()),
 					fieldWithPath("data.deliveryRequest.receiverPhone").type(JsonFieldType.STRING)
 						.description(DELIVERY_REQUEST_RECEIVER_PHONE.getDescription()),
-					fieldWithPath("data.orderProducts[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.orderProducts[].orderProductId").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_ID.getDescription()),
 					fieldWithPath("data.orderProducts[].productName").type(JsonFieldType.STRING)
 						.description(ORDER_PRODUCT_NAME.getDescription()),
@@ -268,7 +276,7 @@ class OrderApiControllerTest extends RestDocsSupport {
 						.description(DELIVERED_AT.getDescription())
 				)
 			));
-		then(orderService).should().findOrderByOrderer(response.id(), userId);
+		then(orderService).should().findOrderByOrderer(response.orderId(), userId);
 	}
 
 	@WithUserDetails
@@ -278,7 +286,7 @@ class OrderApiControllerTest extends RestDocsSupport {
 		//Given
 		long orderId = 1L;
 		long userId = TestSecurityConfig.USER_ID;
-		OrderRequest request = new OrderRequest(1L, 10, "서울 종로구 청와대로 1", "user", "01011112222");
+		OrderRequest request = new OrderRequest(1L, 10, "서울 종로구 청와대로 1", "김철수", "01011111111");
 
 		given(orderService.order(userId, request.toServiceRequest())).willReturn(orderId);
 
@@ -296,7 +304,11 @@ class OrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(orderId))
 			.andDo(document(
 				"user/order/order",
-				userApiDescription(TagDescription.ORDER, "주문하기 (바로 구매)"),
+				userApiDescription(
+					TagDescription.ORDER,
+					"주문하기",
+					"상품을 장바구니에 담지 않고 바로 주문합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -338,7 +350,13 @@ class OrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(orderId))
 			.andDo(document(
 				"user/order/cancelOrder",
-				userApiDescription(TagDescription.ORDER, "주문 취소하기"),
+				userApiDescription(
+					TagDescription.ORDER,
+					"주문 취소",
+					"""
+						주문을 취소합니다.<br>
+						단, 배송 상태가 결제 완료(ACCEPT)인 주문만 취소가 가능합니다.
+						"""),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
