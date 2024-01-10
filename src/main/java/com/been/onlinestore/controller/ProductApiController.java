@@ -31,7 +31,7 @@ public class ProductApiController {
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<CategoryProductResponse>>> getProducts(
 		@RequestParam(required = false) String searchName,
-		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+		@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
 	) {
 		return ResponseEntity.ok(
 			ApiResponse.pagination(productService.findProductsOnSale(searchName, pageable)));

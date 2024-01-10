@@ -8,8 +8,8 @@ import com.been.onlinestore.service.dto.request.UserServiceRequest;
 
 public record UserRequest() {
 
-	private static final String UID_PATTERN_REGEX = "^[a-z]{1}[a-z0-9]{3,9}$";
-	private static final String UID_PATTERN_MESSAGE = "영문 또는 영문 + 숫자 조합 4 ~ 10자리를 입력해주세요.";
+	private static final String UID_PATTERN_REGEX = "^[a-z]{1}[a-z0-9]{2,9}$";
+	private static final String UID_PATTERN_MESSAGE = "영문 또는 영문 + 숫자 조합 3 ~ 10자리를 입력해주세요.";
 
 	private static final String PHONE_PATTERN_REGEX = "^010([0-9]{7,8})+$";
 	private static final String PHONE_PATTERN_MESSAGE = "'-'(하이픈) 없이 10 ~ 11 자리의 숫자만 입력 가능합니다.";

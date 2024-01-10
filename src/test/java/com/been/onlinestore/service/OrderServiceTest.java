@@ -138,7 +138,7 @@ class OrderServiceTest {
 		long orderId = 1L;
 		long ordererId = 1L;
 
-		given(orderRepository.findByIdAndOrdererId(orderId, ordererId)).willReturn(Optional.of(createOrder(ordererId)));
+		given(orderRepository.findByIdAndOrdererId(orderId, ordererId)).willReturn(Optional.of(createOrder(orderId)));
 
 		//When
 		Long result = sut.cancelOrder(orderId, ordererId);

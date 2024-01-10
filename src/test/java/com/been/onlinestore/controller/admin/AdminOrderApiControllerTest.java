@@ -80,8 +80,8 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 		);
 		OrderResponse response1 = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user", "01011111111"),
-			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
+			OrderResponse.OrdererResponse.of("soo", "01011111111"),
+			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "김철수", "01011111111"),
 			List.of(orderProductResponse1),
 			4500,
 			OrderStatus.ORDER,
@@ -93,8 +93,8 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 		);
 		OrderResponse response2 = OrderResponse.of(
 			2L,
-			OrderResponse.OrdererResponse.of("user2", "01022222222"),
-			OrderResponse.DeliveryRequestResponse.of("서울 중구 세종대로 110 서울특별시청", "user2", "01011112222"),
+			OrderResponse.OrdererResponse.of("hee", "01022222222"),
+			OrderResponse.DeliveryRequestResponse.of("서울 중구 세종대로 110 서울특별시청", "김영희", "01022222222"),
 			List.of(orderProductResponse2),
 			12870,
 			OrderStatus.ORDER,
@@ -123,18 +123,26 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
 			.andExpect(jsonPath("$.data").isArray())
-			.andExpect(jsonPath("$.data[0].id").value(response2.id()))
+			.andExpect(jsonPath("$.data[0].orderId").value(response2.orderId()))
 			.andExpect(jsonPath("$.data[0].orderer.uid").value(response2.orderer().uid()))
 			.andExpect(jsonPath("$.data[0].deliveryRequest.deliveryAddress").isNotEmpty())
 			.andExpect(jsonPath("$.data[0].orderProducts").isArray())
-			.andExpect(jsonPath("$.data[0].orderProducts[0].id").value(response2.orderProducts().get(0).id()))
+			.andExpect(jsonPath("$.data[0].orderProducts[0].orderProductId")
+				.value(response2.orderProducts().get(0).orderProductId()))
 			.andExpect(jsonPath("$.page.number").value(page.getNumber()))
 			.andExpect(jsonPath("$.page.size").value(page.getSize()))
 			.andExpect(jsonPath("$.page.totalPages").value(page.getTotalPages()))
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
 				"admin/order/getOrders-searching",
-				adminApiDescription(TagDescription.ORDER, "주문 페이징 조회 + 검색"),
+				adminApiDescription(
+					TagDescription.ORDER,
+					"주문 목록 페이징 조회 (검색: 주문자 ID, 상품 ID, 배송 상태, 주문 상태)",
+					"""
+						모든 주문을 페이지 단위로 조회합니다.<br>
+						주문자 ID, 상품 ID, 배송 상태, 주문 상태로 검색이 가능합니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(PAGE_REQUEST_PARAM)
@@ -150,7 +158,7 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 					),
 				responseFields(
 					RestDocsUtils.STATUS,
-					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data[].orderId").type(JsonFieldType.NUMBER)
 						.description(ORDER_ID.getDescription()),
 					fieldWithPath("data[].orderer.uid").type(JsonFieldType.STRING)
 						.description(ORDERER_UID.getDescription()),
@@ -162,7 +170,7 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 						.description(DELIVERY_REQUEST_RECEIVER_NAME.getDescription()),
 					fieldWithPath("data[].deliveryRequest.receiverPhone").type(JsonFieldType.STRING)
 						.description(DELIVERY_REQUEST_RECEIVER_PHONE.getDescription()),
-					fieldWithPath("data[].orderProducts[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data[].orderProducts[].orderProductId").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_ID.getDescription()),
 					fieldWithPath("data[].orderProducts[].productName").type(JsonFieldType.STRING)
 						.description(ORDER_PRODUCT_NAME.getDescription()),
@@ -207,8 +215,8 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 		);
 		OrderResponse response = OrderResponse.of(
 			1L,
-			OrderResponse.OrdererResponse.of("user", "01011111111"),
-			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "user", "01011112222"),
+			OrderResponse.OrdererResponse.of("soo", "01011111111"),
+			OrderResponse.DeliveryRequestResponse.of("서울 종로구 청와대로 1", "김철수", "01011111111"),
 			List.of(orderProductResponse),
 			4500,
 			OrderStatus.ORDER,
@@ -219,29 +227,34 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 			null
 		);
 
-		given(adminOrderService.findOrder(response.id())).willReturn(response);
+		given(adminOrderService.findOrder(response.orderId())).willReturn(response);
 
 		//When & Then
-		mvc.perform(get("/api/admin/orders/{orderId}", response.id()))
+		mvc.perform(get("/api/admin/orders/{orderId}", response.orderId()))
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.status").value("success"))
-			.andExpect(jsonPath("$.data.id").value(response.id()))
+			.andExpect(jsonPath("$.data.orderId").value(response.orderId()))
 			.andExpect(jsonPath("$.data.orderer.uid").value(response.orderer().uid()))
 			.andExpect(jsonPath("$.data.deliveryRequest.deliveryAddress").isNotEmpty())
 			.andExpect(jsonPath("$.data.orderProducts").isArray())
-			.andExpect(jsonPath("$.data.orderProducts[0].id").value(response.orderProducts().get(0).id()))
+			.andExpect(jsonPath("$.data.orderProducts[0].orderProductId")
+				.value(response.orderProducts().get(0).orderProductId()))
 			.andDo(document(
 				"admin/order/getOrder",
-				adminApiDescription(TagDescription.ORDER, "주문 상세 조회"),
+				adminApiDescription(
+					TagDescription.ORDER,
+					"주문 상세 조회",
+					"주문 ID(orderId)로 주문 정보를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
-					parameterWithName("orderId").description(PRODUCT_ID.getDescription())
+					parameterWithName("orderId").description(ORDER_ID.getDescription())
 				),
 				responseFields(
 					RestDocsUtils.STATUS,
-					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.orderId").type(JsonFieldType.NUMBER)
 						.description(ORDER_ID.getDescription()),
 					fieldWithPath("data.orderer.uid").type(JsonFieldType.STRING)
 						.description(ORDERER_UID.getDescription()),
@@ -253,7 +266,7 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 						.description(DELIVERY_REQUEST_RECEIVER_NAME.getDescription()),
 					fieldWithPath("data.deliveryRequest.receiverPhone").type(JsonFieldType.STRING)
 						.description(DELIVERY_REQUEST_RECEIVER_PHONE.getDescription()),
-					fieldWithPath("data.orderProducts[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.orderProducts[].orderProductId").type(JsonFieldType.NUMBER)
 						.description(ORDER_PRODUCT_ID.getDescription()),
 					fieldWithPath("data.orderProducts[].productName").type(JsonFieldType.STRING)
 						.description(ORDER_PRODUCT_NAME.getDescription()),
@@ -281,7 +294,7 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 						.description(DELIVERED_AT.getDescription())
 				)
 			));
-		then(adminOrderService).should().findOrder(response.id());
+		then(adminOrderService).should().findOrder(response.orderId());
 	}
 
 	@DisplayName("[API][PUT] 베송 상태 수정 - 상품 준비 중")
@@ -303,7 +316,14 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(orderId))
 			.andDo(document(
 				"admin/order/prepareOrders",
-				adminApiDescription(TagDescription.ORDER, "상품 준비 중 처리"),
+				adminApiDescription(
+					TagDescription.ORDER,
+					"상품 준비 중 처리",
+					"""
+						주문의 배송 상태를 상품 준비 중(PREPARING)으로 변경합니다.<br>
+						단, 배송 상태가 결제 완료(ACCEPT)일 때만 상품 준비 중으로 변경할 수 있습니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -336,7 +356,14 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(orderId))
 			.andDo(document(
 				"admin/order/startDelivery",
-				adminApiDescription(TagDescription.ORDER, "배송 중 처리"),
+				adminApiDescription(
+					TagDescription.ORDER,
+					"배송 중 처리",
+					"""
+						주문의 배송 상태를 배송 중(DELIVERING)으로 변경합니다.<br>
+						단, 배송 상태가 상품 준비 중(PREPARING)일 때만 배송 중으로 변경할 수 있습니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -369,7 +396,14 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(orderId))
 			.andDo(document(
 				"admin/order/completeDelivery",
-				adminApiDescription(TagDescription.ORDER, "배송 완료 처리"),
+				adminApiDescription(
+					TagDescription.ORDER,
+					"배송 완료 처리",
+					"""
+						주문의 배송 상태를 배송 완료(COMPLETED)로 변경합니다.<br>
+						단, 배송 상태가 배송 중(DELIVERING)일 때만 배송 완료로 변경할 수 있습니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -381,5 +415,42 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 				)
 			));
 		then(adminOrderService).should().completeDelivery(orderId);
+	}
+
+	@DisplayName("[API][PUT] 주문 취소")
+	@Test
+	void test_cancelOrder() throws Exception {
+		//Given
+		long orderId = 1L;
+
+		given(adminOrderService.cancelOrder(orderId)).willReturn(orderId);
+
+		//When & Then
+		mvc.perform(put("/api/admin/orders/{orderId}/cancel", orderId))
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(orderId))
+			.andDo(document(
+				"admin/order/cancelOrder",
+				adminApiDescription(
+					TagDescription.ORDER,
+					"주문 취소",
+					"""
+						주문을 취소합니다.<br>
+						단, 배송 상태가 결제 완료(ACCEPT)인 주문만 취소가 가능합니다.
+						"""),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("orderId").description(ORDER_ID.getDescription())
+				),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+						.description("취소된 " + ORDER_ID.getDescription())
+				)
+			));
+		then(adminOrderService).should().cancelOrder(orderId);
 	}
 }

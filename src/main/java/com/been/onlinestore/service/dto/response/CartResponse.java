@@ -3,6 +3,7 @@ package com.been.onlinestore.service.dto.response;
 import java.util.List;
 
 import com.been.onlinestore.domain.CartProduct;
+import com.been.onlinestore.domain.constant.SaleStatus;
 
 public record CartResponse(
 	int totalPrice,
@@ -21,7 +22,9 @@ public record CartResponse(
 
 		return CartResponse.of(
 			cartProducts.stream()
-				.mapToInt(CartProductResponse::totalPrice).sum(),
+				.filter(cp -> cp.saleStatus() == SaleStatus.SALE)
+				.mapToInt(CartProductResponse::totalPrice)
+				.sum(),
 			deliveryFee,
 			cartProducts
 		);

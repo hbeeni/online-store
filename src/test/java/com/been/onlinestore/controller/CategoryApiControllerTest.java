@@ -30,6 +30,7 @@ import com.been.onlinestore.config.TestSecurityConfig;
 import com.been.onlinestore.controller.restdocs.RestDocsSupport;
 import com.been.onlinestore.controller.restdocs.RestDocsUtils;
 import com.been.onlinestore.controller.restdocs.TagDescription;
+import com.been.onlinestore.domain.constant.SaleStatus;
 import com.been.onlinestore.service.CategoryService;
 import com.been.onlinestore.service.ProductService;
 import com.been.onlinestore.service.dto.response.CategoryResponse;
@@ -77,7 +78,10 @@ class CategoryApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data[0].productCount").value(response1.productCount()))
 			.andDo(document(
 				"home/category/getCategories",
-				homeApiDescription(TagDescription.CATEGORY, "카테고리 조회"),
+				homeApiDescription(
+					TagDescription.CATEGORY,
+					"카테고리 목록 조회",
+					"판매 상태가 'SALE'이거나 'OUT_OF_STOCK'인 상품이 있는 모든 카테고리를 조회합니다."),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				responseFields(
@@ -111,6 +115,7 @@ class CategoryApiControllerTest extends RestDocsSupport {
 			"깐대파 500g",
 			4500,
 			"시원한 국물 맛의 비밀",
+			SaleStatus.SALE,
 			3000,
 			imagePath + "c1b2f2a2-f0b8-403a-b03b-351d1ee0bd05.jpg"
 		);
@@ -119,6 +124,7 @@ class CategoryApiControllerTest extends RestDocsSupport {
 			"양파 1.5kg",
 			4290,
 			"단단하고 아삭한 양파의 매력",
+			SaleStatus.OUT_OF_STOCK,
 			0,
 			imagePath + "f33104ba-2e81-4b2e-91f7-658d45ec2d6d.jpg"
 		);
@@ -146,7 +152,14 @@ class CategoryApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
 				"home/category/getProductsInCategory",
-				homeApiDescription(TagDescription.CATEGORY, "해당 카테고리의 상품 조회"),
+				homeApiDescription(
+					TagDescription.CATEGORY,
+					"해당 카테고리 속한 상품 목록 페이징 조회",
+					"""
+						카테고리 ID(categoryId)로 해당 카테고리의 상품을 페이지 단위로 조회합니다.<br>
+						판매 상태가 'SALE'이거나 'OUT_OF_STOCK'인 상품만 조회됩니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -163,6 +176,8 @@ class CategoryApiControllerTest extends RestDocsSupport {
 						.description(PRODUCT_PRICE.getDescription()),
 					fieldWithPath("data[].description").type(JsonFieldType.STRING)
 						.description(PRODUCT_DESCRIPTION.getDescription()),
+					fieldWithPath("data[].saleStatus").type(JsonFieldType.STRING)
+						.description(PRODUCT_SALE_STATUS.getDescription()),
 					fieldWithPath("data[].deliveryFee").type(JsonFieldType.NUMBER)
 						.description(PRODUCT_DELIVERY_FEE.getDescription()),
 					fieldWithPath("data[].imageUrl").type(JsonFieldType.STRING)

@@ -98,11 +98,18 @@ public class Product extends BaseEntity {
 		this.deliveryFee = deliveryFee;
 	}
 
+	public boolean isOnSale() {
+		return saleStatus == SaleStatus.SALE;
+	}
+
 	public void updateImage(String imageName) {
 		this.imageName = imageName;
 	}
 
 	public void addStock(int stockQuantity) {
+		if (saleStatus == SaleStatus.OUT_OF_STOCK) {
+			saleStatus = SaleStatus.SALE;
+		}
 		this.stockQuantity += stockQuantity;
 	}
 
@@ -110,6 +117,9 @@ public class Product extends BaseEntity {
 		int restStock = this.stockQuantity - stockQuantity;
 		if (restStock < 0) {
 			throw new IllegalArgumentException(ErrorMessages.NOT_ENOUGH_STOCK.getMessage());
+		}
+		if (restStock == 0) {
+			saleStatus = SaleStatus.OUT_OF_STOCK;
 		}
 		this.stockQuantity = restStock;
 	}

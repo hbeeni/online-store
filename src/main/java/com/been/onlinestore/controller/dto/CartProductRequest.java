@@ -6,18 +6,19 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.been.onlinestore.service.dto.request.CartProductServiceRequest;
 
 public record CartProductRequest() {
 
+	private static final String QUANTITY_MESSAGE = "한 개 이상의 상품을 담아주세요.";
+
 	public record Create(
 		@NotNull @Positive
 		Long productId,
 
-		@NotNull @PositiveOrZero
+		@NotNull @Positive(message = QUANTITY_MESSAGE)
 		Integer productQuantity
 	) {
 
@@ -55,7 +56,7 @@ public record CartProductRequest() {
 	}
 
 	public record Update(
-		@NotNull @PositiveOrZero
+		@NotNull @Positive(message = QUANTITY_MESSAGE)
 		Integer productQuantity
 	) {
 	}

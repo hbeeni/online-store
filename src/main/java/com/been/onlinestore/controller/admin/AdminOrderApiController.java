@@ -56,4 +56,9 @@ public class AdminOrderApiController {
 	public ResponseEntity<ApiResponse<Map<String, Long>>> completeDelivery(@PathVariable Long orderId) {
 		return ResponseEntity.ok(ApiResponse.successId(adminOrderService.completeDelivery(orderId)));
 	}
+
+	@PutMapping("/{orderId}/cancel")
+	public ResponseEntity<ApiResponse<Map<String, Long>>> cancelOrder(@PathVariable Long orderId) {
+		return ResponseEntity.ok(ApiResponse.successId(adminOrderService.cancelOrder(orderId)));
+	}
 }

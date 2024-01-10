@@ -43,15 +43,15 @@ class UserApiControllerTest extends RestDocsSupport {
 	void test_getUser() throws Exception {
 		//Given
 		long id = 1L;
-		String uid = "user1";
+		String uid = "soo";
 		UserResponse response = UserResponse.of(
 			id,
 			uid,
 			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-			"user1",
-			uid + "@mail.com",
-			"test user",
-			"01012345678",
+			"김철수",
+			"soo@mail.com",
+			"철수",
+			"01011111111",
 			RoleType.USER,
 			LocalDateTime.now().minusDays(3),
 			now()
@@ -70,7 +70,11 @@ class UserApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.password").doesNotExist())
 			.andDo(document(
 				"user/user/getUser",
-				userApiDescription(TagDescription.USER, "회원 상세 조회"),
+				userApiDescription(
+					TagDescription.USER,
+					"본인 정보 조회",
+					"로그인한 회원의 정보를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				responseFields(
@@ -104,7 +108,7 @@ class UserApiControllerTest extends RestDocsSupport {
 	void test_updateUserInfo() throws Exception {
 		//Given
 		Long id = TestSecurityConfig.USER_ID;
-		UserRequest.Update request = new UserRequest.Update("nickname", "01012345678");
+		UserRequest.Update request = new UserRequest.Update("닉네임", "01012345678");
 
 		given(userService.updateInfo(id, request.nickname(), request.phone())).willReturn(id);
 
@@ -122,7 +126,15 @@ class UserApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(id))
 			.andDo(document(
 				"user/user/updateUser",
-				userApiDescription(TagDescription.USER, "회원 정보 수정"),
+				userApiDescription(
+					TagDescription.USER,
+					"본인 정보 수정",
+					"""
+						로그인한 회원의 정보를 수정합니다.<br>
+						닉네임과 휴대폰 번호만 변경 가능합니다.<br>
+						반드시 모든 필드를 입력해야 합니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(

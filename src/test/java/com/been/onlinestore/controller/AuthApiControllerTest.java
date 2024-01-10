@@ -61,7 +61,7 @@ class AuthApiControllerTest extends RestDocsSupport {
 		//Given
 		long id = 1L;
 		UserRequest.SignUp request =
-			new UserRequest.SignUp("user", "password", "user", "user@mail.com", "user", "01012345678");
+			new UserRequest.SignUp("minsoo", "password", "김민수", "minsoo@mail.com", "민수", "01012345678");
 
 		given(userService.signUp(eq(request.toServiceRequest()), anyString())).willReturn(id);
 
@@ -79,7 +79,15 @@ class AuthApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(id))
 			.andDo(document(
 				"home/auth/signUp",
-				homeApiDescription(TagDescription.AUTH, "회원가입"),
+				homeApiDescription(
+					TagDescription.AUTH,
+					"회원가입",
+					"""
+						회원가입을 합니다. 일반 회원 권한으로만 가입할 수 있습니다.<br>
+						아이디: 영문 또는 영문 + 숫자 조합 3 ~ 10자리
+						휴대폰 번호: '-'(하이픈) 없이 10 ~ 11 자리의 숫자
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -108,17 +116,17 @@ class AuthApiControllerTest extends RestDocsSupport {
 	@Test
 	void test_login() throws Exception {
 		//Given
-		UserRequest.Login request = new UserRequest.Login("user1", "test12");
+		UserRequest.Login request = new UserRequest.Login("soo", "test12");
 
 		PrincipalDetails principalDetails = PrincipalDetails.of(
 			1L,
 			request.uid(),
 			request.password(),
 			RoleType.USER,
-			"user",
-			"user@mail.com",
-			"user",
-			"01012345678"
+			"김철수",
+			"soo@mail.com",
+			"철수",
+			"01011111111"
 		);
 		UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(
 			principalDetails, request.password(), Set.of(new SimpleGrantedAuthority(RoleType.USER.getRoleName()))
@@ -138,7 +146,16 @@ class AuthApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.status").value("success"))
 			.andDo(document(
 				"home/auth/login",
-				homeApiDescription(TagDescription.AUTH, "로그인"),
+				homeApiDescription(
+					TagDescription.AUTH,
+					"로그인",
+					"""
+						로그인을 합니다. 아래 3개의 계정이 등록되어 있습니다.<br>
+						비밀번호는 동일하게 'test12'입니다.<br>
+						일반 회원 ID - soo, hee<br>
+						관리자 ID - admin
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -170,7 +187,11 @@ class AuthApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.status").value("success"))
 			.andDo(document(
 				"home/auth/logout",
-				homeApiDescription(TagDescription.AUTH, "로그아웃"),
+				homeApiDescription(
+					TagDescription.AUTH,
+					"로그아웃",
+					"로그아웃을 합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				responseFields(STATUS)

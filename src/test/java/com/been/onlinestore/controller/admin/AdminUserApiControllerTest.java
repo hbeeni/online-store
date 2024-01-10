@@ -54,24 +54,24 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.asc(sortName)));
 		UserResponse userResponse1 = UserResponse.of(
 			1L,
-			"user1",
+			"soo",
 			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-			"user1",
-			"user1@mail.com",
-			"test user1",
-			"01012345678",
+			"김철수",
+			"soo@mail.com",
+			"철수",
+			"01011111111",
 			RoleType.USER,
 			LocalDateTime.now().minusDays(3),
 			now()
 		);
 		UserResponse userResponse2 = UserResponse.of(
 			2L,
-			"user2",
+			"hee",
 			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-			"user2",
-			"user2@mail.com",
-			"test user2",
-			"01012123434",
+			"김영희",
+			"hee@mail.com",
+			"영희",
+			"01022222222",
 			RoleType.USER,
 			now().minusDays(30),
 			now().minusDays(22)
@@ -102,7 +102,11 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.page.totalElements").value(page.getTotalElements()))
 			.andDo(document(
 				"admin/user/getUsers",
-				adminApiDescription(TagDescription.USER, "회원 페이징 조회"),
+				adminApiDescription(
+					TagDescription.USER,
+					"회원 목록 페이징 조회",
+					"전체 회원을 페이지 단위로 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestParameters(PAGE_REQUEST_PARAM),
@@ -136,15 +140,15 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 	void test_getUser() throws Exception {
 		//Given
 		long id = 1L;
-		String uid = "testId";
+		String uid = "soo";
 		UserResponse response = UserResponse.of(
 			id,
 			uid,
 			"$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6",
-			"user",
-			uid + "@mail.com",
-			"test user",
-			"01012345678",
+			"김철수",
+			"soo@mail.com",
+			"철수",
+			"01011111111",
 			RoleType.USER,
 			LocalDateTime.now().minusDays(3),
 			now()
@@ -163,7 +167,11 @@ class AdminUserApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.password").doesNotExist())
 			.andDo(document(
 				"admin/user/getUser",
-				adminApiDescription(TagDescription.USER, "회원 상세 조회"),
+				adminApiDescription(
+					TagDescription.USER,
+					"회원 상세 조회",
+					"회원 ID(userId)로 회원의 정보를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(

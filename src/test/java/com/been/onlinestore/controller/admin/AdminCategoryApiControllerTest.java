@@ -78,7 +78,11 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data[0].modifiedBy").value(response1.modifiedBy()))
 			.andDo(document(
 				"admin/category/getCategories",
-				adminApiDescription(TagDescription.CATEGORY, "카테고리 조회"),
+				adminApiDescription(
+					TagDescription.CATEGORY,
+					"카테고리 목록 조회",
+					"모든 카테고리를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				responseFields(
@@ -133,7 +137,11 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.modifiedBy").value(response.modifiedBy()))
 			.andDo(document(
 				"admin/category/getCategory",
-				adminApiDescription(TagDescription.CATEGORY, "카테고리 상세 조회"),
+				adminApiDescription(
+					TagDescription.CATEGORY,
+					"카테고리 상세 조회",
+					"카테고리 ID(categoryId)로 카테고리의 정보를 조회합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -184,7 +192,14 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(id))
 			.andDo(document(
 				"admin/category/addCategory",
-				adminApiDescription(TagDescription.CATEGORY, "카테고리 추가"),
+				adminApiDescription(
+					TagDescription.CATEGORY,
+					"카테고리 추가",
+					"""
+						카테고리를 추가합니다.<br>
+						동일한 이름의 카테고리는 추가할 수 없습니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -226,7 +241,14 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(id))
 			.andDo(document(
 				"admin/category/updateCategory",
-				adminApiDescription(TagDescription.CATEGORY, "카테고리 수정"),
+				adminApiDescription(
+					TagDescription.CATEGORY,
+					"카테고리 수정",
+					"""
+						카테고리의 이름과 정보를 수정합니다.<br>
+						카테고리의 정보를 입력하지 않으면 null이 입력됩니다.
+						"""
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -262,7 +284,11 @@ class AdminCategoryApiControllerTest extends RestDocsSupport {
 			.andExpect(jsonPath("$.data.id").value(id))
 			.andDo(document(
 				"admin/category/deleteCategory",
-				adminApiDescription(TagDescription.CATEGORY, "카테고리 삭제"),
+				adminApiDescription(
+					TagDescription.CATEGORY,
+					"카테고리 삭제",
+					"카테고리를 삭제합니다."
+				),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(

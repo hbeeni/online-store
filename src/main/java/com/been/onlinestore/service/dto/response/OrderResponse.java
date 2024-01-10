@@ -15,7 +15,7 @@ import com.been.onlinestore.file.ImageStore;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record OrderResponse(
-	Long id,
+	Long orderId,
 	OrdererResponse orderer,
 	DeliveryRequestResponse deliveryRequest,
 	List<OrderProductResponse> orderProducts,
@@ -29,13 +29,13 @@ public record OrderResponse(
 ) {
 
 	public static OrderResponse of(
-		Long id, OrdererResponse orderer, DeliveryRequestResponse deliveryRequest,
+		Long orderId, OrdererResponse orderer, DeliveryRequestResponse deliveryRequest,
 		List<OrderProductResponse> orderProducts, int totalPrice, OrderStatus orderStatus,
 		DeliveryStatus deliveryStatus, int deliveryFee,
 		LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime deliveredAt
 	) {
 		return new OrderResponse(
-			id, orderer, deliveryRequest, orderProducts, totalPrice, orderStatus, deliveryStatus, deliveryFee,
+			orderId, orderer, deliveryRequest, orderProducts, totalPrice, orderStatus, deliveryStatus, deliveryFee,
 			createdAt, modifiedAt, deliveredAt
 		);
 	}

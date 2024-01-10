@@ -93,24 +93,24 @@ public class Order extends BaseTimeEntity {
 	}
 
 	public void cancel() {
-		if (this.delivery.getDeliveryStatus() != DeliveryStatus.ACCEPT) {
+		if (!delivery.canCancel()) {
 			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER.getMessage());
 		}
 		orderProducts.forEach(OrderProduct::cancel);
-		this.orderStatus = OrderStatus.CANCEL;
+		orderStatus = OrderStatus.CANCEL;
 	}
 
 	public void startPreparing() {
-		this.getDelivery().startPreparing();
+		delivery.startPreparing();
 		orderProducts.forEach(OrderProduct::startPreparing);
 	}
 
 	public void startDelivery() {
-		this.getDelivery().startDelivery();
+		delivery.startDelivery();
 	}
 
 	public void completeDelivery() {
-		this.getDelivery().completeDelivery();
+		delivery.completeDelivery();
 	}
 
 	@Override
