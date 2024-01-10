@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 
 import lombok.Getter;
@@ -52,34 +53,38 @@ public class Delivery {
 		return new Delivery(deliveryStatus, deliveryFee, deliveredAt);
 	}
 
-	public boolean canStartPreparing() {
-		return this.deliveryStatus == DeliveryStatus.ACCEPT;
-	}
-
 	public void startPreparing() {
-		if (canStartPreparing()) {
-			this.deliveryStatus = DeliveryStatus.PREPARING;
+		if (!canStartPreparing()) {
+			throw new IllegalStateException(ErrorMessages.CANNOT_START_PREPARING.getMessage());
 		}
-	}
-
-	public boolean canStartDelivery() {
-		return this.deliveryStatus == DeliveryStatus.PREPARING;
+		deliveryStatus = DeliveryStatus.PREPARING;
 	}
 
 	public void startDelivery() {
-		if (canStartDelivery()) {
-			this.deliveryStatus = DeliveryStatus.DELIVERING;
+		if (!canStartDelivery()) {
+			throw new IllegalStateException(ErrorMessages.CANNOT_START_DELIVERY.getMessage());
 		}
-	}
-
-	public boolean canCompleteDelivery() {
-		return this.deliveryStatus == DeliveryStatus.DELIVERING;
+		deliveryStatus = DeliveryStatus.DELIVERING;
 	}
 
 	public void completeDelivery() {
-		if (canCompleteDelivery()) {
-			this.deliveryStatus = DeliveryStatus.FINAL_DELIVERY;
+		if (!canCompleteDelivery()) {
+			throw new IllegalStateException(ErrorMessages.CANNOT_COMPLETE_DELIVERY.getMessage());
 		}
+		deliveryStatus = DeliveryStatus.COMPLETED;
+		deliveredAt = LocalDateTime.now();
+	}
+
+	private boolean canStartPreparing() {
+		return deliveryStatus == DeliveryStatus.ACCEPT;
+	}
+
+	private boolean canStartDelivery() {
+		return deliveryStatus == DeliveryStatus.PREPARING;
+	}
+
+	private boolean canCompleteDelivery() {
+		return deliveryStatus == DeliveryStatus.DELIVERING;
 	}
 
 	@Override
