@@ -1,7 +1,5 @@
 package com.been.onlinestore.config;
 
-import java.util.List;
-
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.config.security.CustomLogoutSuccessHandler;
@@ -35,15 +30,12 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private static final String[] WHITE_LIST = {
-		"/", "/logout", "/api/login", "/api/sign-up", "/api/categories/**", "/api/products/**"
+		"/", "/api/login", "/api/sign-up", "/api/categories/**", "/api/products/**"
 	};
 
 	@Bean
-	public SecurityFilterChain jsonSecurityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-			.cors(httpSecurityCorsConfigurer ->
-				httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource())
-			)
 			.formLogin().disable()
 			.httpBasic().disable()
 			.authorizeRequests(auth -> auth
@@ -62,17 +54,6 @@ public class SecurityConfig {
 			)
 			.csrf(csrf -> csrf.ignoringAntMatchers("/api/**"))
 			.build();
-	}
-
-	public CorsConfigurationSource corsConfigurationSource() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedOrigin("*");
-		config.addAllowedMethod("*");
-		config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PATCH", "OPTION", "PUT"));
-		source.registerCorsConfiguration("/**", config);
-
-		return source;
 	}
 
 	@Bean
