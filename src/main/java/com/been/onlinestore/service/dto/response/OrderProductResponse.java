@@ -4,7 +4,7 @@ import com.been.onlinestore.domain.OrderProduct;
 import com.been.onlinestore.file.ImageStore;
 
 public record OrderProductResponse(
-	Long id,
+	Long orderProductId,
 	String productName,
 	int price,
 	int quantity,
@@ -13,9 +13,9 @@ public record OrderProductResponse(
 ) {
 
 	public static OrderProductResponse of(
-		Long id, String productName, int price, int quantity, int totalPrice, String imageUrl
+		Long orderProductId, String productName, int price, int quantity, int totalPrice, String imageUrl
 	) {
-		return new OrderProductResponse(id, productName, price, quantity, totalPrice, imageUrl);
+		return new OrderProductResponse(orderProductId, productName, price, quantity, totalPrice, imageUrl);
 	}
 
 	public static OrderProductResponse from(OrderProduct entity, ImageStore imageStore) {
