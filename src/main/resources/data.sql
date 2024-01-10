@@ -1,10 +1,10 @@
 -- 회원: 비밀번호 test12
 insert into users (created_at, modified_at, email, name, nickname, password, phone, role_type, uid)
-values (now(), now(), 'user1@mail.com', 'user1', 'test user1',
-        '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01011111111', 'USER', 'user1'),
-       (now(), now(), 'user2@mail.com', 'user2', 'test user2',
-        '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01022222222', 'USER', 'user2'),
-       (now(), now(), 'admin@mail.com', 'admin', 'test admin',
+values (now(), now(), 'soo@mail.com', '김철수', '철수',
+        '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01011111111', 'USER', 'soo'),
+       (now(), now(), 'hee@mail.com', '김영희', '영희',
+        '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01022222222', 'USER', 'hee'),
+       (now(), now(), 'admin@mail.com', '관리자', '관리자',
         '$2a$10$wcVfFiEQnqu3WjgyiIsPzuqdYKV9WJ08Wx.4aac0e08CLFpUjvoW6', '01012341234', 'ADMIN', 'admin');
 
 -- 카테고리
@@ -77,7 +77,7 @@ values (NULL, 0, 'PREPARING'),    -- 1
        (NULL, 3000, 'ACCEPT'),    -- 7
        (NULL, 3000, 'PREPARING'), -- 8
        (NULL, 3000, 'ACCEPT'),    -- 9
-       (NULL, 0, 'FINAL_DELIVERY') -- 10
+       (NULL, 0, 'COMPLETED') -- 10
 ;
 
 -- 주문
@@ -86,12 +86,12 @@ values (now(), now(), 'ORDER', '01011111111', 1, 1, 1), -- 1 [1-1, 2-3] user1 PR
        (now(), now(), 'ORDER', '01022222222', 2, 2, 2), -- 2 [4-1, 6-1] user2 PREPARING
        (now(), now(), 'ORDER', '01022222222', 3, 3, 2), -- 3 [9-2] user2 ACCEPT
        (now(), now(), 'ORDER', '01011111111', 4, 4, 1), -- 4 [10-5, 11-2] user1 ACCEPT
-       (now(), now(), 'ORDER', '01011111111', 5, 5, 1), -- 5 [12-12] user1 ACCEPT
+       (now(), now(), 'ORDER', '01011111111', 5, 5, 1), -- 5 [12-12] user1 DELIVERING
        (now(), now(), 'ORDER', '01022222222', 6, 6, 2), -- 6 [3-2, 13-1] user2 DELIVERING
-       (now(), now(), 'ORDER', '01011111111', 7, 7, 1), -- 7 [6-5] user1 DELIVERING
+       (now(), now(), 'ORDER', '01011111111', 7, 7, 1), -- 7 [6-5] user1 ACCEPT
        (now(), now(), 'ORDER', '01022222222', 8, 8, 2), -- 8 [5-1] user2 PREPARING
        (now(), now(), 'ORDER', '01011111111', 9, 9, 1), -- 9 [8-11] user1 ACCEPT
-       (now(), now(), 'ORDER', '01022222222', 10, 10, 2) -- 10 [11-2, 12-2] user2 FINAL_DELIVERY
+       (now(), now(), 'ORDER', '01022222222', 10, 10, 2) -- 10 [11-2, 12-2] user2 COMPLETED
 ;
 
 -- 주문 상품
