@@ -75,6 +75,10 @@ public class Delivery {
 		deliveredAt = LocalDateTime.now();
 	}
 
+	public boolean canCancel() {
+		return deliveryStatus == DeliveryStatus.ACCEPT;
+	}
+
 	private boolean canStartPreparing() {
 		return deliveryStatus == DeliveryStatus.ACCEPT;
 	}

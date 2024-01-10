@@ -38,23 +38,30 @@ public class AdminOrderService {
 	}
 
 	public Long startPreparing(Long orderId) {
-		Order order = orderRepository.findById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+		Order order = orderRepository.findByIdWithDetails(orderId)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 		order.startPreparing();
 		return orderId;
 	}
 
 	public Long startDelivery(Long orderId) {
-		Order order = orderRepository.findById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+		Order order = orderRepository.findByIdWithDetails(orderId)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 		order.startDelivery();
 		return orderId;
 	}
 
 	public Long completeDelivery(Long orderId) {
-		Order order = orderRepository.findById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+		Order order = orderRepository.findByIdWithDetails(orderId)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
 		order.completeDelivery();
+		return orderId;
+	}
+
+	public Long cancelOrder(Long orderId) {
+		Order order = orderRepository.findByIdWithDetails(orderId)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+		order.cancel();
 		return orderId;
 	}
 }
