@@ -30,7 +30,7 @@ class CategoryServiceTest {
 	@Test
 	void test_findCategories() {
 		//Given
-		given(categoryRepository.findAllByProductOnSale()).willReturn(List.of(
+		given(categoryRepository.findAllBySellingProducts()).willReturn(List.of(
 			createCategory("채소"),
 			createCategory("과일"),
 			createCategory("수산")
@@ -41,6 +41,6 @@ class CategoryServiceTest {
 
 		//Then
 		assertThat(result).isNotNull();
-		then(categoryRepository).should().findAllByProductOnSale();
+		then(categoryRepository).should().findAllBySellingProducts();
 	}
 }

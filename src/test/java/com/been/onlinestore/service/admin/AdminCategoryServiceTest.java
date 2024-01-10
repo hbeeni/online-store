@@ -7,6 +7,8 @@ import static org.mockito.BDDMockito.*;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +64,7 @@ class AdminCategoryServiceTest {
 		long id = 1L;
 		Category category = createCategory("카테고리");
 
-		given(categoryRepository.findById(id)).willReturn(Optional.of(category));
+		given(categoryRepository.findByIdWithAllProducts(id)).willReturn(Optional.of(category));
 
 		//When
 		AdminCategoryResponse result = sut.findCategory(id);
@@ -73,7 +75,7 @@ class AdminCategoryServiceTest {
 			.hasFieldOrPropertyWithValue("name", category.getName())
 			.hasFieldOrProperty("productCount")
 			.hasFieldOrProperty("createdAt");
-		then(categoryRepository).should().findById(id);
+		then(categoryRepository).should().findByIdWithAllProducts(id);
 	}
 
 	@DisplayName("카테고리를 추가하면, 저장된 카테고리의 id를 반환한다.")
@@ -82,6 +84,7 @@ class AdminCategoryServiceTest {
 		//Given
 		String name = "category";
 
+		given(categoryRepository.findByName(name)).willReturn(Optional.empty());
 		given(categoryRepository.save(any())).willReturn(createCategory(name));
 
 		//When
@@ -89,7 +92,24 @@ class AdminCategoryServiceTest {
 
 		//Then
 		assertThat(result).isNotNull();
+		then(categoryRepository).should().findByName(name);
 		then(categoryRepository).should().save(any());
+	}
+
+	@DisplayName("카테고리를 추가할 때, 동일한 이름의 카테고리가 이미 존재하면, 예외를 던진다.")
+	@Test
+	void test_addCategory_throwsIllegalArgumentException() {
+		//Given
+		String name = "category";
+		CategoryServiceRequest.Create request = CategoryServiceRequest.Create.of(name, null);
+
+		given(categoryRepository.findByName(name)).willReturn(Optional.of(createCategory(name)));
+
+		//When & Then
+		assertThatThrownBy(() -> sut.addCategory(request))
+			.isInstanceOf(IllegalArgumentException.class);
+		then(categoryRepository).should().findByName(name);
+		then(categoryRepository).shouldHaveNoMoreInteractions();
 	}
 
 	@DisplayName("카테고리 정보를 수정하면, 수정된 카테고리의 id를 반환한다.")
@@ -114,7 +134,7 @@ class AdminCategoryServiceTest {
 
 	@DisplayName("존재하지 않는 카테고리 정보를 수정하려고 하면, 예외를 던진다.")
 	@Test
-	void test_updateCategory_withNonexistentId_throwsIllegalException() {
+	void test_updateCategory_withNonexistentId_throwsEntityNotFoundException() {
 		//Given
 		long id = 1L;
 		CategoryServiceRequest.Update serviceRequest =
@@ -124,7 +144,7 @@ class AdminCategoryServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateCategory(id, serviceRequest))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 		then(categoryRepository).should().findById(id);
 	}
 
