@@ -28,7 +28,7 @@ public record ProductRequest() {
 		@NotBlank @Size(max = 100)
 		String name,
 
-		@NotNull @PositiveOrZero
+		@NotNull @Positive
 		Integer price,
 
 		@Size(max = 255)
@@ -73,7 +73,7 @@ public record ProductRequest() {
 		@NotBlank @Size(max = 100)
 		String name,
 
-		@NotNull @PositiveOrZero
+		@NotNull @Positive
 		Integer price,
 
 		@Size(max = 255)
