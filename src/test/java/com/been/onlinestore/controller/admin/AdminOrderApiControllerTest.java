@@ -382,4 +382,41 @@ class AdminOrderApiControllerTest extends RestDocsSupport {
 			));
 		then(adminOrderService).should().completeDelivery(orderId);
 	}
+
+	@DisplayName("[API][PUT] 주문 취소")
+	@Test
+	void test_cancelOrder() throws Exception {
+		//Given
+		long orderId = 1L;
+
+		given(adminOrderService.cancelOrder(orderId)).willReturn(orderId);
+
+		//When & Then
+		mvc.perform(put("/api/admin/orders/{orderId}/cancel", orderId))
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.status").value("success"))
+			.andExpect(jsonPath("$.data.id").value(orderId))
+			.andDo(document(
+				"admin/order/cancelOrder",
+				adminApiDescription(
+					TagDescription.ORDER,
+					"주문 취소",
+					"""
+						주문을 취소합니다.<br>
+						단, 배송 상태가 결제 완료(ACCEPT)인 주문만 취소가 가능합니다.
+						"""),
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("orderId").description(ORDER_ID.getDescription())
+				),
+				responseFields(
+					RestDocsUtils.STATUS,
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+						.description("취소된 " + ORDER_ID.getDescription())
+				)
+			));
+		then(adminOrderService).should().cancelOrder(orderId);
+	}
 }
