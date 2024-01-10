@@ -20,23 +20,35 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 	@Query("update Product p set p.category = null where p.category.id = :categoryId")
 	int bulkCategoryNull(@Param("categoryId") Long categoryId);
 
-	@Query("select p from Product p where p.saleStatus = 'SALE' and p.category.id = :categoryId")
+	@Query("select p from Product p "
+		+ "where (p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK') "
+		+ "and p.category.id = :categoryId")
 	Page<Product> findAllOnSaleByCategory(@Param("categoryId") Long categoryId, Pageable pageable);
 
-	@Query(value = "select p from Product p join fetch p.category where p.saleStatus = 'SALE'",
-		countQuery = "select count(p) from Product p where p.saleStatus = 'SALE'")
+	@Query(value = "select p from Product p "
+		+ "join fetch p.category "
+		+ "where p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK'",
+		countQuery = "select count(p) from Product p "
+			+ "where p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK'")
 	Page<Product> findAllOnSale(Pageable pageable);
 
 	@Query(value = "select p from Product p "
 		+ "join fetch p.category "
-		+ "where p.saleStatus = 'SALE' and p.name like concat('%', :name, '%')",
+		+ "where (p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK') "
+		+ "and p.name like concat('%', :name, '%')",
 		countQuery = "select count(p) from Product p "
-			+ "where p.saleStatus = 'SALE' and p.name like concat('%', :name, '%')")
+			+ "where (p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK') "
+			+ "and p.name like concat('%', :name, '%')")
 	Page<Product> findAllOnSaleByName(@Param("name") String name, Pageable pageable);
 
-	@Query("select p from Product p where p.saleStatus = 'SALE' and p.id in :ids")
+	@Query("select p from Product p "
+		+ "where (p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK') "
+		+ "and p.id in :ids")
 	List<Product> findAllOnSaleById(@Param("ids") Collection<Long> ids);
 
-	@Query("select p from Product p join fetch p.category where p.saleStatus = 'SALE' and p.id = :id")
+	@Query("select p from Product p "
+		+ "join fetch p.category "
+		+ "where (p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK') "
+		+ "and p.id = :id")
 	Optional<Product> findOnSaleById(@Param("id") Long id);
 }
