@@ -45,10 +45,10 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 		List<Order> orders = findOrders(ordererId, pageable);
 
 		JPAQuery<Long> countQuery = queryFactory
-			.select(order.count())
+			.select(order.countDistinct())
 			.from(order)
-			.join(order.orderer, user).fetchJoin()
-			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
+			.join(order.orderer, user)
+			.join(order.deliveryRequest, deliveryRequest)
 			.where(user.id.eq(ordererId));
 
 		return PageableExecutionUtils.getPage(orders, pageable, countQuery::fetchOne);
@@ -113,6 +113,8 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 			.join(order.deliveryRequest, deliveryRequest).fetchJoin()
 			.join(order.delivery, delivery).fetchJoin()
 			.where(user.id.eq(ordererId))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.orderBy(getOrderSpecifiers(pageable))
 			.fetch();
 
@@ -136,6 +138,8 @@ public class OrderRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 				deliveryStatusEq(cond.deliveryStatus()),
 				orderStatusEq(cond.orderStatus())
 			)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.orderBy(getOrderSpecifiers(pageable))
 			.fetch();
 
