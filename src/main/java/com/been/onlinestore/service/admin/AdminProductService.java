@@ -54,8 +54,10 @@ public class AdminProductService {
 		Product product = productRepository.findById(productId)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
 		Category category = categoryRepository.getReferenceById(serviceRequest.categoryId());
-		product.updateInfo(category, serviceRequest.name(), serviceRequest.price(), serviceRequest.description(),
-			serviceRequest.stockQuantity(), serviceRequest.saleStatus(), serviceRequest.deliveryFee());
+		product.updateInfo(
+			category, serviceRequest.name(), serviceRequest.price(), serviceRequest.description(),
+			serviceRequest.stockQuantity(), serviceRequest.saleStatus(), serviceRequest.deliveryFee()
+		);
 		return product.getId();
 	}
 
