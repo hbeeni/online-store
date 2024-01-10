@@ -41,7 +41,7 @@ public class CartProductService {
 
 	@Transactional(readOnly = true)
 	public CartResponse findCartProducts(Long userId) {
-		List<CartProduct> cartProducts = cartProductRepository.findAllByUserId(userId);
+		List<CartProduct> cartProducts = cartProductRepository.findAllOnSaleOrOutOfStockByUserId(userId);
 		int deliveryFee = getDeliveryFee(cartProducts);
 		return CartResponse.from(cartProducts, deliveryFee);
 	}
@@ -105,9 +105,9 @@ public class CartProductService {
 	}
 
 	private Map<Long, Integer> createOrderProductMap(Long userId, List<Long> cartProductIds) {
-		List<CartProduct> cartProducts = cartProductRepository.findCartProducts(userId, cartProductIds);
+		List<CartProduct> cartProducts = cartProductRepository.findAllOnSaleByIdInAndUserId(userId, cartProductIds);
 		if (cartProducts.size() != cartProductIds.size()) {
-			throw new EntityNotFoundException(ErrorMessages.NOT_FOUND_CART_PRODUCT.getMessage());
+			throw new EntityNotFoundException(ErrorMessages.CANNOT_ORDER_CART_PRODUCT_INCLUDED.getMessage());
 		}
 
 		return cartProducts.stream()
@@ -120,6 +120,7 @@ public class CartProductService {
 	private static int getDeliveryFee(List<CartProduct> cartProducts) {
 		return cartProducts.stream()
 			.map(CartProduct::getProduct)
+			.filter(Product::isOnSale)
 			.map(Product::getDeliveryFee)
 			.min(Comparator.naturalOrder())
 			.orElse(0);

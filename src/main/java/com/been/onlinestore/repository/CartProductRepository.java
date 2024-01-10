@@ -17,8 +17,8 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Long> 
 	@Query("select cp from CartProduct cp "
 		+ "join fetch cp.product p "
 		+ "join fetch cp.user u "
-		+ "where u.id = :userId")
-	List<CartProduct> findAllByUserId(@Param("userId") Long userId);
+		+ "where u.id = :userId and (p.saleStatus = 'SALE' or p.saleStatus = 'OUT_OF_STOCK')")
+	List<CartProduct> findAllOnSaleOrOutOfStockByUserId(@Param("userId") Long userId);
 
 	List<CartProduct> findAllByModifiedAtBefore(LocalDateTime modifiedAt);
 
@@ -31,8 +31,8 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Long> 
 	@Query("select cp from CartProduct cp "
 		+ "join fetch cp.product p "
 		+ "join fetch cp.user u "
-		+ "where cp.id in :cartProductIds and u.id = :userId")
-	List<CartProduct> findCartProducts(
+		+ "where cp.id in :cartProductIds and u.id = :userId and p.saleStatus = 'SALE'")
+	List<CartProduct> findAllOnSaleByIdInAndUserId(
 		@Param("userId") Long userId, @Param("cartProductIds") List<Long> cartProductIds
 	);
 

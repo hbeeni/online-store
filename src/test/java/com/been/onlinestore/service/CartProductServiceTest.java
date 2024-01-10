@@ -46,14 +46,14 @@ class CartProductServiceTest {
 	@InjectMocks
 	private CartProductService sut;
 
-	@DisplayName("장바구니에 있는 모든 상품을 조회한다.")
+	@DisplayName("장바구니에 있는 모든 상품 중 판매 상태가 SALE 또는 OUT_OF_STOCK인 상품을 조회한다.")
 	@Test
 	void test_findCartProducts() {
 		//Given
 		Long productId = 1L;
 		int quantity = 1;
 
-		given(cartProductRepository.findAllByUserId(userId))
+		given(cartProductRepository.findAllOnSaleOrOutOfStockByUserId(userId))
 			.willReturn(List.of(createCartProduct(productId, quantity)));
 
 		//When
@@ -61,7 +61,7 @@ class CartProductServiceTest {
 
 		//Then
 		assertThat(result).isNotNull();
-		then(cartProductRepository).should().findAllByUserId(userId);
+		then(cartProductRepository).should().findAllOnSaleOrOutOfStockByUserId(userId);
 	}
 
 	@DisplayName("장바구니에 상품을 추가한다.")
@@ -144,7 +144,7 @@ class CartProductServiceTest {
 			new CartProductServiceRequest.Order(cartProductIds, "address", "name", "01011112222");
 		Map<Long, Integer> orderProductMap = Map.of(productId1, quantity1, productId2, quantity2);
 
-		given(cartProductRepository.findCartProducts(userId, cartProductIds))
+		given(cartProductRepository.findAllOnSaleByIdInAndUserId(userId, cartProductIds))
 			.willReturn(List.of(createCartProduct(productId1, quantity1), createCartProduct(productId2, quantity2)));
 		given(orderService.order(userId, serviceRequest, orderProductMap)).willReturn(orderId);
 		willDoNothing().given(cartProductRepository).deleteCartProducts(userId, cartProductIds);
@@ -154,7 +154,7 @@ class CartProductServiceTest {
 
 		//Then
 		assertThat(result).isEqualTo(orderId);
-		then(cartProductRepository).should().findCartProducts(userId, cartProductIds);
+		then(cartProductRepository).should().findAllOnSaleByIdInAndUserId(userId, cartProductIds);
 		then(orderService).should().order(userId, serviceRequest, orderProductMap);
 		then(cartProductRepository).should().deleteCartProducts(userId, cartProductIds);
 	}
@@ -167,13 +167,13 @@ class CartProductServiceTest {
 		CartProductServiceRequest.Order serviceRequest =
 			new CartProductServiceRequest.Order(cartProductIds, "address", "name", "01011112222");
 
-		given(cartProductRepository.findCartProducts(userId, cartProductIds))
+		given(cartProductRepository.findAllOnSaleByIdInAndUserId(userId, cartProductIds))
 			.willReturn(List.of(createCartProduct(1L, 1)));
 
 		//When & Then
 		assertThatThrownBy(() -> sut.order(userId, serviceRequest))
 			.isInstanceOf(EntityNotFoundException.class);
-		then(cartProductRepository).should().findCartProducts(userId, cartProductIds);
+		then(cartProductRepository).should().findAllOnSaleByIdInAndUserId(userId, cartProductIds);
 		then(orderService).shouldHaveNoInteractions();
 		then(cartProductRepository).shouldHaveNoMoreInteractions();
 	}
