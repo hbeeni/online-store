@@ -36,11 +36,33 @@ springdoc:
     use-root-path: true
     tags-sorter: alpha
     operations-sorter: alpha
-
 ---
-
 spring:
   config.activate.on-profile: test
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
+---
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+spring:
+  config.activate.on-profile: prod
+  datasource:
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+  jpa:
+    hibernate.ddl-auto: none
+    defer-datasource-initialization: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 1000
+  sql.init.mode: never
+
+image:
+  dir: ${IMAGE_DIR}
+  path: ${IMAGE_PATH}
