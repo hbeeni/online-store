@@ -20,7 +20,7 @@ drop table if exists orders;
 drop table if exists product;
 drop table if exists users;
 
-set foreign_key_checks = 0;
+set foreign_key_checks = 1;
 
 create table address
 (
@@ -34,21 +34,14 @@ create table address
     constraint PK_address PRIMARY KEY (id)
 ) engine = InnoDB;
 
-create table cart
-(
-    id      bigint not null auto_increment,
-    user_id bigint not null,
-    constraint PK_cart PRIMARY KEY (id)
-) engine = InnoDB;
-
-
 create table cart_product
 (
-    id               bigint  not null auto_increment,
-    cart_id          bigint  not null,
-    product_id       bigint  not null,
-    product_price    integer not null,
-    product_quantity integer not null,
+    id          bigint      not null auto_increment,
+    user_id     bigint      not null,
+    product_id  bigint      not null,
+    quantity    integer     not null,
+    created_at  datetime(6) not null,
+    modified_at datetime(6) not null,
     constraint PK_cart_product PRIMARY KEY (id)
 ) engine = InnoDB;
 
@@ -66,13 +59,20 @@ create table category
 
 create table delivery
 (
-    id               bigint      not null auto_increment,
-    delivery_status  varchar(20) not null default 'ACCEPT',
-    delivery_address varchar(50) not null,
-    delivery_fee     integer     not null,
-    receiver_phone   varchar(20) not null,
-    delivered_at     datetime(6),
+    id              bigint      not null auto_increment,
+    delivery_status varchar(20) not null default 'ACCEPT',
+    delivery_fee    integer     not null,
+    delivered_at    datetime(6),
     constraint PK_delivery PRIMARY KEY (id)
+) engine = InnoDB;
+
+create table delivery_request
+(
+    id               bigint      not null auto_increment,
+    delivery_address varchar(50) not null,
+    receiver_name    varchar(20) not null,
+    receiver_phone   varchar(20) not null,
+    constraint PK_delivery_request PRIMARY KEY (id)
 ) engine = InnoDB;
 
 create table order_product
@@ -87,13 +87,14 @@ create table order_product
 
 create table orders
 (
-    id            bigint      not null auto_increment,
-    user_id       bigint      not null,
-    delivery_id   bigint      not null,
-    orderer_phone varchar(20) not null,
-    order_status  varchar(20) not null default 'ORDER',
-    created_at    datetime(6) not null,
-    modified_at   datetime(6) not null,
+    id                  bigint      not null auto_increment,
+    orderer_id          bigint      not null,
+    delivery_id         bigint      not null,
+    delivery_request_id bigint      not null,
+    orderer_phone       varchar(20) not null,
+    order_status        varchar(20) not null default 'ORDER',
+    created_at          datetime(6) not null,
+    modified_at         datetime(6) not null,
     constraint PK_orders PRIMARY KEY (id)
 ) engine = InnoDB;
 
@@ -107,6 +108,7 @@ create table product
     stock_quantity integer      not null,
     sales_volume   integer      not null default 0,
     sale_status    varchar(20)  not null default 'WAIT',
+    delivery_fee   integer      not null default 3000,
     image_url      varchar(200),
     created_at     datetime(6)  not null,
     created_by     varchar(50)  not null,
@@ -118,13 +120,13 @@ create table product
 create table users
 (
     id          bigint       not null auto_increment,
-    uid         varchar(50)  not null,
+    uid         varchar(50)  not null unique,
     password    varchar(255) not null,
     name        varchar(20)  not null,
-    email       varchar(100) not null,
+    email       varchar(100) not null unique,
     nickname    varchar(20),
     phone       varchar(20)  not null,
-    role_type   varchar(20)  not null,
+    role_type   varchar(20)  not null default 'USER',
     created_at  datetime(6)  not null,
     modified_at datetime(6)  not null,
     constraint PK_users PRIMARY KEY (id)
@@ -134,17 +136,13 @@ alter table address
     add constraint FK_address_users
         foreign key (user_id) references users (id);
 
-alter table cart
-    add constraint FK_cart_users
-        foreign key (user_id) references users (id);
-
-alter table cart_product
-    add constraint FK_cart_product_cart
-        foreign key (cart_id) references cart (id);
-
 alter table cart_product
     add constraint FK_cart_product_product
         foreign key (product_id) references product (id);
+
+alter table cart_product
+    add constraint FK_cart_product_users
+        foreign key (user_id) references users (id);
 
 alter table order_product
     add constraint FK_order_product_orders
@@ -159,8 +157,12 @@ alter table orders
         foreign key (delivery_id) references delivery (id);
 
 alter table orders
+    add constraint FK_orders_delivery_request
+        foreign key (delivery_request_id) references delivery_request (id);
+
+alter table orders
     add constraint FK_orders_users
-        foreign key (user_id) references users (id);
+        foreign key (orderer_id) references users (id);
 
 alter table product
     add constraint FK_product_category

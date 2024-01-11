@@ -35,7 +35,7 @@ swaggerSources {
 }
 
 openapi3 {
-    server = 'http://localhost:8080'
+    server = 'http://34.22.67.195:8080'
     title = '쇼핑몰 API'
     description = '가짜 쇼핑몰 API'
     version = '1.0.0'
