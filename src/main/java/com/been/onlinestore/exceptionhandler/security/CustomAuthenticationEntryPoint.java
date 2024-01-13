@@ -1,4 +1,4 @@
-package com.been.onlinestore.exception.security;
+package com.been.onlinestore.exceptionhandler.security;
 
 import java.io.IOException;
 
