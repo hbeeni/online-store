@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 
-import com.been.onlinestore.common.ApiErrorResponse;
-import com.been.onlinestore.common.ApiResponse;
+import com.been.onlinestore.response.ApiErrorResponse;
+import com.been.onlinestore.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class ApiResponseUtils {

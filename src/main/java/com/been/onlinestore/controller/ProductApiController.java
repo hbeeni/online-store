@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.file.ImageStore;
+import com.been.onlinestore.response.ApiResponse;
 import com.been.onlinestore.service.ProductService;
 import com.been.onlinestore.service.dto.response.CategoryProductResponse;
 
