@@ -9,8 +9,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
@@ -77,7 +76,7 @@ class OrderServiceTest {
 
 	@DisplayName("주문을 조회할 때, 주문을 찾지 못하면 예외를 던진다.")
 	@Test
-	void test_findOrderByOrderer_throwsEntityNotFoundException() {
+	void test_findOrderByOrderer_throwsCustomException() {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
@@ -86,7 +85,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findOrderByOrderer(orderId, ordererId))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(orderRepository).should().findOrderByOrderer(orderId, ordererId);
 	}
 
@@ -115,7 +114,7 @@ class OrderServiceTest {
 
 	@DisplayName("주문(바로 구매)을 할 때, 판매하지 않는 상품을 주문하면 예외를 던진다.")
 	@Test
-	void test_order_throwsEntityNotFoundException() {
+	void test_order_throwsCustomException() {
 		//Given
 		long ordererId = 1L;
 		long productId = 1L;
@@ -125,7 +124,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.order(ordererId, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(productRepository).should().findOnSaleById(productId);
 		then(userRepository).shouldHaveNoInteractions();
 		then(orderRepository).shouldHaveNoInteractions();
@@ -150,7 +149,7 @@ class OrderServiceTest {
 
 	@DisplayName("주문을 취소할 때, 취소할 주문을 찾지 못하면 예외를 던진다.")
 	@Test
-	void test_cancelOrder_throwsEntityNotFoundException() {
+	void test_cancelOrder_throwsCustomException() {
 		//Given
 		long orderId = 1L;
 		long ordererId = 1L;
@@ -159,7 +158,7 @@ class OrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.cancelOrder(orderId, ordererId))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(orderRepository).should().findByIdAndOrdererId(orderId, ordererId);
 	}
 }

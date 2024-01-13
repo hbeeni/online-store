@@ -14,8 +14,9 @@ import javax.persistence.Id;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -55,21 +56,21 @@ public class Delivery {
 
 	public void startPreparing() {
 		if (!canStartPreparing()) {
-			throw new IllegalStateException(ErrorMessages.CANNOT_START_PREPARING.getMessage());
+			throw new CustomException(ErrorMessages.CANNOT_START_PREPARING);
 		}
 		deliveryStatus = DeliveryStatus.PREPARING;
 	}
 
 	public void startDelivery() {
 		if (!canStartDelivery()) {
-			throw new IllegalStateException(ErrorMessages.CANNOT_START_DELIVERY.getMessage());
+			throw new CustomException(ErrorMessages.CANNOT_START_DELIVERY);
 		}
 		deliveryStatus = DeliveryStatus.DELIVERING;
 	}
 
 	public void completeDelivery() {
 		if (!canCompleteDelivery()) {
-			throw new IllegalStateException(ErrorMessages.CANNOT_COMPLETE_DELIVERY.getMessage());
+			throw new CustomException(ErrorMessages.CANNOT_COMPLETE_DELIVERY);
 		}
 		deliveryStatus = DeliveryStatus.COMPLETED;
 		deliveredAt = LocalDateTime.now();

@@ -7,8 +7,6 @@ import static org.mockito.BDDMockito.*;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.been.onlinestore.domain.Category;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.service.dto.request.CategoryServiceRequest;
@@ -98,7 +97,7 @@ class AdminCategoryServiceTest {
 
 	@DisplayName("카테고리를 추가할 때, 동일한 이름의 카테고리가 이미 존재하면, 예외를 던진다.")
 	@Test
-	void test_addCategory_throwsIllegalArgumentException() {
+	void test_addCategory_throwsCustomException() {
 		//Given
 		String name = "category";
 		CategoryServiceRequest.Create request = CategoryServiceRequest.Create.of(name, null);
@@ -107,7 +106,7 @@ class AdminCategoryServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.addCategory(request))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(CustomException.class);
 		then(categoryRepository).should().findByName(name);
 		then(categoryRepository).shouldHaveNoMoreInteractions();
 	}
@@ -134,7 +133,7 @@ class AdminCategoryServiceTest {
 
 	@DisplayName("존재하지 않는 카테고리 정보를 수정하려고 하면, 예외를 던진다.")
 	@Test
-	void test_updateCategory_withNonexistentId_throwsEntityNotFoundException() {
+	void test_updateCategory_withNonexistentId_throwsCustomException() {
 		//Given
 		long id = 1L;
 		CategoryServiceRequest.Update serviceRequest =
@@ -144,7 +143,7 @@ class AdminCategoryServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateCategory(id, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(categoryRepository).should().findById(id);
 	}
 

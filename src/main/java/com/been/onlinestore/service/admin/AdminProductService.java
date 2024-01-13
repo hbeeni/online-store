@@ -1,16 +1,15 @@
 package com.been.onlinestore.service.admin;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Category;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
@@ -39,7 +38,7 @@ public class AdminProductService {
 	@Transactional(readOnly = true)
 	public AdminProductResponse findProduct(Long id) {
 		return productRepository.searchProduct(id)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_PRODUCT));
 	}
 
 	public Long addProduct(ProductServiceRequest.Create serviceRequest, String imageName) {
@@ -52,7 +51,7 @@ public class AdminProductService {
 
 	public Long updateProductInfo(Long productId, ProductServiceRequest.Update serviceRequest) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT));
 		Category category = categoryRepository.getReferenceById(serviceRequest.categoryId());
 		product.updateInfo(
 			category, serviceRequest.name(), serviceRequest.price(), serviceRequest.description(),
@@ -63,7 +62,7 @@ public class AdminProductService {
 
 	public Long updateProductImage(Long productId, String imageName) {
 		Product product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.FAIL_TO_UPDATE_PRODUCT));
 		imageStore.deleteImage(product.getImageName());
 		product.updateImage(imageName);
 		return product.getId();

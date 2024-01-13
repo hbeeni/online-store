@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.exception.CustomException;
 
 class ProductTest {
 
@@ -47,7 +48,7 @@ class ProductTest {
 
 	@DisplayName("상품의 재고를 감소시킬 때 현재 재고보다 많은 재고를 감소 시킬 경우 예외를 발생한다.")
 	@Test
-	void removeStock_throwsIllegalArgumentException() {
+	void removeStock_throwsCustomException() {
 		//Given
 		int stockQuantity = 100;
 		int removeStockQuantity = 200;
@@ -55,7 +56,7 @@ class ProductTest {
 
 		//When & Then
 		assertThatThrownBy(() -> saleProduct.removeStock(removeStockQuantity))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(CustomException.class);
 	}
 
 	private static Product createProduct(SaleStatus saleStatus, int stockQuantity) {

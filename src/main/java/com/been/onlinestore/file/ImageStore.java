@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.been.onlinestore.common.ErrorMessages;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class ImageStore {
 		try (FileInputStream imageStream = new FileInputStream(getFullPath(imageName))) {
 			imageByteArray = imageStream.readAllBytes();
 		} catch (IOException e) {
-			throw new IllegalArgumentException(ErrorMessages.NOT_FOUND_IMAGE.getMessage());
+			throw new CustomException(ErrorMessages.NOT_FOUND_IMAGE);
 		}
 
 		return imageByteArray;
@@ -57,7 +58,7 @@ public class ImageStore {
 
 	public String saveImage(MultipartFile multipartFile) throws IOException {
 		if (multipartFile.isEmpty()) {
-			throw new IllegalArgumentException("이미지를 첨부해주세요.");
+			throw new CustomException("이미지를 첨부해주세요.");
 		}
 
 		String originalFilename = multipartFile.getOriginalFilename();

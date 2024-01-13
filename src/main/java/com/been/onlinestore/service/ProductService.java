@@ -2,14 +2,13 @@ package com.been.onlinestore.service;
 
 import static org.springframework.util.StringUtils.*;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.been.onlinestore.common.ErrorMessages;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.service.dto.response.CategoryProductResponse;
@@ -45,6 +44,6 @@ public class ProductService {
 	public CategoryProductResponse findProductOnSale(Long id) {
 		return productRepository.findOnSaleById(id)
 			.map(product -> CategoryProductResponse.from(product, imageStore.getImageUrl(product.getImageName())))
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_PRODUCT));
 	}
 }

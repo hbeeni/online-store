@@ -3,14 +3,13 @@ package com.been.onlinestore.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Address;
 import com.been.onlinestore.domain.User;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.AddressRepository;
 import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.service.dto.request.AddressServiceRequest;
@@ -37,7 +36,7 @@ public class AddressService {
 	public AddressResponse findAddress(Long addressId, Long userId) {
 		return addressRepository.findByIdAndUser_Id(addressId, userId)
 			.map(AddressResponse::from)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ADDRESS));
 	}
 
 	public Long addAddress(Long userId, AddressServiceRequest serviceRequest) {
@@ -58,7 +57,7 @@ public class AddressService {
 
 	public Long updateAddress(Long addressId, Long userId, AddressServiceRequest serviceRequest) {
 		Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ADDRESS));
 
 		if (Boolean.TRUE.equals(serviceRequest.defaultAddress())) {
 			addressRepository.findDefaultAddressByUserId(userId)
@@ -71,10 +70,10 @@ public class AddressService {
 
 	public Long deleteAddress(Long addressId, Long userId) {
 		Address address = addressRepository.findByIdAndUser_Id(addressId, userId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ADDRESS.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ADDRESS));
 
 		if (Boolean.TRUE.equals(address.getDefaultAddress())) {
-			throw new IllegalArgumentException(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS.getMessage());
+			throw new CustomException(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS);
 		}
 
 		addressRepository.deleteById(addressId);

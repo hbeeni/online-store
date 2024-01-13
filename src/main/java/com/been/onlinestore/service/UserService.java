@@ -1,12 +1,11 @@
 package com.been.onlinestore.service;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.User;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.service.dto.request.UserServiceRequest;
 import com.been.onlinestore.service.dto.response.UserResponse;
@@ -22,10 +21,10 @@ public class UserService {
 
 	public Long signUp(UserServiceRequest.SignUp serviceRequest, String encodedPassword) {
 		if (userRepository.existsByUid(serviceRequest.uid())) {
-			throw new IllegalArgumentException(ErrorMessages.DUPLICATE_ID.getMessage());
+			throw new CustomException(ErrorMessages.DUPLICATE_ID);
 		}
 		if (userRepository.existsByEmail(serviceRequest.email())) {
-			throw new IllegalArgumentException(ErrorMessages.ALREADY_SIGNED_UP_USER.getMessage());
+			throw new CustomException(ErrorMessages.ALREADY_SIGNED_UP_USER);
 		}
 		return userRepository.save(serviceRequest.toEntity(encodedPassword)).getId();
 	}
@@ -33,12 +32,12 @@ public class UserService {
 	public UserResponse findUser(Long id) {
 		return userRepository.findById(id)
 			.map(UserResponse::from)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_USER));
 	}
 
 	public Long updateInfo(Long id, String nickname, String phone) {
 		User user = userRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_USER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_USER));
 		user.updateInfo(nickname, phone);
 		return user.getId();
 	}

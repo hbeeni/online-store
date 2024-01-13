@@ -20,9 +20,10 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -94,7 +95,7 @@ public class Order extends BaseTimeEntity {
 
 	public void cancel() {
 		if (!delivery.canCancel()) {
-			throw new IllegalStateException(ErrorMessages.CANNOT_CANCEL_ORDER.getMessage());
+			throw new CustomException(ErrorMessages.CANNOT_CANCEL_ORDER);
 		}
 		orderProducts.forEach(OrderProduct::cancel);
 		orderStatus = OrderStatus.CANCEL;

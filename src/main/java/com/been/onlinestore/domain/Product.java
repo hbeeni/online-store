@@ -14,8 +14,9 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -116,7 +117,7 @@ public class Product extends BaseEntity {
 	public void removeStock(int stockQuantity) {
 		int restStock = this.stockQuantity - stockQuantity;
 		if (restStock < 0) {
-			throw new IllegalArgumentException(ErrorMessages.NOT_ENOUGH_STOCK.getMessage());
+			throw new CustomException(ErrorMessages.NOT_ENOUGH_STOCK);
 		}
 		if (restStock == 0) {
 			saleStatus = SaleStatus.OUT_OF_STOCK;
