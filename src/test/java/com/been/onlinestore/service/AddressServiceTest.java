@@ -9,8 +9,6 @@ import static org.mockito.BDDMockito.*;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Address;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.AddressRepository;
 import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.service.dto.request.AddressServiceRequest;
@@ -49,7 +48,7 @@ class AddressServiceTest {
 		List<AddressResponse> result = sut.findAddresses(userId);
 
 		//Then
-		assertThat(result.size()).isEqualTo(1);
+		assertThat(result).hasSize(1);
 		then(addressRepository).should().findAllByUser_IdOrderByDefaultAddressDesc(userId);
 	}
 
@@ -73,7 +72,7 @@ class AddressServiceTest {
 
 	@DisplayName("배송지 조회시, 배송지가 없으면, 예외를 던진다.")
 	@Test
-	void test_findAddress_throwsEntityNotFoundException() {
+	void test_findAddress_throwsCustomException() {
 		//Given
 		long addressId = 1L;
 		long userId = 1L;
@@ -82,7 +81,7 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findAddress(addressId, userId))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
 	}
 
@@ -190,7 +189,7 @@ class AddressServiceTest {
 
 	@DisplayName("없는 배송지를 수정하면, 예외를 던진다.")
 	@Test
-	void test_updateNonexistentAddress_throwsEntityNotFoundException() {
+	void test_updateNonexistentAddress_throwsCustomException() {
 		//Given
 		long addressId = 1L;
 		long userId = 1L;
@@ -201,13 +200,13 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateAddress(addressId, userId, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
 	}
 
 	@DisplayName("수정하려는 배송지의 회원과 요청한 회원이 다르면, 예외를 던진다.")
 	@Test
-	void test_updateOtherUserAddress_throwsEntityNotFoundException() {
+	void test_updateOtherUserAddress_throwsCustomException() {
 		//Given
 		long addressId = 1L;
 		long requestUserId = 1L;
@@ -218,7 +217,7 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateAddress(addressId, requestUserId, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(addressRepository).should().findByIdAndUser_Id(addressId, requestUserId);
 	}
 
@@ -297,7 +296,7 @@ class AddressServiceTest {
 
 	@DisplayName("기본 배송지를 삭제하면, 예외를 던진다.")
 	@Test
-	void test_deleteDefaultAddress_throwsIllegalArgumentException() {
+	void test_deleteDefaultAddress_throwsCustomException() {
 		//Given
 		long addressId = 1L;
 		long userId = 1L;
@@ -308,7 +307,7 @@ class AddressServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.deleteAddress(addressId, userId))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorMessages.FAIL_TO_DELETE_DEFAULT_ADDRESS.getMessage());
 		then(addressRepository).should().findByIdAndUser_Id(addressId, userId);
 	}

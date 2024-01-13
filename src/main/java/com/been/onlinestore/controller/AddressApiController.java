@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.controller.dto.AddressRequest;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
+import com.been.onlinestore.response.ApiResponse;
 import com.been.onlinestore.service.AddressService;
 import com.been.onlinestore.service.dto.response.AddressResponse;
 

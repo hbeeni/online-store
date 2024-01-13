@@ -1,8 +1,6 @@
-package com.been.onlinestore.exception;
+package com.been.onlinestore.exceptionhandler;
 
 import java.util.Map;
-
-import javax.persistence.EntityNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
-import com.been.onlinestore.common.ApiErrorResponse;
+import com.been.onlinestore.exception.CustomException;
+import com.been.onlinestore.response.ApiErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice(annotations = RestController.class)
-public class ExceptionControllerAdvice {
+public class GlobalExceptionHandler {
 
-	@ExceptionHandler({EntityNotFoundException.class, IllegalArgumentException.class, IllegalStateException.class})
-	public ResponseEntity<ApiErrorResponse<Void>> badRequest(Exception ex) {
+	@ExceptionHandler(CustomException.class)
+	public ResponseEntity<ApiErrorResponse<Void>> badRequest(CustomException ex) {
 		return ResponseEntity.badRequest().body(ApiErrorResponse.fail(ex));
 	}
 

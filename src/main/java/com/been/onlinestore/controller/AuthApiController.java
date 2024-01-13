@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.common.ApiResponse;
 import com.been.onlinestore.controller.dto.UserRequest;
+import com.been.onlinestore.response.ApiResponse;
 import com.been.onlinestore.service.UserService;
 
 import lombok.RequiredArgsConstructor;

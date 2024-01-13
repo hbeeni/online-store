@@ -1,4 +1,4 @@
-package com.been.onlinestore.common;
+package com.been.onlinestore.response;
 
 import java.util.List;
 import java.util.Map;

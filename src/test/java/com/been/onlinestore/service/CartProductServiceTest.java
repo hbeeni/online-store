@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.been.onlinestore.config.TestSecurityConfig;
 import com.been.onlinestore.domain.CartProduct;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.CartProductRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
@@ -113,7 +112,7 @@ class CartProductServiceTest {
 
 	@DisplayName("장바구니에 상품을 추가할 때, 해당 상품이 존재하지 않으면 예외가 발생한다.")
 	@Test
-	void test_addCartProduct_throwsEntityNotFoundException() {
+	void test_addCartProduct_throwsCustomException() {
 		//Given
 		Long productId = 1L;
 		int addQuantity = 2;
@@ -123,7 +122,7 @@ class CartProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.addCartProduct(userId, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(productRepository).should().findOnSaleById(productId);
 		then(cartProductRepository).shouldHaveNoInteractions();
 		then(userRepository).shouldHaveNoInteractions();
@@ -161,7 +160,7 @@ class CartProductServiceTest {
 
 	@DisplayName("장바구니에서 상품을 주문할 때, 장바구니 상품을 찾지 못하면 예외를 던진다.")
 	@Test
-	void test_order_throwsEntityNotFoundException() {
+	void test_order_throwsCustomException() {
 		//Given
 		List<Long> cartProductIds = List.of(1L, 2L);
 		CartProductServiceRequest.Order serviceRequest =
@@ -172,7 +171,7 @@ class CartProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.order(userId, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(cartProductRepository).should().findAllOnSaleByIdInAndUserId(userId, cartProductIds);
 		then(orderService).shouldHaveNoInteractions();
 		then(cartProductRepository).shouldHaveNoMoreInteractions();
@@ -198,7 +197,7 @@ class CartProductServiceTest {
 
 	@DisplayName("장바구니에 담긴 상품의 수량을 변경할 때, 해당 장바구니 상품이 존재하지 않으면 예외를 던진다.")
 	@Test
-	void test_updateCartProductQuantity_throwsEntityNotFoundException() {
+	void test_updateCartProductQuantity_throwsCustomException() {
 		//Given
 		Long cartProductId = 1L;
 		int updateQuantity = 1;
@@ -207,7 +206,7 @@ class CartProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateCartProductQuantity(userId, cartProductId, updateQuantity))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 
 		then(cartProductRepository).should().findCartProduct(userId, cartProductId);
 	}

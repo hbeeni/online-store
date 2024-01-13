@@ -6,8 +6,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import com.been.onlinestore.domain.Order;
 import com.been.onlinestore.domain.constant.DeliveryStatus;
 import com.been.onlinestore.domain.constant.OrderStatus;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
 import com.been.onlinestore.service.dto.response.OrderResponse;
@@ -71,7 +70,7 @@ class AdminOrderServiceTest {
 
 	@DisplayName("주문을 조회할 때, 해당 주문이 없으면 예외를 던진다.")
 	@Test
-	void test_findOrder_throwEntityNotFoundException() {
+	void test_findOrder_throwCustomException() {
 		//Given
 		long orderId = 1L;
 
@@ -79,7 +78,7 @@ class AdminOrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findOrder(orderId))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(orderRepository).should().findOrderByIdForAdmin(orderId);
 	}
 
@@ -152,7 +151,7 @@ class AdminOrderServiceTest {
 
 	@DisplayName("주문을 취소할 때, 취소할 주문을 찾지 못하면 예외를 던진다.")
 	@Test
-	void test_cancelOrder_throwsEntityNotFoundException() {
+	void test_cancelOrder_throwsCustomException() {
 		//Given
 		long orderId = 1L;
 
@@ -160,7 +159,7 @@ class AdminOrderServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.cancelOrder(orderId))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(orderRepository).should().findByIdWithDetails(orderId);
 	}
 }

@@ -1,14 +1,13 @@
 package com.been.onlinestore.service.admin;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.Order;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.querydsl.order.OrderSearchCondition;
@@ -34,33 +33,33 @@ public class AdminOrderService {
 	public OrderResponse findOrder(Long orderId) {
 		return orderRepository.findOrderByIdForAdmin(orderId)
 			.map(order -> OrderResponse.from(order, imageStore))
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ORDER));
 	}
 
 	public Long startPreparing(Long orderId) {
 		Order order = orderRepository.findByIdWithDetails(orderId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ORDER));
 		order.startPreparing();
 		return orderId;
 	}
 
 	public Long startDelivery(Long orderId) {
 		Order order = orderRepository.findByIdWithDetails(orderId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ORDER));
 		order.startDelivery();
 		return orderId;
 	}
 
 	public Long completeDelivery(Long orderId) {
 		Order order = orderRepository.findByIdWithDetails(orderId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ORDER));
 		order.completeDelivery();
 		return orderId;
 	}
 
 	public Long cancelOrder(Long orderId) {
 		Order order = orderRepository.findByIdWithDetails(orderId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ORDER));
 		order.cancel();
 		return orderId;
 	}

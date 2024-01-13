@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.been.onlinestore.common.ApiResponse;
+import com.been.onlinestore.response.ApiResponse;
 import com.been.onlinestore.service.admin.AdminUserService;
 import com.been.onlinestore.service.dto.response.UserResponse;
 

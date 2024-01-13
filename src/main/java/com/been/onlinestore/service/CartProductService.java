@@ -8,16 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.CartProduct;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.User;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.CartProductRepository;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.repository.UserRepository;
@@ -48,7 +47,7 @@ public class CartProductService {
 
 	public CartProductResponse addCartProduct(Long userId, CartProductServiceRequest.Create serviceRequest) {
 		Product product = productRepository.findOnSaleById(serviceRequest.productId())
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_PRODUCT));
 
 		Optional<CartProduct> cartProductOptional =
 			cartProductRepository.findByUserIdAndProductId(userId, serviceRequest.productId());
@@ -79,7 +78,7 @@ public class CartProductService {
 
 	public CartProductResponse updateCartProductQuantity(Long userId, Long cartProductId, int updateProductQuantity) {
 		CartProduct cartProduct = cartProductRepository.findCartProduct(userId, cartProductId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_CART_PRODUCT.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_CART_PRODUCT));
 		cartProduct.updateQuantity(updateProductQuantity);
 		return CartProductResponse.from(cartProduct);
 	}
@@ -107,7 +106,7 @@ public class CartProductService {
 	private Map<Long, Integer> createOrderProductMap(Long userId, List<Long> cartProductIds) {
 		List<CartProduct> cartProducts = cartProductRepository.findAllOnSaleByIdInAndUserId(userId, cartProductIds);
 		if (cartProducts.size() != cartProductIds.size()) {
-			throw new EntityNotFoundException(ErrorMessages.CANNOT_ORDER_CART_PRODUCT_INCLUDED.getMessage());
+			throw new CustomException(ErrorMessages.CANNOT_ORDER_CART_PRODUCT_INCLUDED);
 		}
 
 		return cartProducts.stream()

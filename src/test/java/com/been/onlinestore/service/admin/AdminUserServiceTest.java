@@ -6,8 +6,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.repository.UserRepository;
 import com.been.onlinestore.service.dto.response.UserResponse;
 
@@ -97,7 +96,7 @@ class AdminUserServiceTest {
 
 	@DisplayName("존재하지 않는 회원의 정보를 조회하면, 예외를 던진다.")
 	@Test
-	void test_findUser_throwsEntityNotFoundException() {
+	void test_findUser_throwsCustomException() {
 		//Given
 		long id = 1L;
 
@@ -105,7 +104,7 @@ class AdminUserServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findUser(id))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(userRepository).should().findById(id);
 	}
 }

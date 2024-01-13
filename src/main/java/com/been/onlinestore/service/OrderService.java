@@ -5,20 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.domain.DeliveryRequest;
 import com.been.onlinestore.domain.Order;
 import com.been.onlinestore.domain.OrderProduct;
 import com.been.onlinestore.domain.Product;
 import com.been.onlinestore.domain.User;
 import com.been.onlinestore.domain.constant.OrderStatus;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.OrderRepository;
 import com.been.onlinestore.repository.ProductRepository;
@@ -49,12 +48,12 @@ public class OrderService {
 	public OrderResponse findOrderByOrderer(Long orderId, Long ordererId) {
 		return orderRepository.findOrderByOrderer(orderId, ordererId)
 			.map(order -> OrderResponse.from(order, imageStore))
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ORDER));
 	}
 
 	public Long order(Long ordererId, OrderServiceRequest serviceRequest) {
 		Product product = productRepository.findOnSaleById(serviceRequest.productId())
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_PRODUCT));
 		return order(ordererId, DeliveryRequestInfo.of(serviceRequest), product, serviceRequest.quantity());
 	}
 
@@ -65,7 +64,7 @@ public class OrderService {
 
 	public Long cancelOrder(Long orderId, Long ordererId) {
 		Order order = orderRepository.findByIdAndOrdererId(orderId, ordererId)
-			.orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ORDER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_ORDER));
 		if (order.getOrderStatus() == OrderStatus.ORDER) {
 			order.cancel();
 		}
@@ -81,7 +80,7 @@ public class OrderService {
 		List<Product> products, Map<Long, Integer> orderProductMap
 	) {
 		User orderer = userRepository.findById(ordererId)
-			.orElseThrow(() -> new IllegalArgumentException(ErrorMessages.NOT_FOUND_USER.getMessage()));
+			.orElseThrow(() -> new CustomException(ErrorMessages.NOT_FOUND_USER));
 
 		Order order = Order.create(
 			orderer,
@@ -112,7 +111,7 @@ public class OrderService {
 		List<Product> products = productRepository.findAllOnSaleById(productIds);
 
 		if (productIds.size() != products.size()) {
-			throw new EntityNotFoundException(ErrorMessages.NOT_FOUND_PRODUCT.getMessage());
+			throw new CustomException(ErrorMessages.NOT_FOUND_PRODUCT);
 		}
 
 		return products;

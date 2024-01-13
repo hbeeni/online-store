@@ -14,12 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.been.onlinestore.common.ErrorMessages;
 import com.been.onlinestore.config.security.CustomLogoutSuccessHandler;
 import com.been.onlinestore.controller.dto.security.PrincipalDetails;
 import com.been.onlinestore.domain.constant.RoleType;
-import com.been.onlinestore.exception.security.CustomAccessDeniedHandler;
-import com.been.onlinestore.exception.security.CustomAuthenticationEntryPoint;
+import com.been.onlinestore.enums.ErrorMessages;
+import com.been.onlinestore.exceptionhandler.security.CustomAccessDeniedHandler;
+import com.been.onlinestore.exceptionhandler.security.CustomAuthenticationEntryPoint;
 import com.been.onlinestore.service.admin.AdminUserService;
 
 import lombok.RequiredArgsConstructor;

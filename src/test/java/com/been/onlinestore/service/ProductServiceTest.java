@@ -7,8 +7,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.ProductRepository;
 import com.been.onlinestore.service.dto.response.CategoryProductResponse;
@@ -106,7 +105,7 @@ class ProductServiceTest {
 
 	@DisplayName("[판매 중인 상품] 상품이 없으면, 예외를 던진다.")
 	@Test
-	void test_findProductOnSale_throwsEntityNotFoundException() {
+	void test_findProductOnSale_throwsCustomException() {
 		//Given
 		long id = 1L;
 
@@ -114,7 +113,7 @@ class ProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findProductOnSale(id))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(productRepository).should().findOnSaleById(id);
 	}
 }

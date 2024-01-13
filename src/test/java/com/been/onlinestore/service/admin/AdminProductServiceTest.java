@@ -8,8 +8,6 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.been.onlinestore.domain.constant.SaleStatus;
+import com.been.onlinestore.exception.CustomException;
 import com.been.onlinestore.file.ImageStore;
 import com.been.onlinestore.repository.CategoryRepository;
 import com.been.onlinestore.repository.ProductRepository;
@@ -94,7 +93,7 @@ class AdminProductServiceTest {
 
 	@DisplayName("상품이 없으면, 예외를 던진다.")
 	@Test
-	void test_findProductInfo_throwsEntityNotFoundException() {
+	void test_findProductInfo_throwsCustomException() {
 		//Given
 		long id = 1L;
 
@@ -102,7 +101,7 @@ class AdminProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.findProduct(id))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(productRepository).should().searchProduct(id);
 	}
 
@@ -150,7 +149,7 @@ class AdminProductServiceTest {
 
 	@DisplayName("없는 상품의 수정 정보를 입력하면, 예외를 던진다.")
 	@Test
-	void testUpdateProductInfo_throwsEntityNotFoundException() {
+	void testUpdateProductInfo_throwsCustomException() {
 		//Given
 		long categoryId = 1L;
 		long productId = 1L;
@@ -161,7 +160,7 @@ class AdminProductServiceTest {
 
 		//When & Then
 		assertThatThrownBy(() -> sut.updateProductInfo(productId, serviceRequest))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(CustomException.class);
 		then(productRepository).should().findById(productId);
 		then(categoryRepository).shouldHaveNoInteractions();
 	}
