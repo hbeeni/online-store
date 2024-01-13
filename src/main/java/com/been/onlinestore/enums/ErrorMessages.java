@@ -1,4 +1,4 @@
-package com.been.onlinestore.common;
+package com.been.onlinestore.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
