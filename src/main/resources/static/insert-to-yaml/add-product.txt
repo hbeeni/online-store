@@ -1,0 +1,43 @@
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                detail:
+                  type: object
+                  description: 상품 정보
+                  properties:
+                    categoryId:
+                      type: number
+                      description: 카테고리 시퀀스
+                    name:
+                      type: string
+                      description: 상품명
+                    price:
+                      type: number
+                      description: 상품 가격
+                    description:
+                      type: string
+                      description: 상품 설명
+                    stockQuantity:
+                      type: number
+                      description: 상품 재고 수량
+                    saleStatus:
+                      type: string
+                      description: 상품 판매 상태 (WAIT, SALE, OUT_OF_STOCK, CLOSE)
+                    deliveryFee:
+                      type: number
+                      description: 상품 배송비
+                  example:
+                    categoryId: 1
+                    name: 깐 대파
+                    price: 4500
+                    description: 시원한 국물 맛의 비밀
+                    stockQuantity: 10000
+                    saleStatus: SALE
+                    deliveryFee: 3000
+                image:
+                  type: string
+                  description: 상품 이미지 파일
+                  format: binary
