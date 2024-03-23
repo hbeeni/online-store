@@ -109,7 +109,7 @@ create table product
     sales_volume   integer      not null default 0,
     sale_status    varchar(20)  not null default 'WAIT',
     delivery_fee   integer      not null default 3000,
-    image_url      varchar(200),
+    image_name     varchar(200),
     created_at     datetime(6)  not null,
     created_by     varchar(50)  not null,
     modified_at    datetime(6)  not null,
