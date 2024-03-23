@@ -22,6 +22,7 @@ configurations {
 
 ext {
     set('hibernate.version', '5.6.5.Final')
+    set('profile', !project.hasProperty('profile') ? 'local' : project.property('profile'))
 }
 
 repositories {
@@ -35,23 +36,69 @@ swaggerSources {
 }
 
 openapi3 {
-    server = 'http://onlinestoreapi.kro.kr'
+    if ("${profile}" == 'prod') {
+        server = 'http://onlinesstoreapi.kro.kr'
+    } else {
+        server = 'http://localhost:8080'
+    }
+
     title = '쇼핑몰 API'
-    description = '가짜 쇼핑몰 API'
+    description = '쇼핑몰 API 입니다. 회원가입 및 로그인은 문서 하단에 있습니다.'
     version = '1.0.0'
     format = 'yaml'
 }
 
-tasks.register("copyOpenApiYaml", Copy) {
+tasks.register('insertToOpenApiYaml') {
     dependsOn 'processResources'
     dependsOn 'openapi3'
+
+    doLast {
+        def filePath = "${openapi3.outputDirectory}/openapi3.yaml"
+
+        def openApiFile = file(filePath)
+        def content = openApiFile.text
+
+        def dir = "src/main/resources/static/insert-to-yaml"
+        def addProductText = file("${dir}/add-product.txt").text
+        def updateProductImageText = file("${dir}/update-product-image.txt").text
+
+        def insertionPoint1 = content.indexOf("operationId: admin/product/addProduct") +
+                "operationId: admin/product/addProduct".length()
+        def insertionPoint2 = content.indexOf("operationId: admin/product/updateProductImage") +
+                "operationId: admin/product/updateProductImage".length()
+
+        def section1 = content.substring(0, insertionPoint1) + "\n"
+        def section2 = content.substring(insertionPoint1, insertionPoint2) + "\n"
+        def section3 = content.substring(insertionPoint2)
+
+        def newContent =
+                new StringBuilder().append(section1).append(addProductText)
+                        .append(section2).append(updateProductImageText)
+                        .append(section3)
+
+        new File(filePath).write(newContent.toString(), "utf-8")
+    }
+}
+
+tasks.register('copyOpenApiYaml', Copy) {
+    dependsOn 'insertToOpenApiYaml'
+
+    def dir = "src/main/resources/static/docs"
+
+    new File("${dir}/openapi3.yaml").delete()
     from("${openapi3.outputDirectory}")
-    into("src/main/resources/static/docs")
+    into(dir)
 }
 
 bootJar {
     dependsOn 'copyOpenApiYaml'
+
+    duplicatesStrategy(DuplicatesStrategy.INCLUDE)
+
     archiveFileName = 'online-store-app.jar'
+    from("src/main/resources/static/docs/openapi3.yaml") {
+        into "BOOT-INF/classes/static/docs/"
+    }
 }
 
 dependencies {

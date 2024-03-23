@@ -1,0 +1,13 @@
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  description: 상품 이미지 파일
+                  format: binary
+            encoding:
+              image:
+                contentType: image/png, image/jpeg

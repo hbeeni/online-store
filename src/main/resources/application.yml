@@ -35,7 +35,8 @@ springdoc:
     path: /swagger
     use-root-path: true
     tags-sorter: alpha
-    operations-sorter: alpha
+    operations-sorter: method
+    display-request-duration: true
 ---
 spring:
   config.activate.on-profile: test
