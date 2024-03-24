@@ -37,7 +37,7 @@ swaggerSources {
 
 openapi3 {
     if ("${profile}" == 'prod') {
-        server = 'http://onlinesstoreapi.kro.kr'
+        server = 'http://onlinestoreapi.kro.kr'
     } else {
         server = 'http://localhost:8080'
     }
