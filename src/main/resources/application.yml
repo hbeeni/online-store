@@ -26,17 +26,6 @@ spring:
 image:
   dir: C:/Projects/personal-project/online-store-project/image/
   path: http://localhost:8080/api/products/img/
-
-springdoc:
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8
-  swagger-ui:
-    url: /docs/openapi3.yaml
-    path: /swagger
-    use-root-path: true
-    tags-sorter: alpha
-    operations-sorter: method
-    display-request-duration: true
 ---
 spring:
   config.activate.on-profile: test
