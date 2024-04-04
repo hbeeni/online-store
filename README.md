@@ -74,7 +74,9 @@ http://onlinestoreapi.kro.kr
 <summary><b>상품 등록</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **Multipart 타입 요청** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/admin/AdminProductApiController.java#L55)
     - 상품 정보와 상품 이미지를 `Multipart` 타입으로 요청받습니다.
@@ -89,7 +91,9 @@ http://onlinestoreapi.kro.kr
 
     <img src="./document/image/addProduct_saveImage.png" style="width: 600px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/service/admin/AdminProductService.java#L44)
 
@@ -122,7 +126,7 @@ http://onlinestoreapi.kro.kr
 
 <br/>
 
-#### Controller
+**Controller**
 
 > [장바구니 상품 주문 코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/CartApiController.java#L53)
 
@@ -133,7 +137,9 @@ http://onlinestoreapi.kro.kr
 
     <img src="./document/image/order_controller.png" style="width: 900px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 > [장바구니 상품 주문 코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/service/CartProductService.java#L68)
 
@@ -173,7 +179,7 @@ http://onlinestoreapi.kro.kr
 
 <br/>
 
-#### Controller
+**Controller**
 
 - **요청 처리** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/admin/AdminProductApiController.java#L42)
     - 상품 검색 조건과 페이지네이션 정보를 요청으로 받습니다.
@@ -182,7 +188,7 @@ http://onlinestoreapi.kro.kr
 
 <br/>
 
-#### Service
+**Service**
 
 - **Repository 호출** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/service/admin/AdminProductService.java#L34)
     - 단순히 Repository를 호출하기만 합니다.
@@ -191,7 +197,7 @@ http://onlinestoreapi.kro.kr
 
 <br/>
 
-#### Repository
+**Repository**
 
 > 조건문 재활용 및 가독성을 위해 QueryDSL을 사용합니다.
 
@@ -225,14 +231,18 @@ http://onlinestoreapi.kro.kr
 <summary><b>배송지 추가</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/AddressApiController.java#L48)
     - 로그인한 유저와 추가할 배송지 정보를 요청으로 받습니다.
 
     <img src="./document/image/addAddress_controller.png" style="width: 900px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/service/AddressService.java#L42)
 
@@ -255,14 +265,18 @@ http://onlinestoreapi.kro.kr
 <summary><b>배송지 수정</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/AddressApiController.java#L57)
     - 로그인한 유저, 수정할 배송지 ID, 수정할 배송지 정보를 요청으로 받습니다.
 
     <img src="./document/image/updateAddress_controller.png" style="width: 900px">
 
-#### Service
+<br/>
+
+**Service**
 
 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/service/AddressService.java#L58)
 
@@ -285,14 +299,18 @@ http://onlinestoreapi.kro.kr
 <summary><b>배송지 삭제</b></summary>
 <div markdown="1">
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/AddressApiController.java#L67)
     - 로그인한 유저, 삭제할 배송지 ID를 요청으로 받습니다.
 
     <img src="./document/image/deleteAddress_controller.png" style="width: 900px">
 
-#### Service & Repository
+<br/>
+
+**Service & Repository**
 
 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/service/AddressService.java#L71)
 
@@ -328,14 +346,18 @@ http://onlinestoreapi.kro.kr
 
 로직의 흐름은 동일하기 때문에 **상품 준비 중으로 변경하는 경우**를 기준으로 설명하겠습니다.
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/admin/AdminOrderApiController.java#L46)
     - 배송 상태를 변경하려는 주문의 ID를 요청으로 받습니다.
 
     <img src="./document/image/prepareOrder_controller.png" style="width: 900px">
 
-#### Service
+<br/>
+
+**Service**
 
 - **상품 판매량 증가** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/domain/Order.java#L104)
 	- 상품 준비 중 처리 시 상품의 판매량을 증가시킵니다.
@@ -361,14 +383,18 @@ http://onlinestoreapi.kro.kr
 - 관리자, 일반 회원 모두 주문을 취소할 수 있습니다.
 - 일반 회원 기준으로 설명하겠습니다.
 
-#### Controller
+<br/>
+
+**Controller**
 
 - **요청 처리** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/controller/OrderApiController.java#L61)
     - 로그인한 유저와 취소하려는 주문의 ID를 요청으로 받습니다.
 
     <img src="./document/image/cancelOrder_controller.png" style="width: 900px">
 
-#### Service
+<br/>
+
+**Service**
 
 - **상품 재고 증가** 📌 [코드 확인](https://github.com/hbeeni/online-store/blob/df624c3a7faea999576c10ea7fc57642562c6a71/src/main/java/com/been/onlinestore/domain/Order.java#L96)
     - 주문 취소 시 해당 주문의 상품 재고를 증가시킵니다.
