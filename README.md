@@ -26,6 +26,7 @@ http://onlinestoreapi.kro.kr
 - Spring Web
 - Spring REST Docs
 - restdocs-api-apec
+- Google Cloud Platform
 
 <br/>
 
@@ -914,7 +915,7 @@ public AuditorAware<String> auditorAware() {
 <div markdown="1">
 
 - 문제 상황
-	- Google Cloud를 이용해 배포 후 발생한 문제임
+	- GCP를 이용해 배포 후 발생한 문제임
 	- Spring Boot Application VM 인스턴스, MySQL VM 인스턴스를 각각 생성함
 	- MySQL VM 인스턴스에 MySQL 설치하고, localhost 계정 생성도 했는데 연결이 되지 않았음
 - 해결
@@ -930,8 +931,8 @@ public AuditorAware<String> auditorAware() {
 <summary>ssh: connect to host {IP} port 22: Connection timed out</summary>
 <div markdown="1">
 
-- 로컬에서 Google Cloud VM 인스턴스에 SSH 접속을 시도할 때 문제가 발생함
-- 해결: Google Cloud 방화벽 규칙에서 22번 포트를 열어줌
+- 로컬에서 GCP VM 인스턴스에 SSH 접속을 시도할 때 문제가 발생함
+- 해결: GCP 방화벽 규칙에서 22번 포트를 열어줌
 
 </div>
 </details>
