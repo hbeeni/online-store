@@ -1,7 +1,6 @@
 # 🛒 온라인 쇼핑몰 API (online store API)
 
 쇼핑몰 웹 사이트를 위한 REST API<br/>
-http://onlinestoreapi.kro.kr
 
 <br/>
 
